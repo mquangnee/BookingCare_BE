@@ -12,6 +12,6 @@ namespace BookingCare.Domain.Models.CommandModels
         public EnumGender Gender { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string? PhoneNumber { get; set; }
-        public string? Citizend { get; set; }
+        public string? CitizenId { get; set; }
     }
 }

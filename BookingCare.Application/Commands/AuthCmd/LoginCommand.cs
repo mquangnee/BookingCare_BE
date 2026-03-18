@@ -44,7 +44,7 @@ namespace BookingCare.Application.Commands.AuthCmd
             var user = await _userManager.FindByEmailAsync(request.Email);
             if (user == null)
             {
-                methodResult.AddErrorBadRequest(nameof(EnumSystemErrorCode.DataNotExist), nameof(request.Email), request.Email);
+                methodResult.AddErrorBadRequest(nameof(EnumAuthErrorCode.EmailAndPasswordIncorrect), nameof(request.Email), request.Email);
                 return methodResult;
             }
             if (user.LockoutEnd != null && user.LockoutEnd > DateTime.UtcNow)

@@ -1,6 +1,7 @@
-using BookingCare.Application.Services;
+﻿using BookingCare.Application.Services;
 using BookingCare.Domain.Entities;
 using BookingCare.Domain.Models.CommandModels;
+using BookingCare.Infrastructure.Enums.ErrorCode;
 using BookingCare.Shared.Common;
 using BookingCare.Shared.Enum;
 using BookingCare.Shared.Setting;
@@ -8,40 +9,39 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
-namespace BookingCare.Identity.Application.Commands.AuthCmd
+namespace BookingCare.Application.Commands.AuthCmd
 {
-    public class SendRegisterOtpCommand : SendRegisterOtpCommandModel, IRequest<MethodResult<bool>>
+    public class SendVerifyPasswordOtpCommand : VerifyPasswordCommandModel, IRequest<MethodResult<bool>>
     {
     }
 
-    public class SendRegisterOtpCommandHandler : IRequestHandler<SendRegisterOtpCommand, MethodResult<bool>>
+    public class SendVerifyPasswordOtpCommandHandler : IRequestHandler<SendVerifyPasswordOtpCommand, MethodResult<bool>>
     {
         private readonly UserManager<User> _userManager;
         private readonly IOtpService _otpService;
         private readonly ISenderService _senderService;
 
-        public SendRegisterOtpCommandHandler(UserManager<User> userManager, IOtpService otpService, ISenderService senderService)
+        public SendVerifyPasswordOtpCommandHandler(UserManager<User> userManager, IOtpService otpService, ISenderService senderService)
         {
             _userManager = userManager;
             _otpService = otpService;
             _senderService = senderService;
         }
 
-        public async Task<MethodResult<bool>> Handle(SendRegisterOtpCommand request, CancellationToken cancellationToken)
+        public async Task<MethodResult<bool>> Handle(SendVerifyPasswordOtpCommand request, CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(request);
             var methodResult = new MethodResult<bool>();
 
-            if (string.IsNullOrWhiteSpace(request.Email))
+            if (string.IsNullOrEmpty(request.Email))
             {
                 methodResult.AddErrorBadRequest(nameof(EnumSystemErrorCode.Required), nameof(request.Email), request.Email);
                 return methodResult;
             }
-
-            var user = await _userManager.FindByEmailAsync(request.Email);
-            if (user != null)
+            var user = await _userManager.FindByEmailAsync(request.Email!);
+            if (user == null)
             {
-                methodResult.AddErrorBadRequest(nameof(EnumSystemErrorCode.DataAlreadyExist), nameof(request.Email), request.Email);
+                methodResult.AddErrorBadRequest(nameof(EnumAuthErrorCode.EmailNotExistOrInvalid), nameof(request.Email), request.Email);
                 return methodResult;
             }
 
@@ -54,8 +54,8 @@ namespace BookingCare.Identity.Application.Commands.AuthCmd
 
             await _senderService.SendEmailAsync(
                 to: request.Email,
-                subject: EmailConstants.Subjects.RegisterOtp,
-                templateName: EnumSenderTemplate.SendOtpRegister.ToString(),
+                subject: EmailConstants.Subjects.ForgotPasswordOtp,
+                templateName: EnumSenderTemplate.SendOtpVerifyPassword.ToString(),
                 templateData: templateData
             );
 

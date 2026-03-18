@@ -1,14 +1,14 @@
 using BookingCare.Application.Services;
-using BookingCare.Domain.IRepository;
-using BookingCare.Infrastructure;
 using BookingCare.Domain.Entities;
+using BookingCare.Domain.IRepository;
+using BookingCare.Identity.Application.Commands.AuthCmd;
+using BookingCare.Infrastructure;
 using BookingCare.Shared.Setting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using BookingCare.Identity.Application.Commands.AuthCmd;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,21 +25,26 @@ builder.Services.AddIdentity<User, IdentityRole<Guid>>()
     .AddDefaultTokenProviders();
 
 // Cấu hình JWT Bearer
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"]!)),
-            ClockSkew = TimeSpan.Zero
-        };
-    });
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"]!)),
+        ClockSkew = TimeSpan.Zero
+    };
+});
 
 // Yêu cầu về mật khẩu
 builder.Services.Configure<IdentityOptions>(options =>
@@ -60,11 +65,17 @@ builder.Services.Configure<SmtpSetting>(builder.Configuration.GetSection(SmtpSet
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IPatientRepository, PatientRepository>();
+builder.Services.AddScoped<IPatientProfileRepository, PatientProfileRepository>();
+builder.Services.AddScoped<IDoctorRepository, DoctorRepository>();
+builder.Services.AddScoped<ISpecialtyRepository, SpecialtyRepository>();
+builder.Services.AddScoped<IReceptionistRepository, ReceptionistRepository>();
 
 // Đăng ký Service
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ISenderService, SenderService>();
 builder.Services.AddScoped<IOtpService, OtpService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IGeneratorCodeService, GeneratorCodeService>();
 builder.Services.AddMemoryCache();
 builder.Services.AddMediatR(cfg =>
 {

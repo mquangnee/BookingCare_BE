@@ -2,6 +2,7 @@
 {
     public enum EnumSenderTemplate
     {
-        SendOtpRegister
+        SendOtpRegister,
+        SendOtpVerifyPassword
     }
 }
