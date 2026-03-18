@@ -5,8 +5,10 @@
         EmailAndPasswordNotEmpty,
         AccountLockedOut,
         EmailAndPasswordIncorrect,
+        EmailNotExistOrInvalid,
         ConfirmPasswordNotMatch,
         OtpInvalid,
         RegisterFailed,
+        VerifyPasswordFailed
     }
 }

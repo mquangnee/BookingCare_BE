@@ -13,6 +13,10 @@ namespace BookingCare.Infrastructure
         }
 
         public DbSet<Patient> Patients { get; set; }
+        public DbSet<PatientProfile> PatientProfiles { get; set; }
+        public DbSet<Doctor> Doctors { get; set; }
+        public DbSet<Receptionist> Receptionists { get; set; }
+        public DbSet<Specialty> Specialties { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

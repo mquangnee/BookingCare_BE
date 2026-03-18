@@ -45,5 +45,23 @@ namespace BookingCare.Api.Controllers
             var commandResult = await _mediator.Send(command);
             return commandResult.GetActionResult();
         }
+
+        [HttpPost("send-verify-password-otp")]
+        [ProducesResponseType(typeof(MethodResult<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> SendVerifyPasswordOtp([FromBody] SendVerifyPasswordOtpCommand command)
+        {
+            var commandResult = await _mediator.Send(command);
+            return commandResult.GetActionResult();
+        }
+
+        [HttpPost("verify-password")]
+        [ProducesResponseType(typeof(MethodResult<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> VerifyPassword([FromBody] VerifyPasswordCommand command)
+        {
+            var commandResult = await _mediator.Send(command);
+            return commandResult.GetActionResult();
+        }
     }
 }

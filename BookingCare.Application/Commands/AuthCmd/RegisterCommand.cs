@@ -28,14 +28,22 @@ namespace BookingCare.Application.Commands.AuthCmd
         private readonly IJwtService _jwtService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly JwtSetting _jwtSetting;
+        private readonly IGeneratorCodeService _generatorCodeService;
 
-        public RegisterCommandHandler(UserManager<User> userManager, IOtpService otpService, IJwtService jwtService, IUnitOfWork unitOfWork, IOptions<JwtSetting> jwtOptions)
+        public RegisterCommandHandler(
+            UserManager<User> userManager, 
+            IOtpService otpService, 
+            IJwtService jwtService, 
+            IUnitOfWork unitOfWork, 
+            IOptions<JwtSetting> jwtOptions,
+            IGeneratorCodeService generatorCodeService)
         {
             _userManager = userManager;
             _otpService = otpService;
             _jwtService = jwtService;
             _unitOfWork = unitOfWork;
             _jwtSetting = jwtOptions.Value;
+            _generatorCodeService = generatorCodeService;
         }
 
         public async Task<MethodResult<TokenModel>> Handle(RegisterCommand request, CancellationToken cancellationToken)
@@ -67,10 +75,12 @@ namespace BookingCare.Application.Commands.AuthCmd
                 methodResult.AddErrorBadRequest(nameof(EnumSystemErrorCode.DataAlreadyExist), nameof(request.Email), request.Email);
                 return methodResult;
             }
-            var existingCitizen = await _userManager.Users.FirstOrDefaultAsync(u => u.CitizenId == request.Citizend, cancellationToken);
-            if (existingCitizen != null)
+
+            var existingCitizenId = await _unitOfWork.PatientProfiles.QueryableAsync()
+                .FirstOrDefaultAsync(p => p.CitizenId == request.CitizenId && p.PatientId != null, cancellationToken);
+            if (existingCitizenId != null)
             {
-                methodResult.AddErrorBadRequest(nameof(EnumSystemErrorCode.DataAlreadyExist), nameof(request.Citizend), request.Citizend);
+                methodResult.AddErrorBadRequest(nameof(EnumSystemErrorCode.DataAlreadyExist), nameof(request.CitizenId), request.CitizenId);
                 return methodResult;
             }
 
@@ -78,14 +88,11 @@ namespace BookingCare.Application.Commands.AuthCmd
             {
                 UserName = request.Email,
                 Email = request.Email,
-                FullName = request.FullName,
-                PhoneNumber = request.PhoneNumber,
-                Gender = request.Gender,
-                DateOfBirth = request.DateOfBirth,
-                CitizenId = request.Citizend
+                PhoneNumber = request.PhoneNumber
             };
-            var result = await _userManager.CreateAsync(newUser, request.Password!);
-            if (!result.Succeeded)
+
+            var createResult = await _userManager.CreateAsync(newUser, request.Password!);
+            if (!createResult.Succeeded)
             {
                 methodResult.AddErrorBadRequest(nameof(EnumAuthErrorCode.RegisterFailed), nameof(request.Email), request.Email);
                 return methodResult;
@@ -95,19 +102,37 @@ namespace BookingCare.Application.Commands.AuthCmd
             var newPatient = new Patient
             {
                 UserId = newUser.Id,
-                FullName = newUser.FullName,
-                DateOfBirth = newUser.DateOfBirth,
-                Gender = newUser.Gender,
-                CitizenId = newUser.CitizenId,
-                PhoneNumber = newUser.PhoneNumber
+                PatientCode = await _generatorCodeService.GeneratePatientCodeAsync()
             };
             await _unitOfWork.Patients.AddAsync(newPatient);
+
+            var existingProfile = await _unitOfWork.PatientProfiles.QueryableAsync()
+                .FirstOrDefaultAsync(p => p.CitizenId == request.CitizenId && p.PatientId == null, cancellationToken);
+            if (existingProfile != null)
+            {
+                existingProfile.PatientId = newPatient.Id;
+                _unitOfWork.PatientProfiles.Update(existingProfile);
+            }
+            else
+            {
+                var newPatientProfile = new PatientProfile
+                {
+                    PatientId = newPatient.Id,
+                    FullName = request.FullName,
+                    DateOfBirth = request.DateOfBirth,
+                    Gender = request.Gender,
+                    CitizenId = request.CitizenId,
+                    PhoneNumber = request.PhoneNumber
+                };
+                await _unitOfWork.PatientProfiles.AddAsync(newPatientProfile);
+            }
             await _unitOfWork.SaveChangesAsync();
 
             var token = await GenerateTokenAsync(newUser, _jwtService);
             newUser.RefreshToken = token.RefreshToken;
             newUser.TokenExpiry = DateTime.UtcNow.AddDays(_jwtSetting.RefreshTokenDays);
             await _userManager.UpdateAsync(newUser);
+            _otpService.RemoveOtp(request.Email!);
 
             methodResult.Result = token;
             methodResult.StatusCode = StatusCodes.Status201Created;
@@ -122,7 +147,7 @@ namespace BookingCare.Application.Commands.AuthCmd
                 || request.Otp == null 
                 || request.FullName == null 
                 || request.PhoneNumber == null 
-                || request.Citizend == null;
+                || request.CitizenId == null;
         }
 
         private static async Task<TokenModel> GenerateTokenAsync(User user, IJwtService jwtService)
