@@ -3,7 +3,10 @@ using BookingCare.Domain.Entities;
 using BookingCare.Domain.IRepository;
 using BookingCare.Identity.Application.Commands.AuthCmd;
 using BookingCare.Infrastructure;
+using BookingCare.Infrastructure.Maps;
+using BookingCare.Infrastructure.SeedData;
 using BookingCare.Shared.Setting;
+using BookingCare.Shared.SignalR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -44,6 +47,19 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"]!)),
         ClockSkew = TimeSpan.Zero
     };
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var accessToken = context.Request.Query["accessToken"];
+            var path = context.HttpContext.Request.Path;
+            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments(RealTimeSetting.NotificationHub.Pattern))
+            {
+                context.Token = accessToken;
+            }
+            return Task.CompletedTask;
+        }
+    };
 });
 
 // Yêu cầu về mật khẩu
@@ -69,6 +85,9 @@ builder.Services.AddScoped<IPatientProfileRepository, PatientProfileRepository>(
 builder.Services.AddScoped<IDoctorRepository, DoctorRepository>();
 builder.Services.AddScoped<ISpecialtyRepository, SpecialtyRepository>();
 builder.Services.AddScoped<IReceptionistRepository, ReceptionistRepository>();
+builder.Services.AddScoped<IProfileShareRepository, ProfileShareRepository>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+builder.Services.AddScoped<INotificationTypeRepository, NotificationTypeRepository>();
 
 // Đăng ký Service
 builder.Services.AddHttpContextAccessor();
@@ -76,6 +95,7 @@ builder.Services.AddScoped<ISenderService, SenderService>();
 builder.Services.AddScoped<IOtpService, OtpService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IGeneratorCodeService, GeneratorCodeService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddMemoryCache();
 builder.Services.AddMediatR(cfg =>
 {
@@ -91,6 +111,8 @@ builder.Services.AddCors(options =>
               .AllowCredentials();
     });
 });
+builder.Services.AddAutoMapper(cfg => { }, typeof(ProfileMap));
+builder.Services.AddSignalR();
 
 builder.Services.AddControllers();
 
@@ -99,6 +121,17 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+try
+{
+    await DataSeeder.SeedNotificationTemplatesAsync(app.Services);
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Lỗi khi Seed Data: {ex.Message}");
+}
+
+app.MapHub<NotificationHub>("/notification");
 
 if (app.Environment.IsDevelopment())
 {

@@ -9,6 +9,9 @@ namespace BookingCare.Domain.IRepository
         IDoctorRepository Doctors { get; }
         IReceptionistRepository Receptionists { get; }
         ISpecialtyRepository Specialties { get; }
+        IProfileShareRepository ProfileShares { get; }
+        INotificationRepository Notifications { get; }
+        INotificationTypeRepository NotificationTypes { get; }
         Task<int> SaveChangesAsync();
     }
 
@@ -21,15 +24,30 @@ namespace BookingCare.Domain.IRepository
         public IDoctorRepository Doctors { get; }
         public IReceptionistRepository Receptionists { get; }
         public ISpecialtyRepository Specialties { get; }
+        public IProfileShareRepository ProfileShares { get; }
+        public INotificationRepository Notifications { get; }
+        public INotificationTypeRepository NotificationTypes { get; }
 
-        public UnitOfWork(DbContext dbContext, IPatientRepository patientRepository, IPatientProfileRepository patientProfiles, IDoctorRepository doctors, IReceptionistRepository receptionists, ISpecialtyRepository specialties)
+        public UnitOfWork(
+            DbContext dbContext, 
+            IPatientRepository patients, 
+            IPatientProfileRepository patientProfiles, 
+            IDoctorRepository doctors, 
+            IReceptionistRepository receptionists, 
+            ISpecialtyRepository specialties,
+            IProfileShareRepository profileShares,
+            INotificationRepository notifications,
+            INotificationTypeRepository notificationTypes)
         {
             _dbContext = dbContext;
-            Patients = patientRepository;
+            Patients = patients;
             PatientProfiles = patientProfiles;
             Doctors = doctors;
             Receptionists = receptionists;
             Specialties = specialties;
+            ProfileShares = profileShares;
+            Notifications = notifications;
+            NotificationTypes = notificationTypes;
         }
 
         public void Dispose()

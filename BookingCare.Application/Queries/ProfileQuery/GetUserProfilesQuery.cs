@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using BookingCare.Domain.IRepository;
+﻿using BookingCare.Domain.IRepository;
 using BookingCare.Domain.Models.EntityModels;
 using BookingCare.Shared.Common;
 using BookingCare.Shared.Enum;
@@ -11,26 +10,25 @@ using System.Security.Claims;
 
 namespace BookingCare.Application.Queries.ProfileQuery
 {
-    public class GetUserProfileQuery : IRequest<MethodResult<UserProfileModel>>
+    public class GetUserProfilesQuery : IRequest<MethodResult<List<UserProfileModel>>>
     {
-        public Guid? ProfileId { get; set; }
     }
 
-    public class GetUserProfileQueryHandler : IRequestHandler<GetUserProfileQuery, MethodResult<UserProfileModel>>
+    public class GetUserProfilesQueryHandler : IRequestHandler<GetUserProfilesQuery, MethodResult<List<UserProfileModel>>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public GetUserProfileQueryHandler(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
+        public GetUserProfilesQueryHandler(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
         {
             _unitOfWork = unitOfWork;
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<MethodResult<UserProfileModel>> Handle(GetUserProfileQuery request, CancellationToken cancellationToken)
+        public async Task<MethodResult<List<UserProfileModel>>> Handle(GetUserProfilesQuery request, CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(request);
-            var methodResult = new MethodResult<UserProfileModel>();
+            var methodResult = new MethodResult<List<UserProfileModel>>();
 
             var userIdString = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value
                             ?? _httpContextAccessor.HttpContext?.User?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
@@ -39,36 +37,32 @@ namespace BookingCare.Application.Queries.ProfileQuery
                 methodResult.AddErrorBadRequest(nameof(EnumSystemErrorCode.Unauthorized));
                 return methodResult;
             }
-            var patient = await _unitOfWork.Patients.QueryableAsync()
-                .FirstOrDefaultAsync(p => p.UserId == userId, cancellationToken);
+            var patient = await _unitOfWork.Patients.QueryableAsync().FirstOrDefaultAsync(p => p.UserId == userId, cancellationToken);
             if (patient == null)
             {
                 methodResult.AddErrorBadRequest(nameof(EnumSystemErrorCode.DataNotExist), nameof(patient));
                 return methodResult;
             }
-            var patientProfile = request.ProfileId == null ?
-                await _unitOfWork.PatientProfiles.QueryableAsync().FirstOrDefaultAsync(p => p.PatientId == patient.Id && p.Relationship == EnumRelationship.MySelf, cancellationToken) :
-                await _unitOfWork.PatientProfiles.QueryableAsync().FirstOrDefaultAsync(p => p.Id == request.ProfileId, cancellationToken);
-            if (patientProfile == null)
+            var patientProfiles = await _unitOfWork.PatientProfiles.QueryableAsync().Where(p => p.PatientId == patient.Id && p.Relationship != EnumRelationship.MySelf).ToListAsync(cancellationToken);
+            if (patientProfiles == null || !patientProfiles.Any())
             {
-                methodResult.AddErrorBadRequest(nameof(EnumSystemErrorCode.DataNotExist), nameof(patientProfile));
+                methodResult.AddErrorBadRequest(nameof(EnumSystemErrorCode.DataNotExist), nameof(patientProfiles));
                 return methodResult;
             }
-            
-            methodResult.Result = new UserProfileModel
+
+            methodResult.Result = patientProfiles.Select(patientProfile => new UserProfileModel
             {
-                Id = patientProfile.Id,
                 PatientCode = patient.PatientCode,
                 ProfileCode = patientProfile.ProfileCode,
                 FullName = patientProfile.FullName,
                 DateOfBirth = patientProfile.DateOfBirth,
-                Gender = patientProfile.Gender,
+                Gender  = patientProfile.Gender,
                 CitizenId = patientProfile.CitizenId,
                 PhoneNumber = patientProfile.PhoneNumber,
                 Relationship = patientProfile.Relationship,
                 BloodType = patientProfile.BloodType,
                 MedicalHistory = patientProfile.MedicalHistory
-            };
+            }).ToList();
             methodResult.StatusCode = StatusCodes.Status200OK;
             return methodResult;
         }

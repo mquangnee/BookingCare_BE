@@ -4,7 +4,9 @@ namespace BookingCare.Domain.Models.EntityModels
 {
     public class UserProfileModel
     {
+        public Guid Id { get; set; }
         public string? PatientCode { get; set; }
+        public string? ProfileCode { get; set; }
         public string? FullName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public EnumGender Gender { get; set; }

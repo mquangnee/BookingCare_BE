@@ -24,8 +24,4 @@
     <ProjectReference Include="..\BookingCare.Domain\BookingCare.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Maps\" />
-  </ItemGroup>
-
 </Project>

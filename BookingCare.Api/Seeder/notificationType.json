@@ -1,0 +1,26 @@
+[
+  {
+    "id": "A1B2C3D4-1111-4FAB-A615-8AD7E60D763A",
+    "content": "ShareProfileInvite",
+    "templateMessage": "{0} muốn chia sẻ hồ sơ y tế '{1}' với bạn (Quyền: {2}). Bạn có muốn nhận không?",
+    "createdDate": "2026-03-21T00:00:00"
+  },
+  {
+    "id": "B2C3D4E5-2222-4FAB-A615-8AD7E60D763A",
+    "content": "ShareProfileAccepted",
+    "templateMessage": "{0} đã ĐỒNG Ý nhận quản lý hồ sơ '{1}' của bạn.",
+    "createdDate": "2026-03-21T00:00:00"
+  },
+  {
+    "id": "C3D4E5F6-3333-4FAB-A615-8AD7E60D763A",
+    "content": "ShareProfileRejected",
+    "templateMessage": "{0} đã TỪ CHỐI nhận chia sẻ hồ sơ '{1}'.",
+    "createdDate": "2026-03-21T00:00:00"
+  },
+  {
+    "id": "D4E5F6A7-4444-4FAB-A615-8AD7E60D763A",
+    "content": "ShareProfileRevoked",
+    "templateMessage": "{0} đã ngừng chia sẻ hồ sơ '{1}' với bạn. Bạn không còn quyền truy cập hồ sơ này.",
+    "createdDate": "2026-03-21T00:00:00"
+  }
+]

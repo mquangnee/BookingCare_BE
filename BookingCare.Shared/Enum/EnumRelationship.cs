@@ -7,8 +7,6 @@
         Child,
         Sibling,
         Spouse,
-        Grandparent,
-        Relative,
-        Friend
+        Grandparent
     }
 }
