@@ -115,9 +115,11 @@ namespace BookingCare.Application.Commands.AuthCmd
             }
             else
             {
+                var profileCode = await _generatorCodeService.GeneratePatientProfileCodeAsync();
                 var newPatientProfile = new PatientProfile
                 {
                     PatientId = newPatient.Id,
+                    ProfileCode = profileCode,
                     FullName = request.FullName,
                     DateOfBirth = request.DateOfBirth,
                     Gender = request.Gender,

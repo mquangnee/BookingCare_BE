@@ -28,4 +28,10 @@
     <ProjectReference Include="..\BookingCare.Application\BookingCare.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Seeder\notificationType.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

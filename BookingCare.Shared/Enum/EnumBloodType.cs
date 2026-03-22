@@ -2,6 +2,7 @@
 {
     public enum EnumBloodType
     {
+        Unknown,
         O_Positive,
         O_Negative,
         A_Positive,
@@ -9,7 +10,6 @@
         B_Positive,
         B_Negative,
         AB_Positive,
-        AB_Negative,
-        Unknown
+        AB_Negative
     }
 }

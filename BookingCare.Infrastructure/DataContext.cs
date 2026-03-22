@@ -17,6 +17,9 @@ namespace BookingCare.Infrastructure
         public DbSet<Doctor> Doctors { get; set; }
         public DbSet<Receptionist> Receptionists { get; set; }
         public DbSet<Specialty> Specialties { get; set; }
+        public DbSet<ProfileShare> ProfileShares { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<NotificationType> NotificationTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
