@@ -11,24 +11,28 @@ namespace BookingCare.Application.Commands.NotificationCmd
     {
     }
 
-    public class MarkNotificationReadCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<MarkNotificationReadCommand, MethodResult<bool>>
+    public class MarkNotificationReadCommandHandler : IRequestHandler<MarkNotificationReadCommand, MethodResult<bool>>
     {
+        private readonly IUnitOfWork _unitOfWork;
+
+        public MarkNotificationReadCommandHandler(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
+
         public async Task<MethodResult<bool>> Handle(MarkNotificationReadCommand request, CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(request);
-            MethodResult<bool> methodResult = new();
-
-            var notification = await unitOfWork.Notifications.GetByIdAsync(request.NotificationId);
+            var methodResult = new MethodResult<bool>();
+            var notification = await _unitOfWork.Notifications.GetByIdAsync(request.NotificationId);
             if (notification == null)
             {
                 methodResult.AddErrorBadRequest(nameof(EnumSystemErrorCode.DataNotExist), nameof(request.NotificationId), request.NotificationId);
                 return methodResult;
             }
-
             notification.IsRead = true;
-            unitOfWork.Notifications.Update(notification);
-            await unitOfWork.SaveChangesAsync();
-
+            _unitOfWork.Notifications.Update(notification);
+            await _unitOfWork.SaveChangesAsync();
             methodResult.Result = true;
             methodResult.StatusCode = StatusCodes.Status200OK;
             return methodResult;
