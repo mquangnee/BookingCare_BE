@@ -52,12 +52,25 @@ namespace BookingCare.Identity.Application.Commands.AuthCmd
                 { EmailConstants.Keys.Otp, _otpService.GetOtp(request.Email) }
             };
 
-            await _senderService.SendEmailAsync(
-                to: request.Email,
-                subject: EmailConstants.Subjects.RegisterOtp,
-                templateName: EnumSenderTemplate.SendOtpRegister.ToString(),
-                templateData: templateData
-            );
+            try
+            {
+                await _senderService.SendEmailAsync(
+                    to: request.Email,
+                    subject: EmailConstants.Subjects.RegisterOtp,
+                    templateName: EnumSenderTemplate.SendOtpRegister.ToString(),
+                    templateData: templateData
+                );
+            }
+            catch (Exception)
+            {
+                methodResult.AddError(
+                    StatusCodes.Status500InternalServerError,
+                    nameof(EnumSystemErrorCode.ServerError),
+                    nameof(request.Email),
+                    "Failed to send OTP email."
+                );
+                return methodResult;
+            }
 
             methodResult.Result = true;
             methodResult.StatusCode = StatusCodes.Status200OK;
