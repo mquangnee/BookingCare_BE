@@ -1,4 +1,4 @@
-﻿using BookingCare.Application.Services;
+using BookingCare.Application.Services;
 using BookingCare.Domain.Entities;
 using BookingCare.Domain.Models.CommandModels;
 using BookingCare.Infrastructure.Enums.ErrorCode;
@@ -52,12 +52,25 @@ namespace BookingCare.Application.Commands.AuthCmd
                 { EmailConstants.Keys.Otp, _otpService.GetOtp(request.Email) }
             };
 
-            await _senderService.SendEmailAsync(
-                to: request.Email,
-                subject: EmailConstants.Subjects.ForgotPasswordOtp,
-                templateName: EnumSenderTemplate.SendOtpVerifyPassword.ToString(),
-                templateData: templateData
-            );
+            try
+            {
+                await _senderService.SendEmailAsync(
+                    to: request.Email,
+                    subject: EmailConstants.Subjects.ForgotPasswordOtp,
+                    templateName: EnumSenderTemplate.SendOtpVerifyPassword.ToString(),
+                    templateData: templateData
+                );
+            }
+            catch (Exception)
+            {
+                methodResult.AddError(
+                    StatusCodes.Status500InternalServerError,
+                    nameof(EnumSystemErrorCode.ServerError),
+                    nameof(request.Email),
+                    "Failed to send OTP email."
+                );
+                return methodResult;
+            }
 
             methodResult.Result = true;
             methodResult.StatusCode = StatusCodes.Status200OK;
