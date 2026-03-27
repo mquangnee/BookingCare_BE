@@ -40,7 +40,7 @@ name: Deploy API to Cloud Run
 on:
   push:
     branches:
-      - main
+      - master
   workflow_dispatch:
 
 permissions:
