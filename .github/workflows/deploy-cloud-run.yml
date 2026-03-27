@@ -1,0 +1,101 @@
+# Deploy BookingCare API (Dockerfile at repo root) to Google Cloud Run.
+#
+# --- Google Cloud (one-time) ---
+# 1) Enable APIs: Cloud Run, Artifact Registry, IAM (if prompted).
+# 2) Create Artifact Registry Docker repository, e.g.:
+#    gcloud artifacts repositories create bookingcare \
+#      --repository-format=docker --location=YOUR_REGION
+# 3) Create a service account for CI (e.g. github-actions-deploy) with roles:
+#    - Artifact Registry Writer
+#    - Cloud Run Admin
+#    - Service Account User (on the Cloud Run runtime SA if you use a custom one)
+#    Create a JSON key and store the full JSON as GitHub secret GCP_SA_KEY.
+#
+# --- GitHub repository ---
+# Settings → Secrets and variables → Actions
+#   Secrets:
+#     GCP_SA_KEY                    (service account JSON)
+#     DATABASE_CONNECTION_STRING    (SQL connection string for production)
+#   Maps to env var ConnectionStrings__ConnectedDb on Cloud Run — same as
+#   appsettings.json "ConnectionStrings:ConnectedDb" without editing the file.
+#   Variables (tab “Variables”):
+#     GCP_PROJECT_ID      e.g. my-gcp-project
+#     GCP_REGION          e.g. asia-southeast1
+#     GAR_REPOSITORY      Artifact Registry repo id (e.g. bookingcare)
+#     CLOUD_RUN_SERVICE   Cloud Run service name (e.g. bookingcare-api)
+#
+# --- Runtime configuration ---
+# This workflow sets ConnectionStrings__ConnectedDb from DATABASE_CONNECTION_STRING.
+# Set other secrets in Cloud Run console or extend the deploy step, e.g.:
+#   Jwt__SecretKey, Jwt__Issuer, Jwt__Audience
+#   Smtp__Host, Smtp__Port, Smtp__From, Smtp__Password
+#   Cors__AllowedOrigins__0, Cors__AllowedOrigins__1, ... (or use JSON / Secret Manager)
+# Add your Firebase Hosting origin to CORS for the live API URL.
+#
+# Other Cloud Run env vars are preserved when possible; --update-env-vars merges.
+# If the connection string contains commas, the deploy step uses gcloud delimiter ^##^.
+
+name: Deploy API to Cloud Run
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloud-run-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+      REGION: ${{ vars.GCP_REGION }}
+      GAR_REPOSITORY: ${{ vars.GAR_REPOSITORY }}
+      SERVICE: ${{ vars.CLOUD_RUN_SERVICE }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Set gcloud project and Docker credential helper
+        run: |
+          gcloud config set project "$PROJECT_ID" --quiet
+          gcloud auth configure-docker "${REGION}-docker.pkg.dev" --quiet
+
+      - name: Build and push image
+        run: |
+          IMAGE="${REGION}-docker.pkg.dev/${PROJECT_ID}/${GAR_REPOSITORY}/${SERVICE}:${GITHUB_SHA}"
+          docker build -t "${IMAGE}" -f Dockerfile .
+          docker push "${IMAGE}"
+
+      - name: Deploy to Cloud Run
+        env:
+          CONNECTION_STRING: ${{ secrets.DATABASE_CONNECTION_STRING }}
+        run: |
+          if [ -z "${CONNECTION_STRING}" ]; then
+            echo "Missing Actions secret DATABASE_CONNECTION_STRING"
+            exit 1
+          fi
+          IMAGE="${REGION}-docker.pkg.dev/${PROJECT_ID}/${GAR_REPOSITORY}/${SERVICE}:${GITHUB_SHA}"
+          ENV_VARS="$(printf '^##^ConnectionStrings__ConnectedDb=%s' "${CONNECTION_STRING}")"
+          gcloud run deploy "${SERVICE}" \
+            --image "${IMAGE}" \
+            --region "${REGION}" \
+            --platform managed \
+            --port 8080 \
+            --allow-unauthenticated \
+            --update-env-vars "${ENV_VARS}"

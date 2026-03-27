@@ -1,0 +1,29 @@
+# Git metadata
+.git
+.gitignore
+.gitattributes
+
+# IDE/editor artifacts
+.vs/
+.vscode/
+*.user
+*.suo
+*.swp
+*.tmp
+
+# Build output
+**/bin/
+**/obj/
+**/out/
+**/TestResults/
+
+# Logs and local runtime files
+**/logs/
+*.log
+
+# Docker files not needed in build context
+docker-compose*.yml
+
+# OS artifacts
+.DS_Store
+Thumbs.db
