@@ -10,6 +10,7 @@ namespace BookingCare.Application.Services
         Task<string> GenerateDoctorCodeAsync();
         Task<string> GenerateReceptionistCodeAsync();
         Task<string> GeneratePatientProfileCodeAsync();
+        Task<string> GenerateAppointmentCodeAsync();
     }
 
     public class GeneratorCodeService : IGeneratorCodeService
@@ -67,6 +68,18 @@ namespace BookingCare.Application.Services
                 .FirstOrDefaultAsync();
 
             return GenerateNextCode(lastProfile?.ProfileCode, prefix);
+        }
+
+        public async Task<string> GenerateAppointmentCodeAsync()
+        {
+            var currentMonth = DateTime.Now.ToString("yyMM");
+            var prefix = $"DL-{currentMonth}-";
+            var lastAppointment = await _dbContext.Set<Appointment>()
+                .Where(a => a.AppointmentCode != null && a.AppointmentCode.StartsWith(prefix))
+                .OrderByDescending(a => a.AppointmentCode)
+                .FirstOrDefaultAsync();
+
+            return GenerateNextCode(lastAppointment?.AppointmentCode, prefix);
         }
 
         private string GenerateNextCode(string? lastCode, string prefix)

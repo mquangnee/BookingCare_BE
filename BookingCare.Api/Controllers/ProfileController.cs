@@ -53,7 +53,7 @@ namespace BookingCare.Api.Controllers
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetUserProfiles()
         {
-            var queryResult = await _mediator.Send(new GetUserProfilesQuery { });
+            var queryResult = await _mediator.Send(new GetFamilyProfilesQuery { });
             return queryResult.GetActionResult();
         }
 
@@ -82,6 +82,15 @@ namespace BookingCare.Api.Controllers
         {
             var commandResult = await _mediator.Send(command);
             return commandResult.GetActionResult();
+        }
+
+        [HttpGet("available")]
+        [ProducesResponseType(typeof(MethodResult<List<UserProfileModel>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> GetUserProfilesForBooking([FromQuery] GetUserProfilesForBookingQuery query)
+        {
+            var queryResult = await _mediator.Send(query);
+            return queryResult.GetActionResult();
         }
     }
 }

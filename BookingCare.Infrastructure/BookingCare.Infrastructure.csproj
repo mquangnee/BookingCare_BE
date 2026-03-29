@@ -24,4 +24,8 @@
     <ProjectReference Include="..\BookingCare.Domain\BookingCare.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Enums\ErrorCode\" />
+  </ItemGroup>
+
 </Project>

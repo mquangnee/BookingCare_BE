@@ -2,9 +2,9 @@
 using BookingCare.Domain.Entities;
 using BookingCare.Domain.IRepository;
 using BookingCare.Domain.Models.CommandModels;
-using BookingCare.Infrastructure.Enums.ErrorCode;
 using BookingCare.Shared.Common;
 using BookingCare.Shared.Enum;
+using BookingCare.Shared.Enum.ErrorCode;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -93,17 +93,18 @@ namespace BookingCare.Application.Commands.ProfileCmd
                 profile.ProfileCode!,
                 permissionText,
             };
-            await SendNotificationAsync(_notificationService, senderId, user.Id, profile.Id, messageParams);
+            await SendNotificationAsync(_notificationService, profileShare.Id, senderId, user.Id, profile.Id, messageParams);
             methodResult.Result = true;
             methodResult.StatusCode = StatusCodes.Status200OK;
             return methodResult;
         }
 
-        private static async Task SendNotificationAsync(INotificationService notificationService, Guid senderId, Guid receiverId, Guid objectId, List<object> messageParams)
+        private static async Task SendNotificationAsync(INotificationService notificationService, Guid shareProfileId, Guid senderId, Guid receiverId, Guid objectId, List<object> messageParams)
         {
             await notificationService.SendNotificationAsync(
                 receiverId: receiverId,
                 senderId: senderId,
+                shareProfileId: shareProfileId,
                 content: EnumNotificationContent.ShareProfileInvite,
                 type: EnumNotificationType.ShareProfileInvite,
                 objectId: objectId,

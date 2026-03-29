@@ -1,15 +1,12 @@
-﻿using AutoMapper;
-using BookingCare.Application.Services;
-using BookingCare.Domain.Entities;
+﻿using BookingCare.Application.Services;
 using BookingCare.Domain.IRepository;
 using BookingCare.Domain.Models.CommandModels;
 using BookingCare.Shared.Common;
 using BookingCare.Shared.Enum;
+using BookingCare.Shared.Enum.ErrorCode;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace BookingCare.Application.Commands.NotificationCmd
 {
@@ -45,7 +42,7 @@ namespace BookingCare.Application.Commands.NotificationCmd
             _unitOfWork.Notifications.Update(notification);
 
             var profileShare = await _unitOfWork.ProfileShares.QueryableAsync()
-                .FirstOrDefaultAsync(p => p.ProfileId == notification.ObjectId && p.SharedToUserId == notification.ReceiverId, cancellationToken);
+                .FirstOrDefaultAsync(p => p.Id == notification.ShareProfileId, cancellationToken);
             if (profileShare == null)
             {
                 methodResult.AddErrorBadRequest(nameof(EnumSystemErrorCode.DataNotExist), nameof(notification.ObjectId), notification.ObjectId);
@@ -67,18 +64,19 @@ namespace BookingCare.Application.Commands.NotificationCmd
                 fullName,
                 profile.ProfileCode!
             };
-            await SendNotificationAsync(_notificationService, notification.ReceiverId, (Guid)notification.SenderId!, messageParams);
+            await SendNotificationAsync(_notificationService, null, notification.ReceiverId, (Guid)notification.SenderId!, messageParams);
 
             methodResult.Result = true;
             methodResult.StatusCode = StatusCodes.Status200OK;
             return methodResult;
         }
 
-        private static async Task SendNotificationAsync(INotificationService notificationService, Guid senderId, Guid receiverId, List<object> messageParams)
+        private static async Task SendNotificationAsync(INotificationService notificationService, Guid? shareProfileId, Guid senderId, Guid receiverId, List<object> messageParams)
         {
             await notificationService.SendNotificationAsync(
                 receiverId: receiverId,
                 senderId: senderId,
+                shareProfileId: shareProfileId,
                 content: EnumNotificationContent.ShareProfileAccepted,
                 type: EnumNotificationType.ShareProfileAccepted,
                 objectId: null,

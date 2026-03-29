@@ -16,8 +16,9 @@ namespace BookingCare.Domain.Entities
         public EnumRelationship Relationship { get; set; } = EnumRelationship.MySelf;
         public EnumBloodType BloodType { get; set; } = EnumBloodType.Unknown;
         public string? MedicalHistory { get; set; }
-
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public DateTime? UpdatedDate { get; set; }
+
+        public ICollection<Appointment>? Appointments { get; set; }
     }
 }

@@ -1,9 +1,9 @@
 using BookingCare.Application.Services;
 using BookingCare.Domain.Entities;
 using BookingCare.Domain.Models.CommandModels;
-using BookingCare.Infrastructure.Enums.ErrorCode;
 using BookingCare.Shared.Common;
 using BookingCare.Shared.Enum;
+using BookingCare.Shared.Enum.ErrorCode;
 using BookingCare.Shared.Setting;
 using MediatR;
 using Microsoft.AspNetCore.Http;

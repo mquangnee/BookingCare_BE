@@ -15,5 +15,7 @@ namespace BookingCare.Domain.Models.EntityModels
         public EnumRelationship Relationship { get; set; } = EnumRelationship.MySelf;
         public EnumBloodType BloodType { get; set; } = EnumBloodType.Unknown;
         public string? MedicalHistory { get; set; }
+        public bool IsShared { get; set; } = false;
+        public EnumSharePermission? SharePermission { get; set; }
     }
 }

@@ -12,6 +12,11 @@ namespace BookingCare.Domain.IRepository
         IProfileShareRepository ProfileShares { get; }
         INotificationRepository Notifications { get; }
         INotificationTypeRepository NotificationTypes { get; }
+        IAppointmentRepository Appointments { get; }
+        IServiceRepository Services { get; }
+        IWorkSessionRepository WorkSessions { get; }
+        IWorkSessionServiceRepository WorkSessionServices { get; }
+        IAppointmentServiceRepository AppointmentServices { get; }
         Task<int> SaveChangesAsync();
     }
 
@@ -27,6 +32,11 @@ namespace BookingCare.Domain.IRepository
         public IProfileShareRepository ProfileShares { get; }
         public INotificationRepository Notifications { get; }
         public INotificationTypeRepository NotificationTypes { get; }
+        public IAppointmentRepository Appointments { get; }
+        public IServiceRepository Services { get; }
+        public IWorkSessionRepository WorkSessions { get; }
+        public IWorkSessionServiceRepository WorkSessionServices { get; }
+        public IAppointmentServiceRepository AppointmentServices { get; }
 
         public UnitOfWork(
             DbContext dbContext, 
@@ -37,7 +47,12 @@ namespace BookingCare.Domain.IRepository
             ISpecialtyRepository specialties,
             IProfileShareRepository profileShares,
             INotificationRepository notifications,
-            INotificationTypeRepository notificationTypes)
+            INotificationTypeRepository notificationTypes,
+            IAppointmentRepository appointments,
+            IWorkSessionRepository workSessions,
+            IServiceRepository services,
+            IWorkSessionServiceRepository workSessionServices,
+            IAppointmentServiceRepository appointmentServices)
         {
             _dbContext = dbContext;
             Patients = patients;
@@ -48,6 +63,11 @@ namespace BookingCare.Domain.IRepository
             ProfileShares = profileShares;
             Notifications = notifications;
             NotificationTypes = notificationTypes;
+            Appointments = appointments;
+            WorkSessions = workSessions;
+            Services = services;
+            WorkSessionServices = workSessionServices;
+            AppointmentServices = appointmentServices;
         }
 
         public void Dispose()

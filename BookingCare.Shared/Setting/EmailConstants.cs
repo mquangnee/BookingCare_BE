@@ -15,6 +15,7 @@
         {
             public const string RegisterOtp = $"[{BrandName}] Mã xác thực đăng ký tài khoản";
             public const string ForgotPasswordOtp = $"[{BrandName}] Mã xác thực lấy lại mật khẩu";
+            public const string ChangePasswordOtp = $"[{BrandName}] Mã xác thực đổi mật khẩu";
             public const string AppointmentSuccess = $"[{BrandName}] Xác nhận đặt lịch khám thành công";
         }
     }
