@@ -1,0 +1,72 @@
+# Apply pending Entity Framework Core migrations to the target SQL Server database.
+#
+# Trigger: Actions → "Migrate database" → Run workflow. Pick the branch/tag in the UI.
+# Optional "Full reset" drops the entire database (all data), then reapplies migrations.
+#
+# GitHub → Settings → Secrets and variables → Actions
+#   DATABASE_CONNECTION_STRING — same secret as Cloud Run deploy
+#   (SQL Server connection string; must be reachable from GitHub-hosted runners,
+#    e.g. public endpoint, VPN, or Cloud SQL Auth Proxy if you add that step.)
+#
+# Migrations live in BookingCare.Infrastructure; startup project is BookingCare.Api
+# (matches ConnectionStrings:ConnectedDb in appsettings).
+
+name: Migrate database
+
+on:
+  workflow_dispatch:
+    inputs:
+      full_reset:
+        description: "Drop the entire database, then run all migrations (irreversible data loss)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    env:
+      DOTNET_NO_LOGO: true
+      DOTNET_EF_VERSION: "10.0.4"
+      CONNECTION_STRING: ${{ secrets.DATABASE_CONNECTION_STRING }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Restore
+        run: dotnet restore BookingCare.Api/BookingCare.Api.csproj
+
+      - name: Install EF Core CLI
+        run: |
+          dotnet tool install --global dotnet-ef --version "${DOTNET_EF_VERSION}"
+          echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
+
+      - name: Require database connection string
+        run: |
+          if [ -z "${CONNECTION_STRING}" ]; then
+            echo "Missing Actions secret DATABASE_CONNECTION_STRING"
+            exit 1
+          fi
+
+      - name: Drop database (full reset)
+        if: inputs.full_reset
+        run: |
+          dotnet ef database drop --force \
+            --project BookingCare.Infrastructure/BookingCare.Infrastructure.csproj \
+            --startup-project BookingCare.Api/BookingCare.Api.csproj \
+            --connection "${CONNECTION_STRING}"
+
+      - name: Apply migrations
+        run: |
+          dotnet ef database update \
+            --project BookingCare.Infrastructure/BookingCare.Infrastructure.csproj \
+            --startup-project BookingCare.Api/BookingCare.Api.csproj \
+            --connection "${CONNECTION_STRING}"
