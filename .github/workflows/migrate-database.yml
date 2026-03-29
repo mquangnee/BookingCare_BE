@@ -30,7 +30,9 @@ jobs:
     env:
       DOTNET_NO_LOGO: true
       DOTNET_EF_VERSION: "10.0.4"
-      CONNECTION_STRING: ${{ secrets.DATABASE_CONNECTION_STRING }}
+      # Used by BookingCare.Api design-time config (Program.cs: ConnectionStrings:ConnectedDb).
+      # Required for `database drop`, which unlike `database update` has no --connection flag.
+      ConnectionStrings__ConnectedDb: ${{ secrets.DATABASE_CONNECTION_STRING }}
 
     steps:
       - name: Checkout
@@ -51,7 +53,7 @@ jobs:
 
       - name: Require database connection string
         run: |
-          if [ -z "${CONNECTION_STRING}" ]; then
+          if [ -z "${ConnectionStrings__ConnectedDb}" ]; then
             echo "Missing Actions secret DATABASE_CONNECTION_STRING"
             exit 1
           fi
@@ -61,12 +63,10 @@ jobs:
         run: |
           dotnet ef database drop --force \
             --project BookingCare.Infrastructure/BookingCare.Infrastructure.csproj \
-            --startup-project BookingCare.Api/BookingCare.Api.csproj \
-            --connection "${CONNECTION_STRING}"
+            --startup-project BookingCare.Api/BookingCare.Api.csproj
 
       - name: Apply migrations
         run: |
           dotnet ef database update \
             --project BookingCare.Infrastructure/BookingCare.Infrastructure.csproj \
-            --startup-project BookingCare.Api/BookingCare.Api.csproj \
-            --connection "${CONNECTION_STRING}"
+            --startup-project BookingCare.Api/BookingCare.Api.csproj
