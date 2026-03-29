@@ -1,4 +1,4 @@
-﻿namespace BookingCare.Shared.Enum
+﻿namespace BookingCare.Shared.Enum.ErrorCode
 {
     public enum EnumSystemErrorCode
     {

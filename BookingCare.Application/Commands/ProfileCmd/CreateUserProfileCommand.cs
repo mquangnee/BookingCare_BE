@@ -3,7 +3,7 @@ using BookingCare.Domain.Entities;
 using BookingCare.Domain.IRepository;
 using BookingCare.Domain.Models.CommandModels;
 using BookingCare.Shared.Common;
-using BookingCare.Shared.Enum;
+using BookingCare.Shared.Enum.ErrorCode;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;

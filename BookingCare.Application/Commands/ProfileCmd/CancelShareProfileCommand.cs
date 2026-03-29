@@ -2,6 +2,7 @@
 using BookingCare.Domain.IRepository;
 using BookingCare.Shared.Common;
 using BookingCare.Shared.Enum;
+using BookingCare.Shared.Enum.ErrorCode;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -48,7 +49,7 @@ namespace BookingCare.Application.Commands.ProfileCmd
             var fullName = await GetInfor(_unitOfWork, profileShare.SharedByUserId);
             var userName = await GetInfor(_unitOfWork, profileShare.SharedToUserId);
             var messageParams = new List<object> { fullName ?? string.Empty, userName ?? string.Empty };
-            await SendNotification(_notificationService, profileShare.SharedByUserId, profileShare.SharedToUserId, messageParams);
+            await SendNotification(_notificationService, null, profileShare.SharedByUserId, profileShare.SharedToUserId, messageParams);
 
             methodResult.Result = true;
             methodResult.StatusCode = StatusCodes.Status200OK;
@@ -71,11 +72,12 @@ namespace BookingCare.Application.Commands.ProfileCmd
             return profile.FullName;
         }
 
-        private static async Task SendNotification(INotificationService notificationService, Guid senderId, Guid receiverId, List<object> messageParams)
+        private static async Task SendNotification(INotificationService notificationService, Guid? shareProfileId, Guid senderId, Guid receiverId, List<object> messageParams)
         {
             await notificationService.SendNotificationAsync(
                 receiverId: receiverId,
                 senderId: senderId,
+                shareProfileId: shareProfileId,
                 content: EnumNotificationContent.ShareProfileRevoked,
                 type: EnumNotificationType.ShareProfileRevoked,
                 objectId: null,

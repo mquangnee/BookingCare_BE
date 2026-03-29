@@ -96,6 +96,11 @@ builder.Services.AddScoped<IReceptionistRepository, ReceptionistRepository>();
 builder.Services.AddScoped<IProfileShareRepository, ProfileShareRepository>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<INotificationTypeRepository, NotificationTypeRepository>();
+builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+builder.Services.AddScoped<IWorkSessionRepository, WorkSessionRepository>();
+builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
+builder.Services.AddScoped<IWorkSessionServiceRepository, WorkSessionServiceRepository>();
+builder.Services.AddScoped<IAppointmentServiceRepository, AppointmentServiceRepository>();
 
 // Đăng ký Service
 builder.Services.AddHttpContextAccessor();
@@ -141,15 +146,6 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 app.UseForwardedHeaders();
-
-try
-{
-    await DataSeeder.SeedNotificationTemplatesAsync(app.Services);
-}
-catch (Exception ex)
-{
-    Console.WriteLine($"Lỗi khi Seed Data: {ex.Message}");
-}
 
 app.MapHub<NotificationHub>("/notification");
 

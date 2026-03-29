@@ -63,5 +63,23 @@ namespace BookingCare.Api.Controllers
             var commandResult = await _mediator.Send(command);
             return commandResult.GetActionResult();
         }
+
+        [HttpPost("change-password")]
+        [ProducesResponseType(typeof(MethodResult<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordCommand command)
+        {
+            var commandResult = await _mediator.Send(command);
+            return commandResult.GetActionResult();
+        }
+
+        [HttpPost("send-change-password")]
+        [ProducesResponseType(typeof(MethodResult<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> SendChangePassword([FromBody] SendChangePasswordOtpCommand command)
+        {
+            var commandResult = await _mediator.Send(command);
+            return commandResult.GetActionResult();
+        }
     }
 }

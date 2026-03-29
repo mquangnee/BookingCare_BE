@@ -7,6 +7,7 @@ namespace BookingCare.Domain.Entities
         public Guid Id { get; set; }
         public Guid ReceiverId { get; set; } // Người nhận
         public Guid? SenderId { get; set; } // Người gửi
+        public Guid? ShareProfileId { get; set; }
 
         public string? Message { get; set; }
         public EnumNotificationType Type { get; set; }

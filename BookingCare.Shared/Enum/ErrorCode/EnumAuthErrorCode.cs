@@ -1,4 +1,4 @@
-﻿namespace BookingCare.Infrastructure.Enums.ErrorCode
+﻿namespace BookingCare.Shared.Enum.ErrorCode
 {
     public enum EnumAuthErrorCode
     {
@@ -9,6 +9,8 @@
         ConfirmPasswordNotMatch,
         OtpInvalid,
         RegisterFailed,
-        VerifyPasswordFailed
+        VerifyPasswordFailed,
+        OldPasswordNotMatch,
+        ChangePasswordFailed,
     }
 }
