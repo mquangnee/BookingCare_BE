@@ -37,13 +37,10 @@
 
 name: Deploy API to Cloud Run
 
-# Manual run: Actions → this workflow → “Run workflow”. Pick the branch in
+# Manual only: Actions → this workflow → “Run workflow”. Pick the branch in
 # “Use workflow from”; that branch’s code is checked out by default. Optionally
 # set “Git ref to deploy” to override (branch name, tag, or full SHA).
 on:
-  push:
-    branches:
-      - master
   workflow_dispatch:
     inputs:
       ref:
@@ -73,7 +70,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: >-
-            ${{ github.event_name != 'workflow_dispatch' && github.sha || (github.event.inputs.ref != '' && github.event.inputs.ref || github.sha) }}
+            ${{ github.event.inputs.ref != '' && github.event.inputs.ref || github.sha }}
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
