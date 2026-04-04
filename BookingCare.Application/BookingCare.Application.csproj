@@ -24,8 +24,4 @@
     <ProjectReference Include="..\BookingCare.Infrastructure\BookingCare.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Queries\AppointmentQuery\" />
-  </ItemGroup>
-
 </Project>

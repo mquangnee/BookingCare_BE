@@ -11,7 +11,8 @@
 
         public Guid DoctorId { get; set; }
         public Doctor? Doctor { get; set; }
-        public ICollection<WorkSessionService>? WorkSessionServices { get; set; }
+        public Guid ServiceId { get; set; }
+        public Service? Service { get; set; }
         public ICollection<Appointment>? Appointments { get; set; }
     }
 }

@@ -67,7 +67,7 @@ namespace BookingCare.Application.Queries.ProfileQuery
 
             var shareProfileIds = await _unitOfWork.ProfileShares.QueryableAsync()
                 .Where(sp => sp.SharedToUserId == userId && sp.ShareStatus == EnumShareStatus.Accepted)
-                .Select(sp => sp.ProfileId)
+                .Select(sp => sp.PatientProfileId)
                 .ToListAsync(cancellationToken);
             var sharedProfiles = await profileQuery
                 .Where(p => shareProfileIds.Contains(p.Id))
@@ -86,7 +86,7 @@ namespace BookingCare.Application.Queries.ProfileQuery
                     MedicalHistory = p.MedicalHistory,
                     IsShared = true,
                     SharePermission = _unitOfWork.ProfileShares.QueryableAsync()
-                        .Where(sp => sp.ProfileId == p.Id && sp.SharedToUserId == userId && sp.ShareStatus == EnumShareStatus.Accepted)
+                        .Where(sp => sp.PatientProfileId == p.Id && sp.SharedToUserId == userId && sp.ShareStatus == EnumShareStatus.Accepted)
                         .Select(sp => sp.SharePermission)
                         .FirstOrDefault()
                 })

@@ -12,14 +12,16 @@ namespace BookingCare.Domain.Entities
         public int DurationInMinutes { get; set; }
         public string? Description { get; set; }
         public Guid? SpecialtyId { get; set; }
-        public Specialty? Specialty { get; set; }
-        public EnumPosition? Position { get; set; }
         public Guid? DoctorId { get; set; }
-        public Doctor? Doctor { get; set; }
+        public EnumPosition? Position { get; set; }
         public bool IsActive { get; set; } = true;
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public DateTime? UpdatedDate { get; set; }
 
-        public ICollection<WorkSessionService>? WorkSessionServices { get; set; }
+        // Relationships
+        public Specialty? Specialty { get; set; }
+        public Doctor? Doctor { get; set; }
+        public ICollection<WorkSession>? WorkSessions { get; set; }
+        public ICollection<AppointmentService>? AppointmentServices { get; set; }
     }
 }

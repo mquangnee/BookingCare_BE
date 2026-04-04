@@ -11,6 +11,8 @@
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public DateTime? UpdatedDate { get; set; }
 
+        // Relationships
         public ICollection<Doctor>? Doctors { get; set; }
+        public ICollection<Service>? Services { get; set; }
     }
 }

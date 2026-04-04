@@ -7,6 +7,8 @@ namespace BookingCare.Domain.Entities
         public Guid Id { get; set; }
         public string? AppointmentCode { get; set; }
         public Guid BookerId { get; set; }
+        public Guid WorkSessionId { get; set; }
+        public Guid PatientProfileId { get; set; }
 
         public EnumAppointmentStatus Status { get; set; }
         public DateTime Date { get; set; }
@@ -15,9 +17,9 @@ namespace BookingCare.Domain.Entities
         public int? QueueNumber { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
 
-        public Guid WorkSessionId { get; set; }
+        // Relationships
+        public User? Booker { get; set; }
         public WorkSession? WorkSession { get; set; }
-        public Guid PatientProfileId { get; set; }
         public PatientProfile? PatientProfile { get; set; }
         public ICollection<AppointmentService>? AppointmentServices { get; set; }
     }

@@ -11,7 +11,7 @@ namespace BookingCare.Application.Services
 {
     public interface INotificationService
     {
-        Task SendNotificationAsync(Guid receiverId, Guid? senderId, Guid? shareProfileId, EnumNotificationContent content, EnumNotificationType type, Guid? objectId, List<object> messageParams);
+        Task SendNotificationAsync(Guid receiverId, Guid? senderId, Guid? patientProfileId, EnumNotificationContent content, EnumNotificationType type, Guid? objectId, List<object> messageParams);
     }
 
     public class NotificationService : INotificationService
@@ -25,7 +25,7 @@ namespace BookingCare.Application.Services
             _hubContext = hubContext;
         }
 
-        public async Task SendNotificationAsync(Guid userId, Guid? senderId, Guid? shareProfileId, EnumNotificationContent content, EnumNotificationType type, Guid? objectId, List<object> messageParams)
+        public async Task SendNotificationAsync(Guid userId, Guid? senderId, Guid? patientProfileId, EnumNotificationContent content, EnumNotificationType type, Guid? objectId, List<object> messageParams)
         {
             var notificationType = await _unitOfWork.NotificationTypes.GetByContentAsync(content);
             if (notificationType == null)
@@ -38,7 +38,7 @@ namespace BookingCare.Application.Services
             {
                 ReceiverId = userId,
                 SenderId = senderId,
-                ShareProfileId = shareProfileId,
+                NotificationTypeId = notificationType.Id,
                 Message = messageNoti,
                 Type = type,
                 ObjectId = objectId
@@ -50,7 +50,7 @@ namespace BookingCare.Application.Services
                 NotificationId = notification.Id,
                 ReceiverId = notification.ReceiverId,
                 SenderId = notification.SenderId,
-                ShareProfileId = notification.ShareProfileId,
+                ShareProfileId = patientProfileId,
                 Message = notification.Message,
                 Type = notification.Type,
                 ObjectId = notification.ObjectId,

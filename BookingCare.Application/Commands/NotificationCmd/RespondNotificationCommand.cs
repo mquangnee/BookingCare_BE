@@ -42,7 +42,12 @@ namespace BookingCare.Application.Commands.NotificationCmd
             _unitOfWork.Notifications.Update(notification);
 
             var profileShare = await _unitOfWork.ProfileShares.QueryableAsync()
-                .FirstOrDefaultAsync(p => p.Id == notification.ShareProfileId, cancellationToken);
+                .FirstOrDefaultAsync(p => 
+                    p.PatientProfileId == notification.ObjectId && 
+                    p.SharedByUserId == notification.SenderId && 
+                    p.SharedToUserId == notification.ReceiverId && 
+                    p.ShareStatus == EnumShareStatus.Pending, 
+                    cancellationToken);
             if (profileShare == null)
             {
                 methodResult.AddErrorBadRequest(nameof(EnumSystemErrorCode.DataNotExist), nameof(notification.ObjectId), notification.ObjectId);
@@ -52,33 +57,37 @@ namespace BookingCare.Application.Commands.NotificationCmd
             _unitOfWork.ProfileShares.Update(profileShare);
             await _unitOfWork.SaveChangesAsync();
 
-            var fullName = await GetResponderName(_unitOfWork, notification.ReceiverId, cancellationToken) ?? "Người nhận";
-            var profile = await _unitOfWork.PatientProfiles.GetByIdAsync(notification.ObjectId ?? Guid.NewGuid());
-            if (profile == null)
+            // Only send notification if user accepted the share
+            if (request.IsAccepted)
             {
-                methodResult.AddErrorBadRequest(nameof(EnumSystemErrorCode.DataNotExist), nameof(notification.ObjectId), notification.ObjectId);
-                return methodResult;
+                var fullName = await GetResponderName(_unitOfWork, notification.ReceiverId, cancellationToken) ?? "Người nhận";
+                var profile = await _unitOfWork.PatientProfiles.GetByIdAsync(notification.ObjectId ?? Guid.NewGuid());
+                if (profile == null)
+                {
+                    methodResult.AddErrorBadRequest(nameof(EnumSystemErrorCode.DataNotExist), nameof(notification.ObjectId), notification.ObjectId);
+                    return methodResult;
+                }
+                var messageParams = new List<object>
+                {
+                    fullName,
+                    profile.ProfileCode!
+                };
+                await SendNotificationAsync(_notificationService, null, notification.ReceiverId, (Guid)notification.SenderId!, messageParams, request.IsAccepted);
             }
-            var messageParams = new List<object>
-            {
-                fullName,
-                profile.ProfileCode!
-            };
-            await SendNotificationAsync(_notificationService, null, notification.ReceiverId, (Guid)notification.SenderId!, messageParams);
 
             methodResult.Result = true;
             methodResult.StatusCode = StatusCodes.Status200OK;
             return methodResult;
         }
 
-        private static async Task SendNotificationAsync(INotificationService notificationService, Guid? shareProfileId, Guid senderId, Guid receiverId, List<object> messageParams)
+        private static async Task SendNotificationAsync(INotificationService notificationService, Guid? patientProfileId, Guid senderId, Guid receiverId, List<object> messageParams, bool isAccepted)
         {
             await notificationService.SendNotificationAsync(
                 receiverId: receiverId,
                 senderId: senderId,
-                shareProfileId: shareProfileId,
-                content: EnumNotificationContent.ShareProfileAccepted,
-                type: EnumNotificationType.ShareProfileAccepted,
+                patientProfileId: patientProfileId,
+                content: isAccepted ? EnumNotificationContent.ShareProfileAccepted : EnumNotificationContent.ShareProfileRejected,
+                type: isAccepted ? EnumNotificationType.ShareProfileAccepted : EnumNotificationType.ShareProfileRejected,
                 objectId: null,
                 messageParams: messageParams
             );

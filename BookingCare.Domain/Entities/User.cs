@@ -13,5 +13,10 @@ namespace BookingCare.Domain.Entities
 
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public DateTime? UpdatedDate { get; set; }
+
+        // Relationships
+        public Patient? Patient { get; set; }
+        public Doctor? Doctor { get; set; }
+        public Receptionist? Receptionist { get; set; }
     }
 }

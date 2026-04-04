@@ -4,5 +4,7 @@
     {
         SlotIsTaken,
         PatientHasOverlappingAppointment,
+        StatusNotValidForCancellation,
+        TimeNotValidForCancellation,
     }
 }
