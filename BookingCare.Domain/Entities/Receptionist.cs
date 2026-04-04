@@ -13,5 +13,8 @@ namespace BookingCare.Domain.Entities
         public DateTime DateOfBirth { get; set; }
         public EnumGender Gender { get; set; }
         public string? CitizenId { get; set; }
+
+        // Relationships
+        public User? User { get; set; }
     }
 }

@@ -60,7 +60,7 @@ namespace BookingCare.Application.Queries.ProfileQuery
                 var profileShareModel = new ProfileShareModel
                 {
                     Id = profileShare.Id,
-                    ProfileId = profileShare.ProfileId,
+                    ProfileId = profileShare.PatientProfileId,
                     SharedByUserId = profileShare.SharedByUserId,
                     SharedToUserId = profileShare.SharedToUserId,
                     UserName = inforUser.Value.Item1,

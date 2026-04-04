@@ -1,4 +1,6 @@
-﻿namespace BookingCare.Domain.Models.EntityModels
+﻿using BookingCare.Shared.Enum;
+
+namespace BookingCare.Domain.Models.EntityModels
 {
     public  class AvailableDayModel
     {
@@ -11,5 +13,8 @@
         public TimeSpan EndTime { get; set; }
         public string TimeString => $"{StartTime:hh\\:mm} - {EndTime:hh\\:mm}";
         public bool IsFull { get; set; } = false;
+        public Guid? DoctorId { get; set; }
+        public string? DoctorName { get; set; }
+        public EnumPosition? DoctorPosition { get; set; }
     }
 }

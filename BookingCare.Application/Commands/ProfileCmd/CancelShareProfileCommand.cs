@@ -40,10 +40,10 @@ namespace BookingCare.Application.Commands.ProfileCmd
             _unitOfWork.ProfileShares.Update(profileShare);
             await _unitOfWork.SaveChangesAsync();
 
-            var profile = await _unitOfWork.PatientProfiles.GetByIdAsync(profileShare.ProfileId);
+            var profile = await _unitOfWork.PatientProfiles.GetByIdAsync(profileShare.PatientProfileId);
             if (profile == null)
             {
-                methodResult.AddErrorBadRequest(nameof(EnumSystemErrorCode.DataNotExist), nameof(profileShare.ProfileId), profileShare.ProfileId);
+                methodResult.AddErrorBadRequest(nameof(EnumSystemErrorCode.DataNotExist), nameof(profileShare.PatientProfileId), profileShare.PatientProfileId);
                 return methodResult;
             }
             var fullName = await GetInfor(_unitOfWork, profileShare.SharedByUserId);
@@ -72,12 +72,12 @@ namespace BookingCare.Application.Commands.ProfileCmd
             return profile.FullName;
         }
 
-        private static async Task SendNotification(INotificationService notificationService, Guid? shareProfileId, Guid senderId, Guid receiverId, List<object> messageParams)
+        private static async Task SendNotification(INotificationService notificationService, Guid? patientProfileId, Guid senderId, Guid receiverId, List<object> messageParams)
         {
             await notificationService.SendNotificationAsync(
                 receiverId: receiverId,
                 senderId: senderId,
-                shareProfileId: shareProfileId,
+                patientProfileId: patientProfileId,
                 content: EnumNotificationContent.ShareProfileRevoked,
                 type: EnumNotificationType.ShareProfileRevoked,
                 objectId: null,

@@ -63,7 +63,7 @@ namespace BookingCare.Application.Commands.ProfileCmd
                 methodResult.AddErrorBadRequest(nameof(EnumSystemErrorCode.DataNotExist), nameof(request.ProfileId), request.ProfileId);
                 return methodResult;
             }
-            var existingShare = await _unitOfWork.ProfileShares.QueryableAsync().AnyAsync(ps => ps.ProfileId == request.ProfileId && ps.SharedToUserId == user.Id && ps.ShareStatus != EnumShareStatus.Rejected);
+            var existingShare = await _unitOfWork.ProfileShares.QueryableAsync().AnyAsync(ps => ps.PatientProfileId == request.ProfileId && ps.SharedToUserId == user.Id && ps.ShareStatus != EnumShareStatus.Rejected);
             if (existingShare)
             {
                 methodResult.AddErrorBadRequest(nameof(EnumProfileShareErrorCode.ProfileSharedToThisUser), nameof(existingShare));
@@ -71,7 +71,7 @@ namespace BookingCare.Application.Commands.ProfileCmd
             }
             var profileShare = new ProfileShare
             {
-                ProfileId = request.ProfileId,
+                PatientProfileId = request.ProfileId,
                 SharedByUserId = senderId,
                 SharedToUserId = user.Id,
                 SharePermission = request.Permission
@@ -99,12 +99,12 @@ namespace BookingCare.Application.Commands.ProfileCmd
             return methodResult;
         }
 
-        private static async Task SendNotificationAsync(INotificationService notificationService, Guid shareProfileId, Guid senderId, Guid receiverId, Guid objectId, List<object> messageParams)
+        private static async Task SendNotificationAsync(INotificationService notificationService, Guid patientProfileId, Guid senderId, Guid receiverId, Guid objectId, List<object> messageParams)
         {
             await notificationService.SendNotificationAsync(
                 receiverId: receiverId,
                 senderId: senderId,
-                shareProfileId: shareProfileId,
+                patientProfileId: patientProfileId,
                 content: EnumNotificationContent.ShareProfileInvite,
                 type: EnumNotificationType.ShareProfileInvite,
                 objectId: objectId,

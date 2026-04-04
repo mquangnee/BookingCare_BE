@@ -3,14 +3,12 @@ using BookingCare.Domain.Models.EntityModels;
 using BookingCare.Shared.Common;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookingCare.Application.Queries.ServiceQuery
 {
     public class GetServicesQuery : IRequest<MethodResult<List<ServiceModel>>>
     {
-        public int Page { get; set; } = 1;
-        public int PageSize { get; set; } = 10;
-        public string? Keyword { get; set; }
     }
 
     public class GetServicesQueryHandler : IRequestHandler<GetServicesQuery, MethodResult<List<ServiceModel>>>
@@ -27,18 +25,9 @@ namespace BookingCare.Application.Queries.ServiceQuery
             ArgumentNullException.ThrowIfNull(request);
             var methodResult = new MethodResult<List<ServiceModel>>();
 
-            var services = await _unitOfWork.Services.GetAllAsync();
-            var query = services.AsQueryable();
-            if (!string.IsNullOrWhiteSpace(request.Keyword))
-            {
-                var keyword = request.Keyword.Trim();
-                query = query.Where(s => 
-                    (s.Name != null && s.Name.Contains(keyword, StringComparison.OrdinalIgnoreCase)) ||
-                    (s.ServiceCode != null && s.ServiceCode.Contains(keyword, StringComparison.OrdinalIgnoreCase)));
-            }
-            methodResult.Result = query
-                .Skip((request.Page - 1) * request.PageSize)
-                .Take(request.PageSize)
+            var services = await _unitOfWork.Services
+                .QueryableAsync()
+                .Where(s => s.Position == null)
                 .Select(s => new ServiceModel
                 {
                     Id = s.Id,
@@ -48,8 +37,8 @@ namespace BookingCare.Application.Queries.ServiceQuery
                     Description = s.Description,
                     DurationInMinutes = s.DurationInMinutes,
                     IsActive = s.IsActive
-                })
-                .ToList();
+                }).ToListAsync();
+            methodResult.Result = services;
             methodResult.StatusCode = StatusCodes.Status200OK;
             return methodResult;
         }

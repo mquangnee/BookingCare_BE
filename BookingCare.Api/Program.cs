@@ -4,7 +4,6 @@ using BookingCare.Domain.IRepository;
 using BookingCare.Identity.Application.Commands.AuthCmd;
 using BookingCare.Infrastructure;
 using BookingCare.Infrastructure.Maps;
-using BookingCare.Infrastructure.SeedData;
 using BookingCare.Shared.Setting;
 using BookingCare.Shared.SignalR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -99,7 +98,6 @@ builder.Services.AddScoped<INotificationTypeRepository, NotificationTypeReposito
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IWorkSessionRepository, WorkSessionRepository>();
 builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
-builder.Services.AddScoped<IWorkSessionServiceRepository, WorkSessionServiceRepository>();
 builder.Services.AddScoped<IAppointmentServiceRepository, AppointmentServiceRepository>();
 
 // Đăng ký Service

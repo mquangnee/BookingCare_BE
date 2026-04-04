@@ -71,7 +71,7 @@ namespace BookingCare.Application.Queries.ProfileQuery
 
             // 3. Lấy hồ sơ được người khác chia sẻ
             var sharedProfiles = await (from ps in _unitOfWork.ProfileShares.QueryableAsync()
-                                        join p in _unitOfWork.PatientProfiles.QueryableAsync() on ps.ProfileId equals p.Id
+                                        join p in _unitOfWork.PatientProfiles.QueryableAsync() on ps.PatientProfileId equals p.Id
                                         join pt in _unitOfWork.Patients.QueryableAsync() on p.PatientId equals pt.Id
                                         where ps.SharedToUserId == userId 
                                            && ps.ShareStatus == Shared.Enum.EnumShareStatus.Accepted 

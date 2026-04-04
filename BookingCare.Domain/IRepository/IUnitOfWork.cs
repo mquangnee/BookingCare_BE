@@ -15,7 +15,6 @@ namespace BookingCare.Domain.IRepository
         IAppointmentRepository Appointments { get; }
         IServiceRepository Services { get; }
         IWorkSessionRepository WorkSessions { get; }
-        IWorkSessionServiceRepository WorkSessionServices { get; }
         IAppointmentServiceRepository AppointmentServices { get; }
         Task<int> SaveChangesAsync();
     }
@@ -35,7 +34,6 @@ namespace BookingCare.Domain.IRepository
         public IAppointmentRepository Appointments { get; }
         public IServiceRepository Services { get; }
         public IWorkSessionRepository WorkSessions { get; }
-        public IWorkSessionServiceRepository WorkSessionServices { get; }
         public IAppointmentServiceRepository AppointmentServices { get; }
 
         public UnitOfWork(
@@ -51,7 +49,6 @@ namespace BookingCare.Domain.IRepository
             IAppointmentRepository appointments,
             IWorkSessionRepository workSessions,
             IServiceRepository services,
-            IWorkSessionServiceRepository workSessionServices,
             IAppointmentServiceRepository appointmentServices)
         {
             _dbContext = dbContext;
@@ -66,7 +63,6 @@ namespace BookingCare.Domain.IRepository
             Appointments = appointments;
             WorkSessions = workSessions;
             Services = services;
-            WorkSessionServices = workSessionServices;
             AppointmentServices = appointmentServices;
         }
 

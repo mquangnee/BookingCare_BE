@@ -21,9 +21,9 @@ namespace BookingCare.Api.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(MethodResult<List<ServiceModel>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> GetServices([FromQuery] GetServicesQuery query)
+        public async Task<IActionResult> GetServices()
         {
-            var queryResult = await _mediator.Send(query);
+            var queryResult = await _mediator.Send(new GetServicesQuery { });
             return queryResult.GetActionResult();
         }
     }

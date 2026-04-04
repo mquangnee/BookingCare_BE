@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookingCare.Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20260325043614_add-datetime-field")]
-    partial class adddatetimefield
+    [Migration("20260404021142_initial_database")]
+    partial class initial_database
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,36 +43,60 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("DoctorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("EndTime")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<TimeSpan?>("EndTime")
+                        .HasColumnType("time");
 
                     b.Property<Guid>("PatientProfileId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("StartTime")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("QueueNumber")
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan?>("StartTime")
+                        .HasColumnType("time");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("WorkSessionId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DoctorId");
+                    b.HasIndex("BookerId");
 
                     b.HasIndex("PatientProfileId");
 
                     b.HasIndex("WorkSessionId");
 
                     b.ToTable("Appointments");
+                });
+
+            modelBuilder.Entity("BookingCare.Domain.Entities.AppointmentService", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AppointmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("PriceOverride")
+                        .HasColumnType("float");
+
+                    b.Property<Guid>("ServiceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppointmentId");
+
+                    b.HasIndex("ServiceId");
+
+                    b.ToTable("AppointmentServices");
                 });
 
             modelBuilder.Entity("BookingCare.Domain.Entities.Doctor", b =>
@@ -108,6 +132,9 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Property<int>("Position")
                         .HasColumnType("int");
 
+                    b.Property<Guid>("SpecialtyId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.PrimitiveCollection<string>("SubSpecialties")
                         .HasColumnType("nvarchar(max)");
 
@@ -118,6 +145,11 @@ namespace BookingCare.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SpecialtyId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Doctors");
                 });
@@ -143,6 +175,9 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Property<string>("Message")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("NotificationTypeId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("ObjectId")
                         .HasColumnType("uniqueidentifier");
 
@@ -152,13 +187,16 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Property<Guid?>("SenderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ShareProfileId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("NotificationTypeId");
+
+                    b.HasIndex("ReceiverId");
+
+                    b.HasIndex("SenderId");
 
                     b.ToTable("Notifications");
                 });
@@ -192,10 +230,13 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Property<string>("PatientCode")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("UserId")
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Patients");
                 });
@@ -227,7 +268,7 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Property<string>("MedicalHistory")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("PatientId")
+                    b.Property<Guid>("PatientId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("PhoneNumber")
@@ -244,6 +285,8 @@ namespace BookingCare.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PatientId");
+
                     b.ToTable("PatientProfiles");
                 });
 
@@ -256,7 +299,7 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("ProfileId")
+                    b.Property<Guid>("PatientProfileId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("SharePermission")
@@ -275,6 +318,12 @@ namespace BookingCare.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PatientProfileId");
+
+                    b.HasIndex("SharedByUserId");
+
+                    b.HasIndex("SharedToUserId");
 
                     b.ToTable("ProfileShares");
                 });
@@ -308,6 +357,9 @@ namespace BookingCare.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
                     b.ToTable("Receptionists");
                 });
 
@@ -323,6 +375,9 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("DoctorId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("DurationInMinutes")
                         .HasColumnType("int");
 
@@ -332,16 +387,26 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("Position")
+                        .HasColumnType("int");
+
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
                     b.Property<string>("ServiceCode")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("SpecialtyId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DoctorId");
+
+                    b.HasIndex("SpecialtyId");
 
                     b.ToTable("Services");
                 });
@@ -498,6 +563,10 @@ namespace BookingCare.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ServiceId");
+
+                    b.HasIndex("WorkSessionId");
+
                     b.ToTable("WorkSessionServices");
                 });
 
@@ -634,40 +703,199 @@ namespace BookingCare.Infrastructure.Migrations
 
             modelBuilder.Entity("BookingCare.Domain.Entities.Appointment", b =>
                 {
-                    b.HasOne("BookingCare.Domain.Entities.Doctor", "Doctor")
+                    b.HasOne("BookingCare.Domain.Entities.User", "Booker")
                         .WithMany()
-                        .HasForeignKey("DoctorId")
+                        .HasForeignKey("BookerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("BookingCare.Domain.Entities.PatientProfile", "PatientProfile")
-                        .WithMany()
+                        .WithMany("Appointments")
                         .HasForeignKey("PatientProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("BookingCare.Domain.Entities.WorkSession", "WorkSession")
-                        .WithMany()
+                        .WithMany("Appointments")
                         .HasForeignKey("WorkSessionId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Doctor");
+                    b.Navigation("Booker");
 
                     b.Navigation("PatientProfile");
 
                     b.Navigation("WorkSession");
                 });
 
-            modelBuilder.Entity("BookingCare.Domain.Entities.WorkSession", b =>
+            modelBuilder.Entity("BookingCare.Domain.Entities.AppointmentService", b =>
                 {
-                    b.HasOne("BookingCare.Domain.Entities.Doctor", "Doctor")
-                        .WithMany()
-                        .HasForeignKey("DoctorId")
+                    b.HasOne("BookingCare.Domain.Entities.Appointment", "Appointment")
+                        .WithMany("AppointmentServices")
+                        .HasForeignKey("AppointmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("BookingCare.Domain.Entities.Service", "Service")
+                        .WithMany("AppointmentServices")
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Appointment");
+
+                    b.Navigation("Service");
+                });
+
+            modelBuilder.Entity("BookingCare.Domain.Entities.Doctor", b =>
+                {
+                    b.HasOne("BookingCare.Domain.Entities.Specialty", "Specialty")
+                        .WithMany("Doctors")
+                        .HasForeignKey("SpecialtyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BookingCare.Domain.Entities.User", "User")
+                        .WithOne("Doctor")
+                        .HasForeignKey("BookingCare.Domain.Entities.Doctor", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Specialty");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("BookingCare.Domain.Entities.Notification", b =>
+                {
+                    b.HasOne("BookingCare.Domain.Entities.NotificationType", "NotificationType")
+                        .WithMany()
+                        .HasForeignKey("NotificationTypeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("BookingCare.Domain.Entities.User", "Receiver")
+                        .WithMany()
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BookingCare.Domain.Entities.User", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("NotificationType");
+
+                    b.Navigation("Receiver");
+
+                    b.Navigation("Sender");
+                });
+
+            modelBuilder.Entity("BookingCare.Domain.Entities.Patient", b =>
+                {
+                    b.HasOne("BookingCare.Domain.Entities.User", "User")
+                        .WithOne("Patient")
+                        .HasForeignKey("BookingCare.Domain.Entities.Patient", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("BookingCare.Domain.Entities.PatientProfile", b =>
+                {
+                    b.HasOne("BookingCare.Domain.Entities.Patient", "Patient")
+                        .WithMany("PatientProfiles")
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("BookingCare.Domain.Entities.ProfileShare", b =>
+                {
+                    b.HasOne("BookingCare.Domain.Entities.PatientProfile", "PatientProfile")
+                        .WithMany("SharedProfiles")
+                        .HasForeignKey("PatientProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BookingCare.Domain.Entities.User", "SharedByUser")
+                        .WithMany()
+                        .HasForeignKey("SharedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BookingCare.Domain.Entities.User", "SharedToUser")
+                        .WithMany()
+                        .HasForeignKey("SharedToUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("PatientProfile");
+
+                    b.Navigation("SharedByUser");
+
+                    b.Navigation("SharedToUser");
+                });
+
+            modelBuilder.Entity("BookingCare.Domain.Entities.Receptionist", b =>
+                {
+                    b.HasOne("BookingCare.Domain.Entities.User", "User")
+                        .WithOne("Receptionist")
+                        .HasForeignKey("BookingCare.Domain.Entities.Receptionist", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("BookingCare.Domain.Entities.Service", b =>
+                {
+                    b.HasOne("BookingCare.Domain.Entities.Doctor", "Doctor")
+                        .WithMany("Services")
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("BookingCare.Domain.Entities.Specialty", "Specialty")
+                        .WithMany("Services")
+                        .HasForeignKey("SpecialtyId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.Navigation("Doctor");
+
+                    b.Navigation("Specialty");
+                });
+
+            modelBuilder.Entity("BookingCare.Domain.Entities.WorkSession", b =>
+                {
+                    b.HasOne("BookingCare.Domain.Entities.Doctor", "Doctor")
+                        .WithMany("WorkSessions")
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+                });
+
+            modelBuilder.Entity("BookingCare.Domain.Entities.WorkSessionService", b =>
+                {
+                    b.HasOne("BookingCare.Domain.Entities.Service", "Service")
+                        .WithMany("WorkSessionServices")
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BookingCare.Domain.Entities.WorkSession", "WorkSession")
+                        .WithMany("WorkSessionServices")
+                        .HasForeignKey("WorkSessionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Service");
+
+                    b.Navigation("WorkSession");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -719,6 +947,60 @@ namespace BookingCare.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("BookingCare.Domain.Entities.Appointment", b =>
+                {
+                    b.Navigation("AppointmentServices");
+                });
+
+            modelBuilder.Entity("BookingCare.Domain.Entities.Doctor", b =>
+                {
+                    b.Navigation("Services");
+
+                    b.Navigation("WorkSessions");
+                });
+
+            modelBuilder.Entity("BookingCare.Domain.Entities.Patient", b =>
+                {
+                    b.Navigation("PatientProfiles");
+                });
+
+            modelBuilder.Entity("BookingCare.Domain.Entities.PatientProfile", b =>
+                {
+                    b.Navigation("Appointments");
+
+                    b.Navigation("SharedProfiles");
+                });
+
+            modelBuilder.Entity("BookingCare.Domain.Entities.Service", b =>
+                {
+                    b.Navigation("AppointmentServices");
+
+                    b.Navigation("WorkSessionServices");
+                });
+
+            modelBuilder.Entity("BookingCare.Domain.Entities.Specialty", b =>
+                {
+                    b.Navigation("Doctors");
+
+                    b.Navigation("Services");
+                });
+
+            modelBuilder.Entity("BookingCare.Domain.Entities.User", b =>
+                {
+                    b.Navigation("Doctor");
+
+                    b.Navigation("Patient");
+
+                    b.Navigation("Receptionist");
+                });
+
+            modelBuilder.Entity("BookingCare.Domain.Entities.WorkSession", b =>
+                {
+                    b.Navigation("Appointments");
+
+                    b.Navigation("WorkSessionServices");
                 });
 #pragma warning restore 612, 618
         }

@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <Folder Include="Enums\ErrorCode\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>
