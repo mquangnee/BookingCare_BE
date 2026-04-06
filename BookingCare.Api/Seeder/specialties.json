@@ -3,7 +3,7 @@
     "Id": "11111111-1111-1111-1111-111111111101",
     "SpecialtyCode": "CK-001",
     "Name": "Cơ Xương Khớp",
-    "ImageUrl": "https://storage.googleapis.com/bookingcare/specialties/co-xuong-khop.jpg",
+    "ImageUrl": "https://storage.googleapis.com/bookingcare-resources/static/specialty/CoXuongKhop.png",
     "Description": "Khám và điều trị các bệnh lý về hệ vận động, xương khớp.",
     "CreatedDate": "2026-03-28T08:00:00",
     "UpdatedDate": "2026-03-28T08:00:00"
@@ -12,7 +12,7 @@
     "Id": "11111111-1111-1111-1111-111111111102",
     "SpecialtyCode": "CK-002",
     "Name": "Tiêu hóa",
-    "ImageUrl": "https://storage.googleapis.com/bookingcare/specialties/tieu-hoa.jpg",
+    "ImageUrl": "https://storage.googleapis.com/bookingcare-resources/static/specialty/TieuHoa.png",
     "Description": "Chuyên khoa dạ dày, đại tràng, gan mật và nội soi tiêu hóa.",
     "CreatedDate": "2026-03-28T08:00:00",
     "UpdatedDate": "2026-03-28T08:00:00"
@@ -21,7 +21,7 @@
     "Id": "11111111-1111-1111-1111-111111111103",
     "SpecialtyCode": "CK-003",
     "Name": "Tim mạch",
-    "ImageUrl": "https://storage.googleapis.com/bookingcare/specialties/tim-mach.jpg",
+    "ImageUrl": "https://storage.googleapis.com/bookingcare-resources/static/specialty/TimMach.png",
     "Description": "Điều trị cao huyết áp, suy tim và các bệnh lý mạch vành.",
     "CreatedDate": "2026-03-28T08:00:00",
     "UpdatedDate": "2026-03-28T08:00:00"
@@ -30,7 +30,7 @@
     "Id": "11111111-1111-1111-1111-111111111104",
     "SpecialtyCode": "CK-004",
     "Name": "Sản Phụ khoa",
-    "ImageUrl": "https://storage.googleapis.com/bookingcare/specialties/san-phu-khoa.jpg",
+    "ImageUrl": "https://storage.googleapis.com/bookingcare-resources/static/specialty/SanPhuKhoa.png",
     "Description": "Chăm sóc thai kỳ, sinh sản và các bệnh lý phụ khoa nữ giới.",
     "CreatedDate": "2026-03-28T08:00:00",
     "UpdatedDate": "2026-03-28T08:00:00"
@@ -39,7 +39,7 @@
     "Id": "11111111-1111-1111-1111-111111111105",
     "SpecialtyCode": "CK-005",
     "Name": "Nhi khoa",
-    "ImageUrl": "https://storage.googleapis.com/bookingcare/specialties/nhi-khoa.jpg",
+    "ImageUrl": "https://storage.googleapis.com/bookingcare-resources/static/specialty/NhiKhoa.png",
     "Description": "Khám và điều trị các bệnh lý thường gặp ở trẻ sơ sinh và trẻ nhỏ.",
     "CreatedDate": "2026-03-28T08:00:00",
     "UpdatedDate": "2026-03-28T08:00:00"
@@ -48,7 +48,7 @@
     "Id": "11111111-1111-1111-1111-111111111106",
     "SpecialtyCode": "CK-006",
     "Name": "Da liễu",
-    "ImageUrl": "https://storage.googleapis.com/bookingcare/specialties/da-lieu.jpg",
+    "ImageUrl": "https://storage.googleapis.com/bookingcare-resources/static/specialty/DaLieu.png",
     "Description": "Điều trị mụn, nám, dị ứng da và thẩm mỹ công nghệ cao.",
     "CreatedDate": "2026-03-28T08:00:00",
     "UpdatedDate": "2026-03-28T08:00:00"
@@ -57,7 +57,7 @@
     "Id": "11111111-1111-1111-1111-111111111107",
     "SpecialtyCode": "CK-007",
     "Name": "Tai Mũi Họng",
-    "ImageUrl": "https://storage.googleapis.com/bookingcare/specialties/tai-mui-hong.jpg",
+    "ImageUrl": "https://storage.googleapis.com/bookingcare-resources/static/specialty/TaiMuiHong.png",
     "Description": "Khám và điều trị viêm xoang, viêm họng, các bệnh lý tai mũi họng.",
     "CreatedDate": "2026-03-28T08:00:00",
     "UpdatedDate": "2026-03-28T08:00:00"
@@ -66,7 +66,7 @@
     "Id": "11111111-1111-1111-1111-111111111108",
     "SpecialtyCode": "CK-008",
     "Name": "Mắt",
-    "ImageUrl": "https://storage.googleapis.com/bookingcare/specialties/mat.jpg",
+    "ImageUrl": "https://storage.googleapis.com/bookingcare-resources/static/specialty/Mat.png",
     "Description": "Khám mắt tổng quát, đo thị lực và điều trị tật khúc xạ.",
     "CreatedDate": "2026-03-28T08:00:00",
     "UpdatedDate": "2026-03-28T08:00:00"
@@ -75,7 +75,7 @@
     "Id": "11111111-1111-1111-1111-111111111109",
     "SpecialtyCode": "CK-009",
     "Name": "Thần kinh",
-    "ImageUrl": "https://storage.googleapis.com/bookingcare/specialties/than-kinh.jpg",
+    "ImageUrl": "https://storage.googleapis.com/bookingcare-resources/static/specialty/ThanKinh.png",
     "Description": "Chẩn đoán rối loạn thần kinh, đau đầu, tiền đình và não bộ.",
     "CreatedDate": "2026-03-28T08:00:00",
     "UpdatedDate": "2026-03-28T08:00:00"
@@ -84,7 +84,7 @@
     "Id": "11111111-1111-1111-1111-111111111110",
     "SpecialtyCode": "CK-010",
     "Name": "Răng Hàm Mặt",
-    "ImageUrl": "https://storage.googleapis.com/bookingcare/specialties/rang-ham-mat.jpg",
+    "ImageUrl": "https://storage.googleapis.com/bookingcare-resources/static/specialty/RangHamMat.png",
     "Description": "Nha khoa tổng quát, nhổ răng khôn và thẩm mỹ răng sứ.",
     "CreatedDate": "2026-03-28T08:00:00",
     "UpdatedDate": "2026-03-28T08:00:00"

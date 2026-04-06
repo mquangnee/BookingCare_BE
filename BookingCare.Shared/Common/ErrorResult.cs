@@ -1,6 +1,4 @@
-﻿using BookingCare.Shared.Common;
-
-namespace BonBonCar.Application.Common
+﻿namespace BookingCare.Shared.Common
 {
     public class ErrorResult
     {

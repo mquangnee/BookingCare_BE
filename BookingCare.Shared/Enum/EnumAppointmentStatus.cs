@@ -6,6 +6,6 @@
         Approved,
         InProgress,
         Completed,
-        Canceled
+        Cancelled
     }
 }

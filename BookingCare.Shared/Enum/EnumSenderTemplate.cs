@@ -3,6 +3,8 @@
     public enum EnumSenderTemplate
     {
         SendOtpRegister,
-        SendOtpVerifyPassword
+        SendOtpVerifyPassword,
+        SendOtpChangePassword,
+        DailySummary
     }
 }

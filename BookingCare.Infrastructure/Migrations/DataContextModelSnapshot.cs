@@ -22,6 +22,42 @@ namespace BookingCare.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("BookingCare.Domain.Entities.Admin", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AdminCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Admins");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("bbbbbbbb-2222-2222-2222-222222222222"),
+                            AdminCode = "ADM-001",
+                            FullName = "Nguyễn Minh Quang",
+                            IsActive = true,
+                            UserId = new Guid("aaaaaaaa-1111-1111-1111-111111111111")
+                        });
+                });
+
             modelBuilder.Entity("BookingCare.Domain.Entities.Appointment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -154,7 +190,7 @@ namespace BookingCare.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("33333333-1111-1111-1111-111111111111"),
-                            AvatarUrl = "https://storage.googleapis.com/bookingcare/doctors/nguyen-trong-hung.jpg",
+                            AvatarUrl = "https://storage.googleapis.com/bookingcare-resources/static/doctor/Nam_BacSi_2.jpg",
                             CitizenId = "001075000123",
                             DateOfBirth = new DateTime(1975, 5, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Chuyên gia hàng đầu về các bệnh lý Cơ xương khớp. Nguyên Trưởng khoa Cơ xương khớp Bệnh viện Bạch Mai.",
@@ -171,7 +207,7 @@ namespace BookingCare.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("33333333-2222-2222-2222-222222222222"),
-                            AvatarUrl = "https://storage.googleapis.com/bookingcare/doctors/do-thi-tuong-van.jpg",
+                            AvatarUrl = "https://storage.googleapis.com/bookingcare-resources/static/doctor/Nu_BacSi_1_.jpg",
                             CitizenId = "001182000456",
                             DateOfBirth = new DateTime(1982, 10, 24, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Có nhiều năm kinh nghiệm trong lĩnh vực nội soi tiêu hóa không đau. Đã tu nghiệp chuyên sâu tại Nhật Bản.",
@@ -188,7 +224,7 @@ namespace BookingCare.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("33333333-3333-3333-3333-333333333333"),
-                            AvatarUrl = "https://storage.googleapis.com/bookingcare/doctors/le-ngoc-thanh.jpg",
+                            AvatarUrl = "https://storage.googleapis.com/bookingcare-resources/static/doctor/Nam_BacSi_3.jpg",
                             CitizenId = "001080000789",
                             DateOfBirth = new DateTime(1980, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Bác sĩ chuyên khoa sâu về can thiệp tim mạch và điều trị các bệnh lý tăng huyết áp, suy tim.",
@@ -205,7 +241,7 @@ namespace BookingCare.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("33333333-4444-4444-4444-444444444444"),
-                            AvatarUrl = "https://storage.googleapis.com/bookingcare/doctors/tran-thi-dung.jpg",
+                            AvatarUrl = "https://storage.googleapis.com/bookingcare-resources/static/doctor/Nu_BacSi_2.jpg",
                             CitizenId = "001188000321",
                             DateOfBirth = new DateTime(1988, 8, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Bác sĩ trẻ tận tâm, giỏi chuyên môn về siêu âm dị tật thai nhi 4D/5D và chăm sóc sức khỏe sinh sản.",
@@ -222,7 +258,7 @@ namespace BookingCare.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("33333333-5555-5555-5555-555555555555"),
-                            AvatarUrl = "https://storage.googleapis.com/bookingcare/doctors/pham-nhat-an.jpg",
+                            AvatarUrl = "https://storage.googleapis.com/bookingcare-resources/static/doctor/Nam_BacSi_4.jpg",
                             CitizenId = "001065000654",
                             DateOfBirth = new DateTime(1965, 11, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Chuyên gia đầu ngành về Nhi khoa. Nguyên Phó Giám đốc Bệnh viện Nhi Trung Ương.",
@@ -239,7 +275,7 @@ namespace BookingCare.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("33333333-6666-6666-6666-666666666666"),
-                            AvatarUrl = "https://storage.googleapis.com/bookingcare/doctors/vu-nguyet-minh.jpg",
+                            AvatarUrl = "https://storage.googleapis.com/bookingcare-resources/static/doctor/Nam_BacSi_5.jpg",
                             CitizenId = "001185000111",
                             DateOfBirth = new DateTime(1985, 7, 19, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Chuyên gia da liễu thẩm mỹ, ứng dụng laser trong điều trị sẹo, nám và các bệnh lý viêm da cơ địa.",
@@ -256,7 +292,7 @@ namespace BookingCare.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("33333333-7777-7777-7777-777777777777"),
-                            AvatarUrl = "https://storage.googleapis.com/bookingcare/doctors/tran-huu-thang.jpg",
+                            AvatarUrl = "https://storage.googleapis.com/bookingcare-resources/static/doctor/Nam_BacSi_6.jpg",
                             CitizenId = "001072000222",
                             DateOfBirth = new DateTime(1972, 2, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Phó Giáo sư chuyên thực hiện các ca phẫu thuật Tai Mũi Họng phức tạp, đặc biệt là vi phẫu thanh quản.",
@@ -273,7 +309,7 @@ namespace BookingCare.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("33333333-8888-8888-8888-888888888888"),
-                            AvatarUrl = "https://storage.googleapis.com/bookingcare/doctors/hoang-cuong.jpg",
+                            AvatarUrl = "https://storage.googleapis.com/bookingcare-resources/static/doctor/Nam_BacSi_7.jpg",
                             CitizenId = "001078000333",
                             DateOfBirth = new DateTime(1978, 9, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Tiến sĩ chuyên khoa Mắt với nhiều kinh nghiệm trong phẫu thuật Phaco và Lasik điều trị cận thị.",
@@ -290,7 +326,7 @@ namespace BookingCare.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("33333333-9999-9999-9999-999999999999"),
-                            AvatarUrl = "https://storage.googleapis.com/bookingcare/doctors/nguyen-van-huong.jpg",
+                            AvatarUrl = "https://storage.googleapis.com/bookingcare-resources/static/doctor/Nam_BacSi_8.jpg",
                             CitizenId = "001068000444",
                             DateOfBirth = new DateTime(1968, 12, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Chuyên gia về ngoại thần kinh và thần kinh học lâm sàng. Điều trị thành công hàng ngàn ca rối loạn vận động.",
@@ -307,7 +343,7 @@ namespace BookingCare.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("33333333-0000-0000-0000-000000000000"),
-                            AvatarUrl = "https://storage.googleapis.com/bookingcare/doctors/pham-nhu-hai.jpg",
+                            AvatarUrl = "https://storage.googleapis.com/bookingcare-resources/static/doctor/Nam_BacSi_1.jpg",
                             CitizenId = "001083000555",
                             DateOfBirth = new DateTime(1983, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Bác sĩ giỏi chuyên môn về chỉnh nha và tiểu phẫu răng khôn, luôn đặt tiêu chí thẩm mỹ và an toàn lên hàng đầu.",
@@ -982,7 +1018,7 @@ namespace BookingCare.Infrastructure.Migrations
                             Id = new Guid("11111111-1111-1111-1111-111111111101"),
                             CreatedDate = new DateTime(2026, 3, 28, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Khám và điều trị các bệnh lý về hệ vận động, xương khớp.",
-                            ImageUrl = "https://storage.googleapis.com/bookingcare/specialties/co-xuong-khop.jpg",
+                            ImageUrl = "https://storage.googleapis.com/bookingcare-resources/static/specialty/CoXuongKhop.png",
                             Name = "Cơ Xương Khớp",
                             SpecialtyCode = "CK-001",
                             UpdatedDate = new DateTime(2026, 3, 28, 8, 0, 0, 0, DateTimeKind.Unspecified)
@@ -992,7 +1028,7 @@ namespace BookingCare.Infrastructure.Migrations
                             Id = new Guid("11111111-1111-1111-1111-111111111102"),
                             CreatedDate = new DateTime(2026, 3, 28, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Chuyên khoa dạ dày, đại tràng, gan mật và nội soi tiêu hóa.",
-                            ImageUrl = "https://storage.googleapis.com/bookingcare/specialties/tieu-hoa.jpg",
+                            ImageUrl = "https://storage.googleapis.com/bookingcare-resources/static/specialty/TieuHoa.png",
                             Name = "Tiêu hóa",
                             SpecialtyCode = "CK-002",
                             UpdatedDate = new DateTime(2026, 3, 28, 8, 0, 0, 0, DateTimeKind.Unspecified)
@@ -1002,7 +1038,7 @@ namespace BookingCare.Infrastructure.Migrations
                             Id = new Guid("11111111-1111-1111-1111-111111111103"),
                             CreatedDate = new DateTime(2026, 3, 28, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Điều trị cao huyết áp, suy tim và các bệnh lý mạch vành.",
-                            ImageUrl = "https://storage.googleapis.com/bookingcare/specialties/tim-mach.jpg",
+                            ImageUrl = "https://storage.googleapis.com/bookingcare-resources/static/specialty/TimMach.png",
                             Name = "Tim mạch",
                             SpecialtyCode = "CK-003",
                             UpdatedDate = new DateTime(2026, 3, 28, 8, 0, 0, 0, DateTimeKind.Unspecified)
@@ -1012,7 +1048,7 @@ namespace BookingCare.Infrastructure.Migrations
                             Id = new Guid("11111111-1111-1111-1111-111111111104"),
                             CreatedDate = new DateTime(2026, 3, 28, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Chăm sóc thai kỳ, sinh sản và các bệnh lý phụ khoa nữ giới.",
-                            ImageUrl = "https://storage.googleapis.com/bookingcare/specialties/san-phu-khoa.jpg",
+                            ImageUrl = "https://storage.googleapis.com/bookingcare-resources/static/specialty/SanPhuKhoa.png",
                             Name = "Sản Phụ khoa",
                             SpecialtyCode = "CK-004",
                             UpdatedDate = new DateTime(2026, 3, 28, 8, 0, 0, 0, DateTimeKind.Unspecified)
@@ -1022,7 +1058,7 @@ namespace BookingCare.Infrastructure.Migrations
                             Id = new Guid("11111111-1111-1111-1111-111111111105"),
                             CreatedDate = new DateTime(2026, 3, 28, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Khám và điều trị các bệnh lý thường gặp ở trẻ sơ sinh và trẻ nhỏ.",
-                            ImageUrl = "https://storage.googleapis.com/bookingcare/specialties/nhi-khoa.jpg",
+                            ImageUrl = "https://storage.googleapis.com/bookingcare-resources/static/specialty/NhiKhoa.png",
                             Name = "Nhi khoa",
                             SpecialtyCode = "CK-005",
                             UpdatedDate = new DateTime(2026, 3, 28, 8, 0, 0, 0, DateTimeKind.Unspecified)
@@ -1032,7 +1068,7 @@ namespace BookingCare.Infrastructure.Migrations
                             Id = new Guid("11111111-1111-1111-1111-111111111106"),
                             CreatedDate = new DateTime(2026, 3, 28, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Điều trị mụn, nám, dị ứng da và thẩm mỹ công nghệ cao.",
-                            ImageUrl = "https://storage.googleapis.com/bookingcare/specialties/da-lieu.jpg",
+                            ImageUrl = "https://storage.googleapis.com/bookingcare-resources/static/specialty/DaLieu.png",
                             Name = "Da liễu",
                             SpecialtyCode = "CK-006",
                             UpdatedDate = new DateTime(2026, 3, 28, 8, 0, 0, 0, DateTimeKind.Unspecified)
@@ -1042,7 +1078,7 @@ namespace BookingCare.Infrastructure.Migrations
                             Id = new Guid("11111111-1111-1111-1111-111111111107"),
                             CreatedDate = new DateTime(2026, 3, 28, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Khám và điều trị viêm xoang, viêm họng, các bệnh lý tai mũi họng.",
-                            ImageUrl = "https://storage.googleapis.com/bookingcare/specialties/tai-mui-hong.jpg",
+                            ImageUrl = "https://storage.googleapis.com/bookingcare-resources/static/specialty/TaiMuiHong.png",
                             Name = "Tai Mũi Họng",
                             SpecialtyCode = "CK-007",
                             UpdatedDate = new DateTime(2026, 3, 28, 8, 0, 0, 0, DateTimeKind.Unspecified)
@@ -1052,7 +1088,7 @@ namespace BookingCare.Infrastructure.Migrations
                             Id = new Guid("11111111-1111-1111-1111-111111111108"),
                             CreatedDate = new DateTime(2026, 3, 28, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Khám mắt tổng quát, đo thị lực và điều trị tật khúc xạ.",
-                            ImageUrl = "https://storage.googleapis.com/bookingcare/specialties/mat.jpg",
+                            ImageUrl = "https://storage.googleapis.com/bookingcare-resources/static/specialty/Mat.png",
                             Name = "Mắt",
                             SpecialtyCode = "CK-008",
                             UpdatedDate = new DateTime(2026, 3, 28, 8, 0, 0, 0, DateTimeKind.Unspecified)
@@ -1062,7 +1098,7 @@ namespace BookingCare.Infrastructure.Migrations
                             Id = new Guid("11111111-1111-1111-1111-111111111109"),
                             CreatedDate = new DateTime(2026, 3, 28, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Chẩn đoán rối loạn thần kinh, đau đầu, tiền đình và não bộ.",
-                            ImageUrl = "https://storage.googleapis.com/bookingcare/specialties/than-kinh.jpg",
+                            ImageUrl = "https://storage.googleapis.com/bookingcare-resources/static/specialty/ThanKinh.png",
                             Name = "Thần kinh",
                             SpecialtyCode = "CK-009",
                             UpdatedDate = new DateTime(2026, 3, 28, 8, 0, 0, 0, DateTimeKind.Unspecified)
@@ -1072,7 +1108,7 @@ namespace BookingCare.Infrastructure.Migrations
                             Id = new Guid("11111111-1111-1111-1111-111111111110"),
                             CreatedDate = new DateTime(2026, 3, 28, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Nha khoa tổng quát, nhổ răng khôn và thẩm mỹ răng sứ.",
-                            ImageUrl = "https://storage.googleapis.com/bookingcare/specialties/rang-ham-mat.jpg",
+                            ImageUrl = "https://storage.googleapis.com/bookingcare-resources/static/specialty/RangHamMat.png",
                             Name = "Răng Hàm Mặt",
                             SpecialtyCode = "CK-010",
                             UpdatedDate = new DateTime(2026, 3, 28, 8, 0, 0, 0, DateTimeKind.Unspecified)
@@ -1356,6 +1392,26 @@ namespace BookingCare.Infrastructure.Migrations
                             TwoFactorEnabled = false,
                             UpdatedDate = new DateTime(2026, 3, 28, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             UserName = "bs.phamnhuhai@bookingcare.vn"
+                        },
+                        new
+                        {
+                            Id = new Guid("aaaaaaaa-1111-1111-1111-111111111111"),
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "admin-c1d2-e3f4-g5h6-78901234567",
+                            CreatedDate = new DateTime(2026, 3, 28, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "admin.quang@bookingcare.vn",
+                            EmailConfirmed = true,
+                            LockoutEnabled = true,
+                            NormalizedEmail = "ADMIN.QUANG@BOOKINGCARE.VN",
+                            NormalizedUserName = "ADMIN.QUANG@BOOKINGCARE.VN",
+                            PasswordHash = "AQAAAAIAAYagAAAAECAU7CUYk/UpTJd7hNEWSES8GqiNL5WIHG0BzyW15HYZQiF2Bb7hmkveVjC5dMBB4A==",
+                            PhoneNumber = "0988888888",
+                            PhoneNumberConfirmed = true,
+                            SecurityStamp = "ADMIN_SEC_STAMP_001",
+                            TokenExpiry = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TwoFactorEnabled = false,
+                            UpdatedDate = new DateTime(2026, 3, 28, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            UserName = "admin.quang@bookingcare.vn"
                         });
                 });
 
@@ -1753,6 +1809,11 @@ namespace BookingCare.Infrastructure.Migrations
                         {
                             UserId = new Guid("dddddddd-0000-0000-0000-000000000000"),
                             RoleId = new Guid("7ae82885-3b95-46f9-aa2b-6f81e3a19e27")
+                        },
+                        new
+                        {
+                            UserId = new Guid("aaaaaaaa-1111-1111-1111-111111111111"),
+                            RoleId = new Guid("34994df5-6435-430c-8fd3-e578da6ed929")
                         });
                 });
 
@@ -1773,6 +1834,17 @@ namespace BookingCare.Infrastructure.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("BookingCare.Domain.Entities.Admin", b =>
+                {
+                    b.HasOne("BookingCare.Domain.Entities.User", "User")
+                        .WithOne("Admin")
+                        .HasForeignKey("BookingCare.Domain.Entities.Admin", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BookingCare.Domain.Entities.Appointment", b =>
@@ -2052,6 +2124,8 @@ namespace BookingCare.Infrastructure.Migrations
 
             modelBuilder.Entity("BookingCare.Domain.Entities.User", b =>
                 {
+                    b.Navigation("Admin");
+
                     b.Navigation("Doctor");
 
                     b.Navigation("Patient");
