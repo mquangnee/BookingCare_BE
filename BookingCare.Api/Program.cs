@@ -1,11 +1,13 @@
+using BookingCare.Api.Workers;
+using BookingCare.Application.Patients.Commands.AuthCmd;
 using BookingCare.Application.Services;
 using BookingCare.Domain.Entities;
 using BookingCare.Domain.IRepository;
-using BookingCare.Identity.Application.Commands.AuthCmd;
 using BookingCare.Infrastructure;
 using BookingCare.Infrastructure.Maps;
 using BookingCare.Shared.Setting;
 using BookingCare.Shared.SignalR;
+using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
@@ -87,6 +89,7 @@ builder.Services.Configure<SmtpSetting>(builder.Configuration.GetSection(SmtpSet
 // Đăng ký Repository
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IPatientRepository, PatientRepository>();
 builder.Services.AddScoped<IPatientProfileRepository, PatientProfileRepository>();
 builder.Services.AddScoped<IDoctorRepository, DoctorRepository>();
@@ -106,7 +109,7 @@ builder.Services.AddScoped<ISenderService, SenderService>();
 builder.Services.AddScoped<IOtpService, OtpService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IGeneratorCodeService, GeneratorCodeService>();
-builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<INotificationRealTimeService, NotificationRealTimeService>();
 builder.Services.AddMemoryCache();
 builder.Services.AddMediatR(cfg =>
 {
@@ -134,6 +137,15 @@ builder.Services.AddCors(options =>
 });
 builder.Services.AddAutoMapper(cfg => { }, typeof(ProfileMap));
 builder.Services.AddSignalR();
+builder.Services.AddHangfire(config =>
+{
+    if (builder.Environment.IsDevelopment())
+        config.UseInMemoryStorage();
+    else
+        config.UseSqlServerStorage(
+            builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+builder.Services.AddHangfireServer();
 
 builder.Services.AddControllers();
 
@@ -145,7 +157,17 @@ var app = builder.Build();
 
 app.UseForwardedHeaders();
 
+app.UseHangfireDashboard("/hangfire");
+
+var recurringJobManager = app.Services.GetRequiredService<IRecurringJobManager>();
+
+RecurringJob.AddOrUpdate<AppointmentReminderWorker>(
+    WorkerSetting.JobName.SendEmailDailyAppointmentReminders,
+    job => job.SendAppointmentSummaryAsync(),
+     "0 7 * * *");
+
 app.MapHub<NotificationHub>("/notification");
+app.MapHub<AppointmentHub>("/appointment");
 
 if (app.Environment.IsDevelopment())
 {

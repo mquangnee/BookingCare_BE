@@ -4,6 +4,7 @@ namespace BookingCare.Domain.IRepository
 {
     public interface IUnitOfWork : IDisposable
     {
+        IAdminRepository Admins { get; }
         IPatientRepository Patients { get; }
         IPatientProfileRepository PatientProfiles { get; }
         IDoctorRepository Doctors { get; }
@@ -23,6 +24,7 @@ namespace BookingCare.Domain.IRepository
     {
         private readonly DbContext _dbContext;
 
+        public IAdminRepository Admins { get; }
         public IPatientRepository Patients { get; }
         public IPatientProfileRepository PatientProfiles { get; }
         public IDoctorRepository Doctors { get; }
@@ -37,7 +39,8 @@ namespace BookingCare.Domain.IRepository
         public IAppointmentServiceRepository AppointmentServices { get; }
 
         public UnitOfWork(
-            DbContext dbContext, 
+            DbContext dbContext,
+            IAdminRepository admins,
             IPatientRepository patients, 
             IPatientProfileRepository patientProfiles, 
             IDoctorRepository doctors, 
@@ -52,6 +55,7 @@ namespace BookingCare.Domain.IRepository
             IAppointmentServiceRepository appointmentServices)
         {
             _dbContext = dbContext;
+            Admins = admins;
             Patients = patients;
             PatientProfiles = patientProfiles;
             Doctors = doctors;

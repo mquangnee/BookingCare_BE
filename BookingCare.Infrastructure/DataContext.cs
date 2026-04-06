@@ -12,6 +12,7 @@ namespace BookingCare.Infrastructure
         {
         }
 
+        public DbSet<Admin> Admins { get; set; }
         public DbSet<Patient> Patients { get; set; }
         public DbSet<PatientProfile> PatientProfiles { get; set; }
         public DbSet<Doctor> Doctors { get; set; }
@@ -29,6 +30,11 @@ namespace BookingCare.Infrastructure
         {
             base.OnModelCreating(builder);
 
+            builder.Entity<Admin>()
+                .HasOne(a => a.User)
+                .WithOne(u => u.Admin)
+                .HasForeignKey<Admin>(a => a.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
             builder.Entity<Patient>()
                 .HasOne(p => p.User)
                 .WithOne(u => u.Patient)
@@ -156,7 +162,6 @@ namespace BookingCare.Infrastructure
         {
             string path = Path.Combine(Directory.GetCurrentDirectory(), "Seeder");
 
-            // QUAN TRỌNG: Thiết lập này giúp bỏ qua lỗi phân biệt hoa/thường (ví dụ: "id" trong JSON sẽ tự map vào "Id" trong C#)
             var jsonOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
@@ -169,6 +174,10 @@ namespace BookingCare.Infrastructure
             var usersJson = File.ReadAllText(Path.Combine(path, "users.json"));
             var users = JsonSerializer.Deserialize<List<User>>(usersJson, jsonOptions);
             if (users != null) builder.Entity<User>().HasData(users);
+
+            var adminJson = File.ReadAllText(Path.Combine(path, "admins.json"));
+            var admins = JsonSerializer.Deserialize<List<Admin>>(adminJson, jsonOptions);
+            if (admins != null) builder.Entity<Admin>().HasData(admins);
 
             var userRolesJson = File.ReadAllText(Path.Combine(path, "userroles.json"));
             var userRoles = JsonSerializer.Deserialize<List<IdentityUserRole<Guid>>>(userRolesJson, jsonOptions);

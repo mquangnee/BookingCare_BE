@@ -1,5 +1,4 @@
-﻿using BonBonCar.Application.Common;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace BookingCare.Shared.Common
 {

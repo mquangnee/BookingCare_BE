@@ -178,5 +178,23 @@
     "AccessFailedCount": 0,
     "CreatedDate": "2026-03-28T08:00:00",
     "UpdatedDate": "2026-03-28T08:00:00"
+  },
+  {
+    "Id": "aaaaaaaa-1111-1111-1111-111111111111",
+    "UserName": "admin.quang@bookingcare.vn",
+    "NormalizedUserName": "ADMIN.QUANG@BOOKINGCARE.VN",
+    "Email": "admin.quang@bookingcare.vn",
+    "NormalizedEmail": "ADMIN.QUANG@BOOKINGCARE.VN",
+    "EmailConfirmed": true,
+    "PasswordHash": "AQAAAAIAAYagAAAAECAU7CUYk/UpTJd7hNEWSES8GqiNL5WIHG0BzyW15HYZQiF2Bb7hmkveVjC5dMBB4A==",
+    "SecurityStamp": "ADMIN_SEC_STAMP_001",
+    "ConcurrencyStamp": "admin-c1d2-e3f4-g5h6-78901234567",
+    "PhoneNumber": "0988888888",
+    "PhoneNumberConfirmed": true,
+    "TwoFactorEnabled": false,
+    "LockoutEnabled": true,
+    "AccessFailedCount": 0,
+    "CreatedDate": "2026-03-28T08:00:00",
+    "UpdatedDate": "2026-03-28T08:00:00"
   }
 ]
