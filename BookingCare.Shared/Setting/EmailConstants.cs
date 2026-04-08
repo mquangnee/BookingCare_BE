@@ -13,6 +13,7 @@
             public const string Date = "Date";
             public const string AppointmentCount = "AppointmentCount";
             public const string AppointmentRows = "AppointmentRows";
+            public const string Password = "Password";
         }
 
         public static class Subjects
@@ -22,6 +23,7 @@
             public const string ChangePasswordOtp = $"{BrandName} - Mã xác thực đổi mật khẩu";
             public const string AppointmentSuccess = $"{BrandName} - Xác nhận đặt lịch khám thành công";
             public const string DailySummary = BrandName + " - Lịch khám ngày {{Date}} của bạn";
+            public const string CreateDoctorAccount = $"{BrandName} - Thông tin tài khoản bác sĩ của bạn";
         }
     }
 }

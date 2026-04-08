@@ -2,13 +2,15 @@
 using BookingCare.Domain.Models.EntityModels;
 using BookingCare.Shared.Common;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
 namespace BookingCare.Api.Controllers.Patients
 {
-    [Route("api/patient/specialty")]
+    [Route("api/specialty")]
     [ApiController]
+    [Authorize(Roles = "Admin, Patient")]
     public class SpecialtyController : ControllerBase
     {
         private readonly IMediator _mediator;

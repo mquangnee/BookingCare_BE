@@ -31,7 +31,7 @@ namespace BookingCare.Application.Admins.Query
                 .QueryableAsync()
                 .Include(pp => pp.Patient)
                     .ThenInclude(pp => pp.User)
-                .Where(pp => pp.Patient!.User != null && pp.Patient.User.LockoutEnd != null && pp.Patient.User.LockoutEnd < today && pp.Relationship == EnumRelationship.MySelf)
+                .Where(pp => pp.Patient!.User != null && (pp.Patient.User.LockoutEnd == null || pp.Patient.User.LockoutEnd < today) && pp.Relationship == EnumRelationship.MySelf)
                 .Select(pp => new PatientModel
                 {
                     Id = pp.PatientId,

@@ -7,6 +7,7 @@ namespace BookingCare.Domain.Models.EntityModels
         public Guid Id { get; set; }
         public Guid UserId { get; set; }
         public Guid SpecialtyId { get; set; }
+        public string? SpecialtyName { get; set; }
         public string? DoctorCode { get; set; }
         public string? Email { get; set; }
         public string? PhoneNumber { get; set; }
@@ -20,6 +21,7 @@ namespace BookingCare.Domain.Models.EntityModels
         public IList<string>? SubSpecialties { get; set; }
         public string? WorkingHistory { get; set; }
         public string? Description { get; set; }
+        public EnumAccountStatus Status { get; set; }
         public double? Price { get; set; }
     }
 }

@@ -64,8 +64,8 @@ namespace BookingCare.Application.Patients.Queries.AppointmentQuery
             var totalCount = await query.CountAsync(cancellationToken);
 
             query = query
-                .OrderByDescending(a => a.Date)
-                .ThenByDescending(a => a.CreatedDate);
+                .OrderBy(a => a.Date)
+                .ThenBy(a => a.StartTime);
             var appointments = await query
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)

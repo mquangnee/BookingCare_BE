@@ -30,14 +30,19 @@ namespace BookingCare.Application.Admins.Query
 
             var totalAppointmentsToday = await _unitOfWork.Appointments
                 .QueryableAsync()
-                .Where(a => a.CreatedDate == today)
+                .Include(a => a.Booker)
+                .Include(a => a.WorkSession)
+                    .ThenInclude(ws => ws.Doctor)
+                .Where(a => a.CreatedDate.Day == today.Day)
                 .Select(a => new AppointmentModel
                 {
                     Id = a.Id,
                     AppointmentCode = a.AppointmentCode,
                     BookerId = a.BookerId,
                     WorkSessionId = a.WorkSessionId,
+                    DoctorName = a.WorkSession.Doctor.FullName,
                     PatientProfileId = a.PatientProfileId,
+                    PatientName = a.PatientProfile.FullName,
                     Date = a.Date,
                     StartTime = a.StartTime,
                     EndTime = a.EndTime
@@ -45,14 +50,16 @@ namespace BookingCare.Application.Admins.Query
                 .ToListAsync(cancellationToken);
             var totalAppointmentsYesterday = await _unitOfWork.Appointments
                 .QueryableAsync()
-                .Where(a => a.CreatedDate == yesterday)
+                .Where(a => a.CreatedDate.Day == yesterday.Day)
                 .Select(a => new AppointmentModel
                 {
                     Id = a.Id,
                     AppointmentCode = a.AppointmentCode,
                     BookerId = a.BookerId,
                     WorkSessionId = a.WorkSessionId,
+                    DoctorName = a.WorkSession.Doctor.FullName,
                     PatientProfileId = a.PatientProfileId,
+                    PatientName = a.PatientProfile.FullName,
                     Date = a.Date,
                     StartTime = a.StartTime,
                     EndTime = a.EndTime
