@@ -4,11 +4,14 @@ using BookingCare.Shared.Common;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using BookingCare.Shared.Enum;
 
 namespace BookingCare.Application.Admins.Query
 {
     public class GetTotalDoctorsQuery : IRequest<MethodResult<DashboardMetricModel<DoctorModel>>>
     {
+        public Guid SpecialtyId { get; set; }
+        public bool IsActived { get; set; }
     }
 
     public class GetTotalDoctorsQueryHandler : IRequestHandler<GetTotalDoctorsQuery, MethodResult<DashboardMetricModel<DoctorModel>>>
@@ -25,16 +28,18 @@ namespace BookingCare.Application.Admins.Query
             ArgumentNullException.ThrowIfNull(request);
             var methodResult = new MethodResult<DashboardMetricModel<DoctorModel>>();
 
-            var today = DateTime.Now;
-            var totalDoctors = await _unitOfWork.Doctors
+            var query = _unitOfWork.Doctors
                 .QueryableAsync()
                 .Include(d => d.User)
-                .Where(d => d.User != null && d.User.LockoutEnd != null && d.User.LockoutEnd < today)
+                .Include(d => d.Specialty);
+
+            var totalDoctors = await query
                 .Select(d => new DoctorModel
                 {
                     Id = d.Id,
                     UserId = d.UserId,
                     SpecialtyId = d.SpecialtyId,
+                    SpecialtyName = d.Specialty != null ? d.Specialty.Name : "Chưa xác định",
                     DoctorCode = d.DoctorCode,
                     Email = d.User!.Email,
                     PhoneNumber = d.User.PhoneNumber,
@@ -47,16 +52,17 @@ namespace BookingCare.Application.Admins.Query
                     Position = d.Position,
                     SubSpecialties = d.SubSpecialties,
                     WorkingHistory = d.WorkingHistory,
-                    Description = d.Description
+                    Description = d.Description,
+                    Status = d.User.LockoutEnd == null ? EnumAccountStatus.Active : EnumAccountStatus.Inactive,
                 })
                 .ToListAsync(cancellationToken);
 
-            var dashboardModel = new DashboardMetricModel<DoctorModel>
+            methodResult.Result = new DashboardMetricModel<DoctorModel>
             {
                 Total = totalDoctors.Count,
                 Data = totalDoctors
             };
-            methodResult.Result = dashboardModel;
+
             methodResult.StatusCode = StatusCodes.Status200OK;
             return methodResult;
         }

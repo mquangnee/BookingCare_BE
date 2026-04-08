@@ -28,5 +28,23 @@ namespace BookingCare.Api.Controllers.Admins
             var queryResult = await _mediator.Send(new GetDashboardSummaryQuery { });
             return queryResult.GetActionResult();
         }
+
+        [HttpGet("booking-chart")]
+        [ProducesResponseType(typeof(MethodResult<List<ChartDataModel>>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> GetWeeklyBookingStatistics()
+        {
+            var queryResult = await _mediator.Send(new GetWeeklyBookingStatisticsQuery { });
+            return queryResult.GetActionResult();
+        }
+
+        [HttpGet("specialty-chart")]
+        [ProducesResponseType(typeof(MethodResult<List<SpecialtyDistributionModel>>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> GetWeeklySpecialtyDistribution()
+        {
+            var queryResult = await _mediator.Send(new GetWeeklySpecialtyDistributionQuery { });
+            return queryResult.GetActionResult();
+        }
     }
 }

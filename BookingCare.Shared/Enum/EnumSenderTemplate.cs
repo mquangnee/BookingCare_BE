@@ -5,6 +5,8 @@
         SendOtpRegister,
         SendOtpVerifyPassword,
         SendOtpChangePassword,
-        DailySummary
+        DailySummary,
+        AccountCreated,
+        CreateDoctorAccount
     }
 }

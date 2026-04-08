@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Runtime;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -146,6 +147,10 @@ builder.Services.AddHangfire(config =>
             builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 builder.Services.AddHangfireServer();
+
+// Đăng ký Cloud Storage Service
+builder.Services.Configure<CloudStorageSetting>(builder.Configuration.GetSection("GoogleCloudStorage"));
+builder.Services.AddScoped<ICloudStorageService, CloudStorageService>();
 
 builder.Services.AddControllers();
 
