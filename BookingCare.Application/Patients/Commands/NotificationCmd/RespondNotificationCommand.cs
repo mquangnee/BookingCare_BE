@@ -55,9 +55,8 @@ namespace BookingCare.Application.Patients.Commands.NotificationCmd
             }
             profileShare.ShareStatus = request.IsAccepted ? EnumShareStatus.Accepted : EnumShareStatus.Rejected;
             _unitOfWork.ProfileShares.Update(profileShare);
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            // Only send notification if user accepted the share
             if (request.IsAccepted)
             {
                 var fullName = await GetResponderName(_unitOfWork, notification.ReceiverId, cancellationToken) ?? "Người nhận";
@@ -89,7 +88,8 @@ namespace BookingCare.Application.Patients.Commands.NotificationCmd
                 content: isAccepted ? EnumNotificationContent.ShareProfileAccepted : EnumNotificationContent.ShareProfileRejected,
                 type: isAccepted ? EnumNotificationType.ShareProfileAccepted : EnumNotificationType.ShareProfileRejected,
                 objectId: null,
-                messageParams: messageParams
+                messageParams: messageParams,
+                cancellationToken: CancellationToken.None
             );
         }
 

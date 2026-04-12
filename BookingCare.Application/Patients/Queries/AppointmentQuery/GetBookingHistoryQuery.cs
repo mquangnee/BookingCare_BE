@@ -66,10 +66,7 @@ namespace BookingCare.Application.Patients.Queries.AppointmentQuery
             query = query
                 .OrderBy(a => a.Date)
                 .ThenBy(a => a.StartTime);
-            var appointments = await query
-                .Skip((request.PageNumber - 1) * request.PageSize)
-                .Take(request.PageSize)
-                .ToListAsync(cancellationToken);
+            var appointments = await query.ToListAsync(cancellationToken);
             var bookingHistories = appointments.Select(a => new BookingHistoryModel
             {
                 Id = a.Id,
@@ -77,7 +74,6 @@ namespace BookingCare.Application.Patients.Queries.AppointmentQuery
                 Date = a.Date,
                 StartTime = a.StartTime,
                 EndTime = a.EndTime,
-                QueueNumber = a.QueueNumber,
                 Status = a.Status,
                 DoctorName = a.WorkSession.Doctor.FullName,
                 DoctorCode = a.WorkSession.Doctor.DoctorCode,
@@ -93,9 +89,7 @@ namespace BookingCare.Application.Patients.Queries.AppointmentQuery
             var pagedResult = new PagedResult<BookingHistoryModel>
             {
                 Items = bookingHistories,
-                TotalCount = totalCount,
-                PageNumber = request.PageNumber,
-                PageSize = request.PageSize
+                TotalCount = totalCount
             };
 
             methodResult.Result = pagedResult;

@@ -50,10 +50,9 @@ namespace BookingCare.Application.Admins.Query
                     CitizenId = d.CitizenId,
                     ExperienceYears = d.ExperienceYears,
                     Position = d.Position,
-                    SubSpecialties = d.SubSpecialties,
                     WorkingHistory = d.WorkingHistory,
                     Description = d.Description,
-                    Status = d.User.LockoutEnd == null ? EnumAccountStatus.Active : EnumAccountStatus.Inactive,
+                    Status = d.User.LockoutEnd == null ? EnumStatus.Active : EnumStatus.Inactive,
                 })
                 .ToListAsync(cancellationToken);
 

@@ -11,7 +11,7 @@ namespace BookingCare.Application.Services
 {
     public interface INotificationRealTimeService
     {
-        Task SendNotificationAsync(Guid receiverId, Guid? senderId, Guid? patientProfileId, EnumNotificationContent content, EnumNotificationType type, Guid? objectId, List<object> messageParams);
+        Task SendNotificationAsync(Guid receiverId, Guid? senderId, Guid? patientProfileId, EnumNotificationContent content, EnumNotificationType type, Guid? objectId, List<object> messageParams, CancellationToken cancellationToken);
     }
 
     public class NotificationRealTimeService : INotificationRealTimeService
@@ -25,7 +25,7 @@ namespace BookingCare.Application.Services
             _hubContext = hubContext;
         }
 
-        public async Task SendNotificationAsync(Guid userId, Guid? senderId, Guid? patientProfileId, EnumNotificationContent content, EnumNotificationType type, Guid? objectId, List<object> messageParams)
+        public async Task SendNotificationAsync(Guid userId, Guid? senderId, Guid? patientProfileId, EnumNotificationContent content, EnumNotificationType type, Guid? objectId, List<object> messageParams, CancellationToken cancellationToken)
         {
             var notificationType = await _unitOfWork.NotificationTypes.GetByContentAsync(content);
             if (notificationType == null)
@@ -44,7 +44,7 @@ namespace BookingCare.Application.Services
                 ObjectId = objectId
             };
             await _unitOfWork.Notifications.AddAsync(notification);
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
             var notificationModel = new NotificationModel
             {
                 NotificationId = notification.Id,
@@ -59,7 +59,7 @@ namespace BookingCare.Application.Services
                 IsActioned = notification.IsActioned,
                 CreatedDate = notification.CreatedDate
             };
-            await _hubContext.Clients.User(userId.ToString()).SendAsync(RealTimeSetting.NotificationHub.Method.NotificationMessage, notificationModel);
+            await _hubContext.Clients.User(userId.ToString()).SendAsync(HubSetting.Method.NotificationMessage, notificationModel);
         }
     }
 }

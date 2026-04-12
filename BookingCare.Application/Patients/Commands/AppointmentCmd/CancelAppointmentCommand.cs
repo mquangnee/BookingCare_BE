@@ -66,7 +66,7 @@ namespace BookingCare.Application.Patients.Commands.AppointmentCmd
             }
             appointment.Status = EnumAppointmentStatus.Cancelled;
             _unitOfWork.Appointments.Update(appointment);
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             methodResult.Result = true;
             methodResult.StatusCode = StatusCodes.Status200OK;

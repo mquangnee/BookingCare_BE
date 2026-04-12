@@ -18,10 +18,10 @@ namespace BookingCare.Domain.Models.EntityModels
         public string? CitizenId { get; set; }
         public int ExperienceYears { get; set; }
         public EnumPosition Position { get; set; }
-        public IList<string>? SubSpecialties { get; set; }
         public string? WorkingHistory { get; set; }
         public string? Description { get; set; }
-        public EnumAccountStatus Status { get; set; }
+        public EnumStatus Status { get; set; }
         public double? Price { get; set; }
+        public DateTime? StartTime { get; set; }
     }
 }

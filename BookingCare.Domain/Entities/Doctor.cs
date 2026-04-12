@@ -7,7 +7,6 @@ namespace BookingCare.Domain.Entities
         public Guid Id { get; set; }
         public Guid UserId { get; set; }
         public Guid SpecialtyId { get; set; }
-
         public string? DoctorCode { get; set; }
         public string? AvatarUrl { get; set; }
         public string? FullName { get; set; }
@@ -19,8 +18,7 @@ namespace BookingCare.Domain.Entities
         public IList<string>? SubSpecialties { get; set; }
         public string? WorkingHistory { get; set; }
         public string? Description { get; set; }
-
-        // Relationships
+        
         public User? User { get; set; }
         public Specialty? Specialty { get; set; }
         public ICollection<WorkSession>? WorkSessions { get; set; }

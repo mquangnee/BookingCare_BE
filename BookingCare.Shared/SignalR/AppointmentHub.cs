@@ -6,18 +6,14 @@ namespace BookingCare.Shared.SignalR
     [Authorize]
     public class AppointmentHub : Hub
     {
-        public override Task OnConnectedAsync()
+        public async Task JoinDoctorGroup(Guid userId)
         {
-            var userId = Context.UserIdentifier;
-            Console.WriteLine($"User {userId} vừa kết nối SignalR!");
-            return base.OnConnectedAsync();
+            await Groups.AddToGroupAsync(Context.ConnectionId, $"doctor_{userId}");
         }
 
-        public override Task OnDisconnectedAsync(Exception exception)
+        public async Task LeaveDoctorGroup(Guid doctorId)
         {
-            var userId = Context.UserIdentifier;
-            Console.WriteLine($"User {userId} vừa ngắt kết nối!");
-            return base.OnDisconnectedAsync(exception);
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"doctor_{doctorId}");
         }
     }
 }

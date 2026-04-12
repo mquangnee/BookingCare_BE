@@ -34,7 +34,7 @@ namespace BookingCare.Application.Admins.Query
                 .Where(pp => pp.Patient!.User != null && (pp.Patient.User.LockoutEnd == null || pp.Patient.User.LockoutEnd < today) && pp.Relationship == EnumRelationship.MySelf)
                 .Select(pp => new PatientModel
                 {
-                    Id = pp.PatientId,
+                    Id = (Guid)pp.PatientId!,
                     UserId = pp.Patient!.UserId,
                     PatientCode = pp.Patient.PatientCode,
                     Email = pp.Patient!.User!.Email,

@@ -61,9 +61,11 @@ builder.Services.AddAuthentication(options =>
     {
         OnMessageReceived = context =>
         {
-            var accessToken = context.Request.Query["accessToken"];
+            var accessToken = context.Request.Query["access_token"];
             var path = context.HttpContext.Request.Path;
-            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments(RealTimeSetting.NotificationHub.Pattern))
+            if (!string.IsNullOrEmpty(accessToken) &&
+                (path.StartsWithSegments(HubSetting.Pattern.NotificationHub) ||
+                 path.StartsWithSegments(HubSetting.Pattern.AppointmentHub)))
             {
                 context.Token = accessToken;
             }
@@ -103,6 +105,9 @@ builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IWorkSessionRepository, WorkSessionRepository>();
 builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IAppointmentServiceRepository, AppointmentServiceRepository>();
+builder.Services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
+builder.Services.AddScoped<IPrescriptionDetailRepository, PrescriptionDetailRepository>();
+builder.Services.AddScoped<IMedicineRepository, MedicineRepository>();
 
 // Đăng ký Service
 builder.Services.AddHttpContextAccessor();
@@ -171,8 +176,8 @@ RecurringJob.AddOrUpdate<AppointmentReminderWorker>(
     job => job.SendAppointmentSummaryAsync(),
      "0 7 * * *");
 
-app.MapHub<NotificationHub>("/notification");
-app.MapHub<AppointmentHub>("/appointment");
+app.MapHub<NotificationHub>(HubSetting.Pattern.NotificationHub);
+app.MapHub<AppointmentHub>(HubSetting.Pattern.AppointmentHub);
 
 if (app.Environment.IsDevelopment())
 {

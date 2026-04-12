@@ -22,18 +22,18 @@ namespace BookingCare.Api.Controllers.Patients
         }
 
         [HttpGet()]
-        [ProducesResponseType(typeof(MethodResult<UserProfileModel>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(MethodResult<PatientProfileModel>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> GetUserProfile([FromQuery] Guid? profileId)
+        public async Task<IActionResult> GetPatientProfile([FromQuery] Guid? profileId)
         {
-            var queryResult = await _mediator.Send(new GetUserProfileQuery { ProfileId = profileId });
+            var queryResult = await _mediator.Send(new GetPatientProfileQuery { ProfileId = profileId });
             return queryResult.GetActionResult();
         }
 
         [HttpPost("update")]
         [ProducesResponseType(typeof(MethodResult<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> UpdateUserProfile([FromBody] UpdateUserProfileCommand command)
+        public async Task<IActionResult> UpdatePatientProfile([FromBody] UpdatePatientProfileCommand command)
         {
             var commandResult = await _mediator.Send(command);
             return commandResult.GetActionResult();
@@ -42,16 +42,16 @@ namespace BookingCare.Api.Controllers.Patients
         [HttpPost("create")]
         [ProducesResponseType(typeof(MethodResult<bool>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> CreateUserProfile([FromBody] CreateUserProfileCommand command)
+        public async Task<IActionResult> CreatePatientProfile([FromBody] CreatePatientProfileCommand command)
         {
             var commandResult = await _mediator.Send(command);
             return commandResult.GetActionResult();
         }
 
         [HttpGet("all")]
-        [ProducesResponseType(typeof(MethodResult<List<UserProfileModel>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(MethodResult<List<PatientProfileModel>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> GetUserProfiles()
+        public async Task<IActionResult> GetPatientProfiles()
         {
             var queryResult = await _mediator.Send(new GetFamilyProfilesQuery { });
             return queryResult.GetActionResult();
@@ -60,7 +60,7 @@ namespace BookingCare.Api.Controllers.Patients
         [HttpPost("share")]
         [ProducesResponseType(typeof(MethodResult<bool>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> ShareUserProfile([FromBody] ShareUserProfileCommand command)
+        public async Task<IActionResult> SharePatientProfile([FromBody] SharePatientProfileCommand command)
         {
             var commandResult = await _mediator.Send(command);
             return commandResult.GetActionResult();
@@ -85,9 +85,9 @@ namespace BookingCare.Api.Controllers.Patients
         }
 
         [HttpGet("available")]
-        [ProducesResponseType(typeof(MethodResult<List<UserProfileModel>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(MethodResult<List<PatientProfileModel>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> GetUserProfilesForBooking([FromQuery] GetUserProfilesForBookingQuery query)
+        public async Task<IActionResult> GetUserProfilesForBooking([FromQuery] GetPatientProfilesForBookingQuery query)
         {
             var queryResult = await _mediator.Send(query);
             return queryResult.GetActionResult();

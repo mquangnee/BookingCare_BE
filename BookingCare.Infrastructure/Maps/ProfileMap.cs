@@ -8,7 +8,7 @@ namespace BookingCare.Infrastructure.Maps
     {
         public ProfileMap()
         {
-            CreateMap<PatientProfile, UserProfileModel>();
+            CreateMap<PatientProfile, PatientProfileModel>();
         }
     }
 }
