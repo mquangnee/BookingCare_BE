@@ -17,7 +17,10 @@ namespace BookingCare.Domain.IRepository
         IServiceRepository Services { get; }
         IWorkSessionRepository WorkSessions { get; }
         IAppointmentServiceRepository AppointmentServices { get; }
-        Task<int> SaveChangesAsync();
+        IMedicineRepository Medicines { get; }
+        IPrescriptionRepository Prescriptions { get; }
+        IPrescriptionDetailRepository PrescriptionDetails { get; }
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 
     public class UnitOfWork : IUnitOfWork
@@ -37,6 +40,9 @@ namespace BookingCare.Domain.IRepository
         public IServiceRepository Services { get; }
         public IWorkSessionRepository WorkSessions { get; }
         public IAppointmentServiceRepository AppointmentServices { get; }
+        public IMedicineRepository Medicines { get; }
+        public IPrescriptionRepository Prescriptions { get; }
+        public IPrescriptionDetailRepository PrescriptionDetails { get; }
 
         public UnitOfWork(
             DbContext dbContext,
@@ -52,7 +58,10 @@ namespace BookingCare.Domain.IRepository
             IAppointmentRepository appointments,
             IWorkSessionRepository workSessions,
             IServiceRepository services,
-            IAppointmentServiceRepository appointmentServices)
+            IAppointmentServiceRepository appointmentServices,
+            IMedicineRepository medicines,
+            IPrescriptionRepository prescriptions,
+            IPrescriptionDetailRepository prescriptionDetails)
         {
             _dbContext = dbContext;
             Admins = admins;
@@ -68,6 +77,9 @@ namespace BookingCare.Domain.IRepository
             WorkSessions = workSessions;
             Services = services;
             AppointmentServices = appointmentServices;
+            Medicines = medicines;
+            Prescriptions = prescriptions;
+            PrescriptionDetails = prescriptionDetails;
         }
 
         public void Dispose()
@@ -75,9 +87,9 @@ namespace BookingCare.Domain.IRepository
             _dbContext.Dispose();
         }
 
-        public async Task<int> SaveChangesAsync()
+        public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
-            return await _dbContext.SaveChangesAsync();
+            return await _dbContext.SaveChangesAsync(cancellationToken);
         }
     }
 }

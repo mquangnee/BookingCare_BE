@@ -6,7 +6,7 @@ namespace BookingCare.Domain.Entities
     {
         public Guid Id { get; set; }
         public string? ProfileCode { get; set; }
-        public Guid PatientId { get; set; }
+        public Guid? PatientId { get; set; }
 
         public string? FullName { get; set; }
         public DateTime DateOfBirth { get; set; }

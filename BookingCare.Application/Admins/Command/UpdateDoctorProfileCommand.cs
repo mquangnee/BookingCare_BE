@@ -43,12 +43,14 @@ namespace BookingCare.Application.Admins.Command
             }
             doctor.SpecialtyId = request.SpecialtyId;
             doctor.Position = request.Position;
-            user.PhoneNumber = request.PhoneNumber;
             doctor.ExperienceYears = request.ExperienceYears;
             doctor.Description = request.Description;
             doctor.WorkingHistory = request.WorkingHistory;
             _unitOfWork.Doctors.Update(doctor);
-            await _unitOfWork.SaveChangesAsync();
+
+            user.PhoneNumber = request.PhoneNumber;
+            user.UpdatedDate = DateTime.Now;
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
             var res = await _userManager.UpdateAsync(user);
             if (res.Succeeded == false)
             {

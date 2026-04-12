@@ -32,7 +32,8 @@ namespace BookingCare.Application.Admins.Command
                 methodResult.AddErrorBadRequest(nameof(EnumSystemErrorCode.DataNotExist), nameof(request.UserId), request.UserId);
                 return methodResult;
             }
-            user.LockoutEnd = request.NewStatus == Shared.Enum.EnumAccountStatus.Active ? null : DateTimeOffset.MaxValue;
+            user.LockoutEnd = request.NewStatus == Shared.Enum.EnumStatus.Active ? null : DateTimeOffset.MaxValue;
+            user.UpdatedDate = DateTime.Now;
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
             {

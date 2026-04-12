@@ -70,6 +70,9 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Property<Guid>("BookerId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("CheckInDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
@@ -82,14 +85,26 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Property<Guid>("PatientProfileId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int?>("QueueNumber")
-                        .HasColumnType("int");
+                    b.Property<Guid>("PrescriptionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Priority")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<TimeSpan?>("StartTime")
                         .HasColumnType("time");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("WorkSessionId")
                         .HasColumnType("uniqueidentifier");
@@ -359,6 +374,173 @@ namespace BookingCare.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("BookingCare.Domain.Entities.Medicine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Function")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Medicines");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("e4b6d081-3c72-4d1a-8b1e-9a2f5c1d4e01"),
+                            CreatedDate = new DateTime(2026, 4, 9, 17, 4, 5, 0, DateTimeKind.Utc),
+                            Function = "Giảm đau, hạ sốt từ nhẹ đến vừa.",
+                            Name = "Paracetamol 500mg",
+                            Status = 0,
+                            Unit = "Tablet"
+                        },
+                        new
+                        {
+                            Id = new Guid("f5c7e192-4d83-5e2b-9c2f-0b3a6d2e5f12"),
+                            CreatedDate = new DateTime(2026, 4, 9, 17, 4, 5, 0, DateTimeKind.Utc),
+                            Function = "Kháng viêm không steroid (NSAID), giảm đau, hạ sốt.",
+                            Name = "Ibuprofen 400mg",
+                            Status = 0,
+                            Unit = "Tablet"
+                        },
+                        new
+                        {
+                            Id = new Guid("a1d8f203-5e94-6f3c-0d3a-1c4b7e3f6023"),
+                            CreatedDate = new DateTime(2026, 4, 9, 17, 4, 5, 0, DateTimeKind.Utc),
+                            Function = "Gel bôi ngoài da giảm đau, chống viêm cơ xương khớp.",
+                            Name = "Voltaren Emulgel 1% 20g",
+                            Status = 0,
+                            Unit = "Tube"
+                        },
+                        new
+                        {
+                            Id = new Guid("b2e90314-6fa5-704d-1e4b-2d5c8f407134"),
+                            CreatedDate = new DateTime(2026, 4, 9, 17, 4, 5, 0, DateTimeKind.Utc),
+                            Function = "Ức chế tiết axit dạ dày, điều trị viêm loét dạ dày - tá tràng.",
+                            Name = "Omeprazole 20mg",
+                            Status = 0,
+                            Unit = "Tablet"
+                        },
+                        new
+                        {
+                            Id = new Guid("c3fa1425-70b6-815e-2f5c-3e6d90518245"),
+                            CreatedDate = new DateTime(2026, 4, 9, 17, 4, 5, 0, DateTimeKind.Utc),
+                            Function = "Thuốc kháng axit, điều trị cơn đau dạ dày cấp.",
+                            Name = "Phosphalugel 20% 20g",
+                            Status = 0,
+                            Unit = "Sachet"
+                        },
+                        new
+                        {
+                            Id = new Guid("d40b2536-81c7-926f-306d-4f7ea1629356"),
+                            CreatedDate = new DateTime(2026, 4, 9, 17, 4, 5, 0, DateTimeKind.Utc),
+                            Function = "Điều trị tiêu chảy, nhiễm khuẩn đường ruột.",
+                            Name = "Berberin 10mg",
+                            Status = 0,
+                            Unit = "Bottle"
+                        },
+                        new
+                        {
+                            Id = new Guid("e51c3647-92d8-0370-417e-508fb273a467"),
+                            CreatedDate = new DateTime(2026, 4, 9, 17, 4, 5, 0, DateTimeKind.Utc),
+                            Function = "Kháng sinh nhóm Penicillin, điều trị nhiễm khuẩn hô hấp, tai mũi họng.",
+                            Name = "Amoxicillin 500mg",
+                            Status = 0,
+                            Unit = "Blister"
+                        },
+                        new
+                        {
+                            Id = new Guid("f62d4758-03e9-1481-528f-6190c384b578"),
+                            CreatedDate = new DateTime(2026, 4, 9, 17, 4, 5, 0, DateTimeKind.Utc),
+                            Function = "Kháng sinh nhóm Macrolid, trị viêm phế quản, viêm phổi.",
+                            Name = "Azithromycin 250mg",
+                            Status = 0,
+                            Unit = "Tablet"
+                        },
+                        new
+                        {
+                            Id = new Guid("073e5869-14fa-2592-6390-72a1d495c689"),
+                            CreatedDate = new DateTime(2026, 4, 9, 17, 4, 5, 0, DateTimeKind.Utc),
+                            Function = "Thuốc kháng histamin, điều trị viêm mũi dị ứng, mề đay.",
+                            Name = "Loratadine 10mg",
+                            Status = 0,
+                            Unit = "Tablet"
+                        },
+                        new
+                        {
+                            Id = new Guid("184f697a-250b-3603-74a1-83b2e506d79a"),
+                            CreatedDate = new DateTime(2026, 4, 9, 17, 4, 5, 0, DateTimeKind.Utc),
+                            Function = "Siro ho chiết xuất lá thường xuân, làm loãng đờm, giảm ho.",
+                            Name = "Prospan 100ml",
+                            Status = 0,
+                            Unit = "Bottle"
+                        },
+                        new
+                        {
+                            Id = new Guid("29507a8b-361c-4714-85b2-94c3f617e8ab"),
+                            CreatedDate = new DateTime(2026, 4, 9, 17, 4, 5, 0, DateTimeKind.Utc),
+                            Function = "Thuốc chẹn kênh canxi, điều trị tăng huyết áp.",
+                            Name = "Amlodipine 5mg",
+                            Status = 0,
+                            Unit = "Blister"
+                        },
+                        new
+                        {
+                            Id = new Guid("3a618b9c-472d-5825-96c3-05d40728f9bc"),
+                            CreatedDate = new DateTime(2026, 4, 9, 17, 4, 5, 0, DateTimeKind.Utc),
+                            Function = "Tăng cường sức đề kháng, bổ sung vitamin C.",
+                            Name = "Vitamin C 500mg",
+                            Status = 0,
+                            Unit = "Vial"
+                        },
+                        new
+                        {
+                            Id = new Guid("4b729cad-583e-6936-07d4-16e518390acd"),
+                            CreatedDate = new DateTime(2026, 4, 9, 17, 4, 5, 0, DateTimeKind.Utc),
+                            Function = "Hỗ trợ điều trị thoái hóa khớp, tăng dịch nhờn sụn khớp.",
+                            Name = "Glucosamine Sulfate 1500mg",
+                            Status = 0,
+                            Unit = "Box"
+                        },
+                        new
+                        {
+                            Id = new Guid("5c83adb1-694f-7a47-18e5-27f6294a1bde"),
+                            CreatedDate = new DateTime(2026, 4, 9, 17, 4, 5, 0, DateTimeKind.Utc),
+                            Function = "Thuốc gây tê tại chỗ dạng tiêm.",
+                            Name = "Lidocaine 2%",
+                            Status = 0,
+                            Unit = "Ampule"
+                        },
+                        new
+                        {
+                            Id = new Guid("6d94bec2-7a50-8b58-29f6-38073a5b2cef"),
+                            CreatedDate = new DateTime(2026, 4, 9, 17, 4, 5, 0, DateTimeKind.Utc),
+                            Function = "Điều trị thiếu máu do thiếu vitamin B12, đau dây thần kinh.",
+                            Name = "Vitamin B12 1000mcg",
+                            Status = 0,
+                            Unit = "Ampule"
+                        });
+                });
+
             modelBuilder.Entity("BookingCare.Domain.Entities.Notification", b =>
                 {
                     b.Property<Guid>("Id")
@@ -503,7 +685,7 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Property<string>("MedicalHistory")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("PatientId")
+                    b.Property<Guid?>("PatientId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("PhoneNumber")
@@ -523,6 +705,59 @@ namespace BookingCare.Infrastructure.Migrations
                     b.HasIndex("PatientId");
 
                     b.ToTable("PatientProfiles");
+                });
+
+            modelBuilder.Entity("BookingCare.Domain.Entities.Prescription", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AppointmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Diagnosis")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Instructions")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppointmentId")
+                        .IsUnique();
+
+                    b.ToTable("Prescriptions");
+                });
+
+            modelBuilder.Entity("BookingCare.Domain.Entities.PrescriptionDetail", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Dosage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("MedicineId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PrescriptionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Usage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MedicineId");
+
+                    b.HasIndex("PrescriptionId");
+
+                    b.ToTable("PrescriptionDetails");
                 });
 
             modelBuilder.Entity("BookingCare.Domain.Entities.ProfileShare", b =>
@@ -1953,10 +2188,39 @@ namespace BookingCare.Infrastructure.Migrations
                     b.HasOne("BookingCare.Domain.Entities.Patient", "Patient")
                         .WithMany("PatientProfiles")
                         .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("BookingCare.Domain.Entities.Prescription", b =>
+                {
+                    b.HasOne("BookingCare.Domain.Entities.Appointment", "Appointment")
+                        .WithOne("Prescription")
+                        .HasForeignKey("BookingCare.Domain.Entities.Prescription", "AppointmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Patient");
+                    b.Navigation("Appointment");
+                });
+
+            modelBuilder.Entity("BookingCare.Domain.Entities.PrescriptionDetail", b =>
+                {
+                    b.HasOne("BookingCare.Domain.Entities.Medicine", "Medicine")
+                        .WithMany("PrescriptionDetails")
+                        .HasForeignKey("MedicineId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BookingCare.Domain.Entities.Prescription", "Prescription")
+                        .WithMany("PrescriptionDetails")
+                        .HasForeignKey("PrescriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Medicine");
+
+                    b.Navigation("Prescription");
                 });
 
             modelBuilder.Entity("BookingCare.Domain.Entities.ProfileShare", b =>
@@ -2087,6 +2351,8 @@ namespace BookingCare.Infrastructure.Migrations
             modelBuilder.Entity("BookingCare.Domain.Entities.Appointment", b =>
                 {
                     b.Navigation("AppointmentServices");
+
+                    b.Navigation("Prescription");
                 });
 
             modelBuilder.Entity("BookingCare.Domain.Entities.Doctor", b =>
@@ -2094,6 +2360,11 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Navigation("Services");
 
                     b.Navigation("WorkSessions");
+                });
+
+            modelBuilder.Entity("BookingCare.Domain.Entities.Medicine", b =>
+                {
+                    b.Navigation("PrescriptionDetails");
                 });
 
             modelBuilder.Entity("BookingCare.Domain.Entities.Patient", b =>
@@ -2106,6 +2377,11 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Navigation("Appointments");
 
                     b.Navigation("SharedProfiles");
+                });
+
+            modelBuilder.Entity("BookingCare.Domain.Entities.Prescription", b =>
+                {
+                    b.Navigation("PrescriptionDetails");
                 });
 
             modelBuilder.Entity("BookingCare.Domain.Entities.Service", b =>

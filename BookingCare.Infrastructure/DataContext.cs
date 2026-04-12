@@ -25,16 +25,21 @@ namespace BookingCare.Infrastructure
         public DbSet<WorkSession> WorkSessions { get; set; }
         public DbSet<Service> Services { get; set; }
         public DbSet<AppointmentService> AppointmentServices { get; set; }
+        public DbSet<Prescription> Prescriptions { get; set; }
+        public DbSet<PrescriptionDetail> PrescriptionDetails { get; set; }
+        public DbSet<Medicine> Medicines { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
+            #region Identity Configurations
             builder.Entity<Admin>()
                 .HasOne(a => a.User)
                 .WithOne(u => u.Admin)
                 .HasForeignKey<Admin>(a => a.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
             builder.Entity<Patient>()
                 .HasOne(p => p.User)
                 .WithOne(u => u.Patient)
@@ -45,7 +50,8 @@ namespace BookingCare.Infrastructure
                 .HasOne(pp => pp.Patient)
                 .WithMany(p => p.PatientProfiles)
                 .HasForeignKey(pp => pp.PatientId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.SetNull);
 
             builder.Entity<Doctor>()
                 .HasOne(d => d.User)
@@ -107,6 +113,12 @@ namespace BookingCare.Infrastructure
                 .HasForeignKey(a => a.BookerId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.Entity<Appointment>()
+                .HasOne(a => a.Prescription)
+                .WithOne(p => p.Appointment)
+                .HasForeignKey<Appointment>(a => a.PrescriptionId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             builder.Entity<AppointmentService>()
                 .HasOne(asvc => asvc.Appointment)
                 .WithMany(a => a.AppointmentServices)
@@ -155,6 +167,63 @@ namespace BookingCare.Infrastructure
                 .HasForeignKey(n => n.NotificationTypeId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.Entity<Prescription>()
+                .HasOne(p => p.Appointment)
+                .WithOne(a => a.Prescription)
+                .HasForeignKey<Prescription>(p => p.AppointmentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<PrescriptionDetail>()
+                .HasOne(pd => pd.Prescription)
+                .WithMany(p => p.PrescriptionDetails)
+                .HasForeignKey(pd => pd.PrescriptionId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Medicine>()
+                .HasMany(m => m.PrescriptionDetails)
+                .WithOne(pd => pd.Medicine)
+                .HasForeignKey(pd => pd.MedicineId)
+                .OnDelete(DeleteBehavior.Restrict);
+            #endregion
+
+            #region Convertion for Enums to string
+            //builder.Entity<Doctor>()
+            //    .Property(d => d.Position)
+            //    .HasConversion<string>();
+
+            //builder.Entity<Doctor>()
+            //    .Property(d => d.Gender)
+            //    .HasConversion<string>();
+
+            builder.Entity<Medicine>()
+                .Property(m => m.Unit)
+                .HasConversion<string>();
+
+            builder.Entity<Appointment>()
+                .Property(a => a.Type)
+                .HasConversion<string>();
+
+            builder.Entity<Appointment>()
+                .Property(a => a.Status)
+                .HasConversion<string>();
+
+            builder.Entity<Appointment>()
+                .Property(a => a.Priority)
+                .HasConversion<string>();
+
+            //builder.Entity<PatientProfile>()
+            //    .Property(a => a.Gender)
+            //    .HasConversion<string>();
+
+            //builder.Entity<PatientProfile>()
+            //    .Property(a => a.Relationship)
+            //    .HasConversion<string>();
+
+            //builder.Entity<PatientProfile>()
+            //    .Property(a => a.BloodType)
+            //    .HasConversion<string>();
+            #endregion
+
             SeedData(builder);
         }
 
@@ -202,6 +271,10 @@ namespace BookingCare.Infrastructure
             var workSessionJson = File.ReadAllText(Path.Combine(path, "worksessions.json"));
             var workSessions = JsonSerializer.Deserialize<List<WorkSession>>(workSessionJson, jsonOptions);
             if (workSessions != null) builder.Entity<WorkSession>().HasData(workSessions);
+
+            var medicinesJson = File.ReadAllText(Path.Combine(path, "medicines.json"));
+            var medicines = JsonSerializer.Deserialize<List<Medicine>>(medicinesJson, jsonOptions);
+            if (medicines != null) builder.Entity<Medicine>().HasData(medicines);
         }
     }
 }

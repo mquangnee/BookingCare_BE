@@ -102,11 +102,10 @@ namespace BookingCare.Application.Patients.Commands.AppointmentCmd
                 Id = Guid.NewGuid(),
                 AppointmentCode = appointmentCode,
                 BookerId = bookerId,
-                Status = EnumAppointmentStatus.Pending,
+                Status = EnumAppointmentStatus.Approved, //Khi tích hợp thanh toán xong thì sửa
                 Date = request.Date,
                 StartTime = request.StartTime,
                 EndTime = request.EndTime,
-                QueueNumber = null,
                 CreatedDate = DateTime.Now,
                 WorkSessionId = workSession.Id,
                 PatientProfileId = request.PatientProfileId,
@@ -121,7 +120,7 @@ namespace BookingCare.Application.Patients.Commands.AppointmentCmd
                 }
             };
             await _unitOfWork.Appointments.AddAsync(newAppointment);
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
             methodResult.Result = true;
             methodResult.StatusCode = StatusCodes.Status201Created;
             return methodResult;

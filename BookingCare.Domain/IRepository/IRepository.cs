@@ -11,6 +11,7 @@ namespace BookingCare.Domain.IRepository
         Task<bool> AnyAsync(Guid id);
         Task<IList<T>> GetAllAsync();
         IQueryable<T> QueryableAsync();
+        Task AddRangeAsync(List<T> entites);
     }
 
     public class Repository<T> : IRepository<T> where T : class
@@ -61,6 +62,11 @@ namespace BookingCare.Domain.IRepository
         {
             var entity = await _dbSet.FindAsync(id);
             return entity != null;
+        }
+
+        public async Task AddRangeAsync(List<T> entities)
+        {
+            await _dbSet.AddRangeAsync(entities);
         }
     }
 }

@@ -94,7 +94,7 @@ namespace BookingCare.Application.Admins.Command
                 return methodResult;
             }
 
-            await _userManager.AddToRoleAsync(user, "Doctor");
+            await _userManager.AddToRoleAsync(user, RoleConstants.Doctor);
 
             string? avatarUrl = null;
             if (request.Avatar != null)
@@ -119,7 +119,7 @@ namespace BookingCare.Application.Admins.Command
                 Description = request.Description
             };
             await _unitOfWork.Doctors.AddAsync(doctor);
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             var templateData = new Dictionary<string, string>
             {

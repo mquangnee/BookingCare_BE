@@ -127,7 +127,7 @@ namespace BookingCare.Application.Patients.Commands.AuthCmd
                 };
                 await _unitOfWork.PatientProfiles.AddAsync(newPatientProfile);
             }
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             var token = await GenerateTokenAsync(newUser, _jwtService);
             newUser.RefreshToken = token.RefreshToken;

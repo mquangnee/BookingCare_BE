@@ -49,7 +49,6 @@ namespace BookingCare.Application.Patients.Queries.DoctorQuery
                     CitizenId = x.CitizenId,
                     ExperienceYears = x.ExperienceYears,
                     Position = x.Position,
-                    SubSpecialties = x.SubSpecialties,
                     WorkingHistory = x.WorkingHistory,
                     Description = x.Description
                 }).ToListAsync(cancellationToken);

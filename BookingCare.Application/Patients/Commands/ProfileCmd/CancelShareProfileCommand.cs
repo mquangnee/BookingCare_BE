@@ -38,7 +38,7 @@ namespace BookingCare.Application.Patients.Commands.ProfileCmd
             }
             profileShare.ShareStatus = EnumShareStatus.Rejected;
             _unitOfWork.ProfileShares.Update(profileShare);
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             var profile = await _unitOfWork.PatientProfiles.GetByIdAsync(profileShare.PatientProfileId);
             if (profile == null)
@@ -81,7 +81,8 @@ namespace BookingCare.Application.Patients.Commands.ProfileCmd
                 content: EnumNotificationContent.ShareProfileRevoked,
                 type: EnumNotificationType.ShareProfileRevoked,
                 objectId: null,
-                messageParams: messageParams
+                messageParams: messageParams,
+                cancellationToken: CancellationToken.None
             );
         }
     }

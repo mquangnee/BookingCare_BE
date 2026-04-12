@@ -11,11 +11,11 @@ using System.Security.Claims;
 
 namespace BookingCare.Application.Patients.Queries.ProfileQuery
 {
-    public class GetFamilyProfilesQuery : IRequest<MethodResult<List<UserProfileModel>>>
+    public class GetFamilyProfilesQuery : IRequest<MethodResult<List<PatientProfileModel>>>
     {
     }
 
-    public class GetFamilyProfilesQueryHandler : IRequestHandler<GetFamilyProfilesQuery, MethodResult<List<UserProfileModel>>>
+    public class GetFamilyProfilesQueryHandler : IRequestHandler<GetFamilyProfilesQuery, MethodResult<List<PatientProfileModel>>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -26,10 +26,10 @@ namespace BookingCare.Application.Patients.Queries.ProfileQuery
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<MethodResult<List<UserProfileModel>>> Handle(GetFamilyProfilesQuery request, CancellationToken cancellationToken)
+        public async Task<MethodResult<List<PatientProfileModel>>> Handle(GetFamilyProfilesQuery request, CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(request);
-            var methodResult = new MethodResult<List<UserProfileModel>>();
+            var methodResult = new MethodResult<List<PatientProfileModel>>();
 
             var userIdString = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value
                             ?? _httpContextAccessor.HttpContext?.User?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
@@ -48,7 +48,7 @@ namespace BookingCare.Application.Patients.Queries.ProfileQuery
             var profileQuery = _unitOfWork.PatientProfiles.QueryableAsync();
             var familyProfiles = await profileQuery
                 .Where(pp => pp.PatientId == patient.Id && pp.Relationship != EnumRelationship.MySelf)
-                .Select(p => new UserProfileModel
+                .Select(p => new PatientProfileModel
                 {
                     Id = p.Id,
                     PatientCode = patient.PatientCode,
@@ -71,7 +71,7 @@ namespace BookingCare.Application.Patients.Queries.ProfileQuery
                 .ToListAsync(cancellationToken);
             var sharedProfiles = await profileQuery
                 .Where(p => shareProfileIds.Contains(p.Id))
-                .Select(p => new UserProfileModel
+                .Select(p => new PatientProfileModel
                 {
                     Id = p.Id,
                     PatientCode = null,
