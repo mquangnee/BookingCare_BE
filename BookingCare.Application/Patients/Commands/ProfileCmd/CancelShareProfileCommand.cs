@@ -17,9 +17,9 @@ namespace BookingCare.Application.Patients.Commands.ProfileCmd
     public class CancelShareProfileCommandHandler : IRequestHandler<CancelShareProfileCommand, MethodResult<bool>>
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly INotificationRealTimeService _notificationService;
+        private readonly INotificationService _notificationService;
 
-        public CancelShareProfileCommandHandler(IUnitOfWork unitOfWork, INotificationRealTimeService notificationService)
+        public CancelShareProfileCommandHandler(IUnitOfWork unitOfWork, INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
             _notificationService = notificationService;
@@ -72,7 +72,7 @@ namespace BookingCare.Application.Patients.Commands.ProfileCmd
             return profile.FullName;
         }
 
-        private static async Task SendNotification(INotificationRealTimeService notificationService, Guid? patientProfileId, Guid senderId, Guid receiverId, List<object> messageParams)
+        private static async Task SendNotification(INotificationService notificationService, Guid? patientProfileId, Guid senderId, Guid receiverId, List<object> messageParams)
         {
             await notificationService.SendNotificationAsync(
                 receiverId: receiverId,

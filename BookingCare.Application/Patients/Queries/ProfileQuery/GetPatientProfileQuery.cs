@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using BookingCare.Domain.IRepository;
+﻿using BookingCare.Domain.IRepository;
 using BookingCare.Domain.Models.EntityModels;
 using BookingCare.Shared.Common;
 using BookingCare.Shared.Enum;

@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BookingCare.Application\BookingCare.Application.csproj" />
+    <ProjectReference Include="..\BookingCare.Infrastructure\BookingCare.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

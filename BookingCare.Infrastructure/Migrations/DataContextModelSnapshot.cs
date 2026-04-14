@@ -82,6 +82,9 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Property<TimeSpan?>("EndTime")
                         .HasColumnType("time");
 
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid>("PatientProfileId")
                         .HasColumnType("uniqueidentifier");
 
@@ -91,6 +94,12 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Property<string>("Priority")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ServiceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("ServicePrice")
+                        .HasColumnType("float");
 
                     b.Property<TimeSpan?>("StartTime")
                         .HasColumnType("time");
@@ -115,36 +124,11 @@ namespace BookingCare.Infrastructure.Migrations
 
                     b.HasIndex("PatientProfileId");
 
+                    b.HasIndex("ServiceId");
+
                     b.HasIndex("WorkSessionId");
 
                     b.ToTable("Appointments");
-                });
-
-            modelBuilder.Entity("BookingCare.Domain.Entities.AppointmentService", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AppointmentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("PriceOverride")
-                        .HasColumnType("float");
-
-                    b.Property<Guid>("ServiceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AppointmentId");
-
-                    b.HasIndex("ServiceId");
-
-                    b.ToTable("AppointmentServices");
                 });
 
             modelBuilder.Entity("BookingCare.Domain.Entities.Doctor", b =>
@@ -174,17 +158,19 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Property<string>("FullName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Gender")
-                        .HasColumnType("int");
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Position")
-                        .HasColumnType("int");
+                    b.Property<string>("Position")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ServiceId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("SpecialtyId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.PrimitiveCollection<string>("SubSpecialties")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -193,6 +179,8 @@ namespace BookingCare.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ServiceId");
 
                     b.HasIndex("SpecialtyId");
 
@@ -212,27 +200,27 @@ namespace BookingCare.Infrastructure.Migrations
                             DoctorCode = "BS-001",
                             ExperienceYears = 25,
                             FullName = "Nguyễn Trọng Hưng",
-                            Gender = 0,
-                            Position = 3,
+                            Gender = "Male",
+                            Position = "AssociateProfessor",
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111101"),
                             SpecialtyId = new Guid("11111111-1111-1111-1111-111111111101"),
-                            SubSpecialties = "[\"N\\u1ED9i c\\u01A1 x\\u01B0\\u01A1ng kh\\u1EDBp\",\"Ph\\u1EE5c h\\u1ED3i ch\\u1EE9c n\\u0103ng\"]",
                             UserId = new Guid("dddddddd-1111-1111-1111-111111111111"),
                             WorkingHistory = "Bệnh viện Bạch Mai (2000-2015); Bệnh viện Đại học Y Hà Nội (2015-Nay)"
                         },
                         new
                         {
                             Id = new Guid("33333333-2222-2222-2222-222222222222"),
-                            AvatarUrl = "https://storage.googleapis.com/bookingcare-resources/static/doctor/Nu_BacSi_1_.jpg",
+                            AvatarUrl = "https://storage.googleapis.com/bookingcare-resources/static/doctor/Nu_BacSi_1.jpg",
                             CitizenId = "001182000456",
                             DateOfBirth = new DateTime(1982, 10, 24, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Có nhiều năm kinh nghiệm trong lĩnh vực nội soi tiêu hóa không đau. Đã tu nghiệp chuyên sâu tại Nhật Bản.",
                             DoctorCode = "BS-002",
                             ExperienceYears = 18,
                             FullName = "Đỗ Thị Tường Vân",
-                            Gender = 1,
-                            Position = 1,
+                            Gender = "Female",
+                            Position = "Master",
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111102"),
                             SpecialtyId = new Guid("11111111-1111-1111-1111-111111111102"),
-                            SubSpecialties = "[\"N\\u1ED9i soi ti\\u00EAu h\\u00F3a\",\"B\\u1EC7nh l\\u00FD gan m\\u1EADt\"]",
                             UserId = new Guid("dddddddd-2222-2222-2222-222222222222"),
                             WorkingHistory = "Bệnh viện Việt Đức (2006-Nay)"
                         },
@@ -246,10 +234,10 @@ namespace BookingCare.Infrastructure.Migrations
                             DoctorCode = "BS-003",
                             ExperienceYears = 20,
                             FullName = "Lê Ngọc Thành",
-                            Gender = 0,
-                            Position = 2,
+                            Gender = "Male",
+                            Position = "DoctorOfPhilosophy",
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111103"),
                             SpecialtyId = new Guid("11111111-1111-1111-1111-111111111103"),
-                            SubSpecialties = "[\"Ngo\\u1EA1i tim m\\u1EA1ch\",\"Si\\u00EAu \\u00E2m tim\"]",
                             UserId = new Guid("dddddddd-3333-3333-3333-333333333333"),
                             WorkingHistory = "Bệnh viện Tim Hà Nội (2005-Nay)"
                         },
@@ -263,10 +251,10 @@ namespace BookingCare.Infrastructure.Migrations
                             DoctorCode = "BS-004",
                             ExperienceYears = 12,
                             FullName = "Trần Thị Dung",
-                            Gender = 1,
-                            Position = 0,
+                            Gender = "Female",
+                            Position = "Doctor",
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111104"),
                             SpecialtyId = new Guid("11111111-1111-1111-1111-111111111104"),
-                            SubSpecialties = "[\"Si\\u00EAu \\u00E2m thai k\\u1EF3\",\"V\\u00F4 sinh hi\\u1EBFm mu\\u1ED9n\"]",
                             UserId = new Guid("dddddddd-4444-4444-4444-444444444444"),
                             WorkingHistory = "Bệnh viện Phụ Sản Trung Ương (2012-Nay)"
                         },
@@ -280,10 +268,10 @@ namespace BookingCare.Infrastructure.Migrations
                             DoctorCode = "BS-005",
                             ExperienceYears = 35,
                             FullName = "Phạm Nhật An",
-                            Gender = 0,
-                            Position = 4,
+                            Gender = "Male",
+                            Position = "Professor",
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111105"),
                             SpecialtyId = new Guid("11111111-1111-1111-1111-111111111105"),
-                            SubSpecialties = "[\"Truy\\u1EC1n nhi\\u1EC5m nhi\",\"H\\u00F4 h\\u1EA5p nhi\"]",
                             UserId = new Guid("dddddddd-5555-5555-5555-555555555555"),
                             WorkingHistory = "Bệnh viện Nhi Trung Ương (1990-Nay)"
                         },
@@ -297,10 +285,10 @@ namespace BookingCare.Infrastructure.Migrations
                             DoctorCode = "BS-006",
                             ExperienceYears = 15,
                             FullName = "Vũ Nguyệt Minh",
-                            Gender = 1,
-                            Position = 1,
+                            Gender = "Male",
+                            Position = "Master",
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111106"),
                             SpecialtyId = new Guid("11111111-1111-1111-1111-111111111106"),
-                            SubSpecialties = "[\"\\u0110i\\u1EC1u tr\\u1ECB m\\u1EE5n\",\"Th\\u1EA9m m\\u1EF9 da c\\u00F4ng ngh\\u1EC7 cao\"]",
                             UserId = new Guid("dddddddd-6666-6666-6666-666666666666"),
                             WorkingHistory = "Bệnh viện Da liễu Trung Ương (2010-Nay)"
                         },
@@ -314,10 +302,10 @@ namespace BookingCare.Infrastructure.Migrations
                             DoctorCode = "BS-007",
                             ExperienceYears = 28,
                             FullName = "Trần Hữu Thắng",
-                            Gender = 0,
-                            Position = 3,
+                            Gender = "Male",
+                            Position = "AssociateProfessor",
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111107"),
                             SpecialtyId = new Guid("11111111-1111-1111-1111-111111111107"),
-                            SubSpecialties = "[\"Ph\\u1EABu thu\\u1EADt n\\u1ED9i soi m\\u0169i xoang\",\"C\\u1EAFt amidan\"]",
                             UserId = new Guid("dddddddd-7777-7777-7777-777777777777"),
                             WorkingHistory = "Bệnh viện Tai Mũi Họng Trung Ương (1998-Nay)"
                         },
@@ -331,10 +319,10 @@ namespace BookingCare.Infrastructure.Migrations
                             DoctorCode = "BS-008",
                             ExperienceYears = 22,
                             FullName = "Hoàng Cương",
-                            Gender = 0,
-                            Position = 2,
+                            Gender = "Male",
+                            Position = "DoctorOfPhilosophy",
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111108"),
                             SpecialtyId = new Guid("11111111-1111-1111-1111-111111111108"),
-                            SubSpecialties = "[\"Kh\\u00FAc x\\u1EA1 nh\\u00E3n khoa\",\"\\u0110\\u1EE5c th\\u1EE7y tinh th\\u1EC3\"]",
                             UserId = new Guid("dddddddd-8888-8888-8888-888888888888"),
                             WorkingHistory = "Bệnh viện Mắt Trung Ương (2002-Nay)"
                         },
@@ -348,10 +336,10 @@ namespace BookingCare.Infrastructure.Migrations
                             DoctorCode = "BS-009",
                             ExperienceYears = 30,
                             FullName = "Nguyễn Văn Hướng",
-                            Gender = 0,
-                            Position = 3,
+                            Gender = "Male",
+                            Position = "AssociateProfessor",
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111109"),
                             SpecialtyId = new Guid("11111111-1111-1111-1111-111111111109"),
-                            SubSpecialties = "[\"\\u0110\\u1ED9ng kinh\",\"Parkinson\",\"\\u0110au \\u0111\\u1EA7u m\\u1EA1n t\\u00EDnh\"]",
                             UserId = new Guid("dddddddd-9999-9999-9999-999999999999"),
                             WorkingHistory = "Bệnh viện Hữu nghị Việt Đức (1995-Nay)"
                         },
@@ -365,10 +353,10 @@ namespace BookingCare.Infrastructure.Migrations
                             DoctorCode = "BS-010",
                             ExperienceYears = 17,
                             FullName = "Phạm Như Hải",
-                            Gender = 0,
-                            Position = 1,
+                            Gender = "Male",
+                            Position = "Master",
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111110"),
                             SpecialtyId = new Guid("11111111-1111-1111-1111-111111111110"),
-                            SubSpecialties = "[\"Ni\\u1EC1ng r\\u0103ng th\\u1EA9m m\\u1EF9\",\"Nh\\u1ED5 r\\u0103ng kh\\u00F4n m\\u1ECDc l\\u1EC7ch\"]",
                             UserId = new Guid("dddddddd-0000-0000-0000-000000000000"),
                             WorkingHistory = "Bệnh viện Răng Hàm Mặt Trung Ương (2008-Nay)"
                         });
@@ -389,8 +377,9 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Unit")
                         .IsRequired()
@@ -410,7 +399,7 @@ namespace BookingCare.Infrastructure.Migrations
                             CreatedDate = new DateTime(2026, 4, 9, 17, 4, 5, 0, DateTimeKind.Utc),
                             Function = "Giảm đau, hạ sốt từ nhẹ đến vừa.",
                             Name = "Paracetamol 500mg",
-                            Status = 0,
+                            Status = "Active",
                             Unit = "Tablet"
                         },
                         new
@@ -419,7 +408,7 @@ namespace BookingCare.Infrastructure.Migrations
                             CreatedDate = new DateTime(2026, 4, 9, 17, 4, 5, 0, DateTimeKind.Utc),
                             Function = "Kháng viêm không steroid (NSAID), giảm đau, hạ sốt.",
                             Name = "Ibuprofen 400mg",
-                            Status = 0,
+                            Status = "Active",
                             Unit = "Tablet"
                         },
                         new
@@ -428,8 +417,8 @@ namespace BookingCare.Infrastructure.Migrations
                             CreatedDate = new DateTime(2026, 4, 9, 17, 4, 5, 0, DateTimeKind.Utc),
                             Function = "Gel bôi ngoài da giảm đau, chống viêm cơ xương khớp.",
                             Name = "Voltaren Emulgel 1% 20g",
-                            Status = 0,
-                            Unit = "Tube"
+                            Status = "Active",
+                            Unit = "Vial"
                         },
                         new
                         {
@@ -437,7 +426,7 @@ namespace BookingCare.Infrastructure.Migrations
                             CreatedDate = new DateTime(2026, 4, 9, 17, 4, 5, 0, DateTimeKind.Utc),
                             Function = "Ức chế tiết axit dạ dày, điều trị viêm loét dạ dày - tá tràng.",
                             Name = "Omeprazole 20mg",
-                            Status = 0,
+                            Status = "Active",
                             Unit = "Tablet"
                         },
                         new
@@ -446,8 +435,8 @@ namespace BookingCare.Infrastructure.Migrations
                             CreatedDate = new DateTime(2026, 4, 9, 17, 4, 5, 0, DateTimeKind.Utc),
                             Function = "Thuốc kháng axit, điều trị cơn đau dạ dày cấp.",
                             Name = "Phosphalugel 20% 20g",
-                            Status = 0,
-                            Unit = "Sachet"
+                            Status = "Active",
+                            Unit = "Bottle"
                         },
                         new
                         {
@@ -455,7 +444,7 @@ namespace BookingCare.Infrastructure.Migrations
                             CreatedDate = new DateTime(2026, 4, 9, 17, 4, 5, 0, DateTimeKind.Utc),
                             Function = "Điều trị tiêu chảy, nhiễm khuẩn đường ruột.",
                             Name = "Berberin 10mg",
-                            Status = 0,
+                            Status = "Active",
                             Unit = "Bottle"
                         },
                         new
@@ -464,7 +453,7 @@ namespace BookingCare.Infrastructure.Migrations
                             CreatedDate = new DateTime(2026, 4, 9, 17, 4, 5, 0, DateTimeKind.Utc),
                             Function = "Kháng sinh nhóm Penicillin, điều trị nhiễm khuẩn hô hấp, tai mũi họng.",
                             Name = "Amoxicillin 500mg",
-                            Status = 0,
+                            Status = "Active",
                             Unit = "Blister"
                         },
                         new
@@ -473,7 +462,7 @@ namespace BookingCare.Infrastructure.Migrations
                             CreatedDate = new DateTime(2026, 4, 9, 17, 4, 5, 0, DateTimeKind.Utc),
                             Function = "Kháng sinh nhóm Macrolid, trị viêm phế quản, viêm phổi.",
                             Name = "Azithromycin 250mg",
-                            Status = 0,
+                            Status = "Active",
                             Unit = "Tablet"
                         },
                         new
@@ -482,7 +471,7 @@ namespace BookingCare.Infrastructure.Migrations
                             CreatedDate = new DateTime(2026, 4, 9, 17, 4, 5, 0, DateTimeKind.Utc),
                             Function = "Thuốc kháng histamin, điều trị viêm mũi dị ứng, mề đay.",
                             Name = "Loratadine 10mg",
-                            Status = 0,
+                            Status = "Active",
                             Unit = "Tablet"
                         },
                         new
@@ -491,7 +480,7 @@ namespace BookingCare.Infrastructure.Migrations
                             CreatedDate = new DateTime(2026, 4, 9, 17, 4, 5, 0, DateTimeKind.Utc),
                             Function = "Siro ho chiết xuất lá thường xuân, làm loãng đờm, giảm ho.",
                             Name = "Prospan 100ml",
-                            Status = 0,
+                            Status = "Active",
                             Unit = "Bottle"
                         },
                         new
@@ -500,7 +489,7 @@ namespace BookingCare.Infrastructure.Migrations
                             CreatedDate = new DateTime(2026, 4, 9, 17, 4, 5, 0, DateTimeKind.Utc),
                             Function = "Thuốc chẹn kênh canxi, điều trị tăng huyết áp.",
                             Name = "Amlodipine 5mg",
-                            Status = 0,
+                            Status = "Active",
                             Unit = "Blister"
                         },
                         new
@@ -509,7 +498,7 @@ namespace BookingCare.Infrastructure.Migrations
                             CreatedDate = new DateTime(2026, 4, 9, 17, 4, 5, 0, DateTimeKind.Utc),
                             Function = "Tăng cường sức đề kháng, bổ sung vitamin C.",
                             Name = "Vitamin C 500mg",
-                            Status = 0,
+                            Status = "Active",
                             Unit = "Vial"
                         },
                         new
@@ -518,7 +507,7 @@ namespace BookingCare.Infrastructure.Migrations
                             CreatedDate = new DateTime(2026, 4, 9, 17, 4, 5, 0, DateTimeKind.Utc),
                             Function = "Hỗ trợ điều trị thoái hóa khớp, tăng dịch nhờn sụn khớp.",
                             Name = "Glucosamine Sulfate 1500mg",
-                            Status = 0,
+                            Status = "Active",
                             Unit = "Box"
                         },
                         new
@@ -527,7 +516,7 @@ namespace BookingCare.Infrastructure.Migrations
                             CreatedDate = new DateTime(2026, 4, 9, 17, 4, 5, 0, DateTimeKind.Utc),
                             Function = "Thuốc gây tê tại chỗ dạng tiêm.",
                             Name = "Lidocaine 2%",
-                            Status = 0,
+                            Status = "Active",
                             Unit = "Ampule"
                         },
                         new
@@ -536,7 +525,7 @@ namespace BookingCare.Infrastructure.Migrations
                             CreatedDate = new DateTime(2026, 4, 9, 17, 4, 5, 0, DateTimeKind.Utc),
                             Function = "Điều trị thiếu máu do thiếu vitamin B12, đau dây thần kinh.",
                             Name = "Vitamin B12 1000mcg",
-                            Status = 0,
+                            Status = "Active",
                             Unit = "Ampule"
                         });
                 });
@@ -574,8 +563,9 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Property<Guid?>("SenderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -594,8 +584,9 @@ namespace BookingCare.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Content")
-                        .HasColumnType("int");
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -611,28 +602,28 @@ namespace BookingCare.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("a1b2c3d4-1111-4fab-a615-8ad7e60d763a"),
-                            Content = 1,
+                            Content = "ShareProfileInvite",
                             CreatedDate = new DateTime(2026, 3, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TemplateMessage = "{0} muốn chia sẻ hồ sơ y tế '{1}' với bạn (Quyền: {2}). Bạn có muốn nhận không?"
                         },
                         new
                         {
                             Id = new Guid("b2c3d4e5-2222-4fab-a615-8ad7e60d763a"),
-                            Content = 2,
+                            Content = "ShareProfileAccepted",
                             CreatedDate = new DateTime(2026, 3, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TemplateMessage = "{0} đã ĐỒNG Ý nhận quản lý hồ sơ '{1}' của bạn."
                         },
                         new
                         {
                             Id = new Guid("c3d4e5f6-3333-4fab-a615-8ad7e60d763a"),
-                            Content = 3,
+                            Content = "ShareProfileRejected",
                             CreatedDate = new DateTime(2026, 3, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TemplateMessage = "{0} đã TỪ CHỐI nhận chia sẻ hồ sơ '{1}'."
                         },
                         new
                         {
                             Id = new Guid("d4e5f6a7-4444-4fab-a615-8ad7e60d763a"),
-                            Content = 4,
+                            Content = "ShareProfileRevoked",
                             CreatedDate = new DateTime(2026, 3, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TemplateMessage = "{0} đã ngừng chia sẻ hồ sơ '{1}' với bạn. Bạn không còn quyền truy cập hồ sơ này."
                         });
@@ -664,8 +655,9 @@ namespace BookingCare.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("BloodType")
-                        .HasColumnType("int");
+                    b.Property<string>("BloodType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CitizenId")
                         .HasColumnType("nvarchar(max)");
@@ -679,8 +671,9 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Property<string>("FullName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Gender")
-                        .HasColumnType("int");
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MedicalHistory")
                         .HasColumnType("nvarchar(max)");
@@ -694,8 +687,9 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Property<string>("ProfileCode")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Relationship")
-                        .HasColumnType("int");
+                    b.Property<string>("Relationship")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -705,6 +699,94 @@ namespace BookingCare.Infrastructure.Migrations
                     b.HasIndex("PatientId");
 
                     b.ToTable("PatientProfiles");
+                });
+
+            modelBuilder.Entity("BookingCare.Domain.Entities.Payment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
+
+                    b.Property<Guid>("AppointmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Method")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("PaidAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppointmentId")
+                        .IsUnique();
+
+                    b.ToTable("Payments");
+                });
+
+            modelBuilder.Entity("BookingCare.Domain.Entities.PaymentTransaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ExternalOrderCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FailureReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GatewayResponse")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("PaymentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TransactionCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PaymentId");
+
+                    b.ToTable("PaymentTransactions");
                 });
 
             modelBuilder.Entity("BookingCare.Domain.Entities.Prescription", b =>
@@ -772,11 +854,13 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Property<Guid>("PatientProfileId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("SharePermission")
-                        .HasColumnType("int");
+                    b.Property<string>("SharePermission")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ShareStatus")
-                        .HasColumnType("int");
+                    b.Property<string>("ShareStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("SharedByUserId")
                         .HasColumnType("uniqueidentifier");
@@ -816,8 +900,9 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Property<string>("FullName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Gender")
-                        .HasColumnType("int");
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ReceptionistCode")
                         .HasColumnType("nvarchar(max)");
@@ -857,8 +942,8 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("Position")
-                        .HasColumnType("int");
+                    b.Property<string>("Position")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Price")
                         .HasColumnType("float");
@@ -889,7 +974,7 @@ namespace BookingCare.Infrastructure.Migrations
                             DurationInMinutes = 15,
                             IsActive = true,
                             Name = "Khám Phó Giáo sư - Cơ Xương Khớp",
-                            Position = 3,
+                            Position = "AssociateProfessor",
                             Price = 500000.0,
                             ServiceCode = "SRV-KHAM-CK01-PGS",
                             SpecialtyId = new Guid("11111111-1111-1111-1111-111111111101"),
@@ -903,7 +988,7 @@ namespace BookingCare.Infrastructure.Migrations
                             DurationInMinutes = 15,
                             IsActive = true,
                             Name = "Khám Thạc sĩ/Bác sĩ CKI - Cơ Xương Khớp",
-                            Position = 1,
+                            Position = "Master",
                             Price = 300000.0,
                             ServiceCode = "SRV-KHAM-CK01-THS",
                             SpecialtyId = new Guid("11111111-1111-1111-1111-111111111101"),
@@ -917,7 +1002,7 @@ namespace BookingCare.Infrastructure.Migrations
                             DurationInMinutes = 15,
                             IsActive = true,
                             Name = "Khám Thạc sĩ - Tiêu hóa",
-                            Position = 1,
+                            Position = "Master",
                             Price = 300000.0,
                             ServiceCode = "SRV-KHAM-CK02-THS",
                             SpecialtyId = new Guid("11111111-1111-1111-1111-111111111102"),
@@ -931,7 +1016,7 @@ namespace BookingCare.Infrastructure.Migrations
                             DurationInMinutes = 20,
                             IsActive = true,
                             Name = "Khám Giáo sư - Tiêu hóa",
-                            Position = 4,
+                            Position = "Professor",
                             Price = 800000.0,
                             ServiceCode = "SRV-KHAM-CK02-GS",
                             SpecialtyId = new Guid("11111111-1111-1111-1111-111111111102"),
@@ -945,7 +1030,7 @@ namespace BookingCare.Infrastructure.Migrations
                             DurationInMinutes = 15,
                             IsActive = true,
                             Name = "Khám Tiến sĩ - Tim mạch",
-                            Position = 2,
+                            Position = "DoctorOfPhilosophy",
                             Price = 400000.0,
                             ServiceCode = "SRV-KHAM-CK03-TS",
                             SpecialtyId = new Guid("11111111-1111-1111-1111-111111111103"),
@@ -959,7 +1044,7 @@ namespace BookingCare.Infrastructure.Migrations
                             DurationInMinutes = 15,
                             IsActive = true,
                             Name = "Khám Bác sĩ chuyên khoa - Sản Phụ khoa",
-                            Position = 0,
+                            Position = "Doctor",
                             Price = 200000.0,
                             ServiceCode = "SRV-KHAM-CK04-BS",
                             SpecialtyId = new Guid("11111111-1111-1111-1111-111111111104"),
@@ -973,7 +1058,7 @@ namespace BookingCare.Infrastructure.Migrations
                             DurationInMinutes = 20,
                             IsActive = true,
                             Name = "Khám Giáo sư - Nhi khoa",
-                            Position = 4,
+                            Position = "Professor",
                             Price = 800000.0,
                             ServiceCode = "SRV-KHAM-CK05-GS",
                             SpecialtyId = new Guid("11111111-1111-1111-1111-111111111105"),
@@ -987,7 +1072,7 @@ namespace BookingCare.Infrastructure.Migrations
                             DurationInMinutes = 15,
                             IsActive = true,
                             Name = "Khám Thạc sĩ - Da liễu",
-                            Position = 1,
+                            Position = "Master",
                             Price = 350000.0,
                             ServiceCode = "SRV-KHAM-CK06-THS",
                             SpecialtyId = new Guid("11111111-1111-1111-1111-111111111106"),
@@ -1001,7 +1086,7 @@ namespace BookingCare.Infrastructure.Migrations
                             DurationInMinutes = 15,
                             IsActive = true,
                             Name = "Khám Phó Giáo sư - Tai Mũi Họng",
-                            Position = 3,
+                            Position = "AssociateProfessor",
                             Price = 500000.0,
                             ServiceCode = "SRV-KHAM-CK07-PGS",
                             SpecialtyId = new Guid("11111111-1111-1111-1111-111111111107"),
@@ -1015,7 +1100,7 @@ namespace BookingCare.Infrastructure.Migrations
                             DurationInMinutes = 15,
                             IsActive = true,
                             Name = "Khám Tiến sĩ - Mắt",
-                            Position = 2,
+                            Position = "DoctorOfPhilosophy",
                             Price = 400000.0,
                             ServiceCode = "SRV-KHAM-CK08-TS",
                             SpecialtyId = new Guid("11111111-1111-1111-1111-111111111108"),
@@ -1029,7 +1114,7 @@ namespace BookingCare.Infrastructure.Migrations
                             DurationInMinutes = 20,
                             IsActive = true,
                             Name = "Khám Phó Giáo sư - Thần kinh",
-                            Position = 3,
+                            Position = "AssociateProfessor",
                             Price = 600000.0,
                             ServiceCode = "SRV-KHAM-CK09-PGS",
                             SpecialtyId = new Guid("11111111-1111-1111-1111-111111111109"),
@@ -1043,7 +1128,7 @@ namespace BookingCare.Infrastructure.Migrations
                             DurationInMinutes = 20,
                             IsActive = true,
                             Name = "Khám Thạc sĩ - Răng Hàm Mặt",
-                            Position = 1,
+                            Position = "Master",
                             Price = 300000.0,
                             ServiceCode = "SRV-KHAM-CK10-THS",
                             SpecialtyId = new Guid("11111111-1111-1111-1111-111111111110"),
@@ -1054,7 +1139,6 @@ namespace BookingCare.Infrastructure.Migrations
                             Id = new Guid("22222222-3333-3333-3333-111111111101"),
                             CreatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Bao gồm thuốc tiêm chính hãng và công thực hiện trực tiếp bởi PGS. Nguyễn Trọng Hưng, giúp bôi trơn và giảm đau khớp gối.",
-                            DoctorId = new Guid("33333333-1111-1111-1111-111111111111"),
                             DurationInMinutes = 30,
                             IsActive = true,
                             Name = "Tiêm chất nhờn khớp gối (Hyaluronic Acid)",
@@ -1068,7 +1152,6 @@ namespace BookingCare.Infrastructure.Migrations
                             Id = new Guid("22222222-3333-3333-3333-111111111102"),
                             CreatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Nội soi không đau, an toàn, có test vi khuẩn HP. Trực tiếp thực hiện bởi BS. Đỗ Thị Tường Vân.",
-                            DoctorId = new Guid("33333333-2222-2222-2222-222222222222"),
                             DurationInMinutes = 60,
                             IsActive = true,
                             Name = "Gói Nội soi kép Dạ dày - Đại tràng Gây mê",
@@ -1082,7 +1165,6 @@ namespace BookingCare.Infrastructure.Migrations
                             Id = new Guid("22222222-3333-3333-3333-111111111103"),
                             CreatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Đánh giá cấu trúc, chức năng tim và vận tốc dòng máu. Trực tiếp thực hiện và đọc kết quả bởi TS. Lê Ngọc Thành.",
-                            DoctorId = new Guid("33333333-3333-3333-3333-333333333333"),
                             DurationInMinutes = 30,
                             IsActive = true,
                             Name = "Siêu âm tim Doppler màu",
@@ -1096,7 +1178,6 @@ namespace BookingCare.Infrastructure.Migrations
                             Id = new Guid("22222222-3333-3333-3333-111111111104"),
                             CreatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Siêu âm hình thái học thai nhi công nghệ 5D mới nhất, cung cấp video sắc nét. Thực hiện bởi BS. Trần Thị Dung.",
-                            DoctorId = new Guid("33333333-4444-4444-4444-444444444444"),
                             DurationInMinutes = 30,
                             IsActive = true,
                             Name = "Siêu âm thai 5D tầm soát dị tật",
@@ -1110,7 +1191,6 @@ namespace BookingCare.Infrastructure.Migrations
                             Id = new Guid("22222222-3333-3333-3333-222222222204"),
                             CreatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Thủ thuật điều trị viêm lộ tuyến cổ tử cung. Thực hiện bởi BS. Trần Thị Dung.",
-                            DoctorId = new Guid("33333333-4444-4444-4444-444444444444"),
                             DurationInMinutes = 45,
                             IsActive = true,
                             Name = "Cầm máu và áp lạnh cổ tử cung",
@@ -1124,7 +1204,6 @@ namespace BookingCare.Infrastructure.Migrations
                             Id = new Guid("22222222-3333-3333-3333-111111111105"),
                             CreatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Tìm nguyên nhân gây hen suyễn, viêm da cơ địa cho trẻ. Đọc kết quả trực tiếp bởi GS. Phạm Nhật An.",
-                            DoctorId = new Guid("33333333-5555-5555-5555-555555555555"),
                             DurationInMinutes = 45,
                             IsActive = true,
                             Name = "Test lẩy da (Prick test) tìm dị nguyên 60 yếu tố",
@@ -1138,7 +1217,6 @@ namespace BookingCare.Infrastructure.Migrations
                             Id = new Guid("22222222-3333-3333-3333-111111111106"),
                             CreatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Bắn laser fractional tái tạo bề mặt da, thu nhỏ lỗ chân lông. Thực hiện trực tiếp bởi ThS. Vũ Nguyệt Minh.",
-                            DoctorId = new Guid("33333333-6666-6666-6666-666666666666"),
                             DurationInMinutes = 45,
                             IsActive = true,
                             Name = "Điều trị sẹo rỗ/mụn chuyên sâu bằng Laser CO2",
@@ -1152,7 +1230,6 @@ namespace BookingCare.Infrastructure.Migrations
                             Id = new Guid("22222222-3333-3333-3333-111111111107"),
                             CreatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Sử dụng ống soi siêu nhỏ mềm mại, phù hợp cho cả trẻ em. Trực tiếp thực hiện bởi PGS. Trần Hữu Thắng.",
-                            DoctorId = new Guid("33333333-7777-7777-7777-777777777777"),
                             DurationInMinutes = 20,
                             IsActive = true,
                             Name = "Nội soi Tai Mũi Họng Ống Mềm (Không gây buồn nôn)",
@@ -1166,7 +1243,6 @@ namespace BookingCare.Infrastructure.Migrations
                             Id = new Guid("22222222-3333-3333-3333-111111111108"),
                             CreatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Đánh giá các bệnh lý điểm vàng và thần kinh thị giác. TS. Hoàng Cương trực tiếp đọc kết quả.",
-                            DoctorId = new Guid("33333333-8888-8888-8888-888888888888"),
                             DurationInMinutes = 20,
                             IsActive = true,
                             Name = "Chụp cắt lớp võng mạc (OCT)",
@@ -1180,7 +1256,6 @@ namespace BookingCare.Infrastructure.Migrations
                             Id = new Guid("22222222-3333-3333-3333-111111111109"),
                             CreatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Ghi lại hoạt động điện của não để phát hiện sóng động kinh, u não. Phân tích kết quả bởi PGS. Nguyễn Văn Hướng.",
-                            DoctorId = new Guid("33333333-9999-9999-9999-999999999999"),
                             DurationInMinutes = 45,
                             IsActive = true,
                             Name = "Đo điện não đồ (EEG)",
@@ -1194,7 +1269,6 @@ namespace BookingCare.Infrastructure.Migrations
                             Id = new Guid("22222222-3333-3333-3333-111111111110"),
                             CreatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Nhổ răng bằng sóng siêu âm không sưng, ít chảy máu. Trực tiếp phẫu thuật bởi ThS. Phạm Như Hải.",
-                            DoctorId = new Guid("33333333-0000-0000-0000-000000000000"),
                             DurationInMinutes = 60,
                             IsActive = true,
                             Name = "Tiểu phẫu nhổ răng khôn mọc ngầm bằng Piezotome",
@@ -1208,7 +1282,6 @@ namespace BookingCare.Infrastructure.Migrations
                             Id = new Guid("22222222-3333-3333-3333-222222222210"),
                             CreatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Công nghệ tẩy trắng răng cắt lạnh an toàn, lên ngay 2-3 tone màu. Thực hiện bởi ThS. Phạm Như Hải.",
-                            DoctorId = new Guid("33333333-0000-0000-0000-000000000000"),
                             DurationInMinutes = 60,
                             IsActive = true,
                             Name = "Tẩy trắng răng Laser Whitening",
@@ -1688,168 +1761,267 @@ namespace BookingCare.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("44444444-5555-5555-5555-111111111111"),
-                            CreatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = new Guid("44444444-7777-7777-7777-000000000001"),
+                            CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             DoctorId = new Guid("33333333-1111-1111-1111-111111111111"),
-                            EndTime = new DateTime(2026, 4, 8, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 8, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndTime = new DateTime(2026, 4, 14, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                            NextAvailableAt = new DateTime(2026, 4, 14, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             ServiceId = new Guid("22222222-1111-1111-1111-111111111101"),
-                            StartTime = new DateTime(2026, 4, 8, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                            StartTime = new DateTime(2026, 4, 14, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = new Guid("44444444-5555-5555-5555-222222222222"),
-                            CreatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-1111-1111-1111-111111111111"),
-                            EndTime = new DateTime(2026, 4, 8, 17, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 8, 13, 30, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-3333-3333-3333-111111111101"),
-                            StartTime = new DateTime(2026, 4, 8, 13, 30, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-5555-5555-5555-333333333333"),
-                            CreatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-2222-2222-2222-222222222222"),
-                            EndTime = new DateTime(2026, 4, 9, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 9, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-3333-3333-3333-111111111102"),
-                            StartTime = new DateTime(2026, 4, 9, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-5555-5555-5555-444444444444"),
-                            CreatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = new Guid("44444444-7777-7777-7777-000000000002"),
+                            CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             DoctorId = new Guid("33333333-3333-3333-3333-333333333333"),
-                            EndTime = new DateTime(2026, 4, 9, 17, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 9, 13, 30, 0, 0, DateTimeKind.Unspecified),
+                            EndTime = new DateTime(2026, 4, 14, 17, 0, 0, 0, DateTimeKind.Unspecified),
+                            NextAvailableAt = new DateTime(2026, 4, 14, 13, 30, 0, 0, DateTimeKind.Unspecified),
                             ServiceId = new Guid("22222222-3333-3333-3333-111111111103"),
-                            StartTime = new DateTime(2026, 4, 9, 13, 30, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                            StartTime = new DateTime(2026, 4, 14, 13, 30, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = new Guid("44444444-5555-5555-5555-555555555555"),
-                            CreatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-4444-4444-4444-444444444444"),
-                            EndTime = new DateTime(2026, 4, 8, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 8, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-1111-1111-1111-111111111104"),
-                            StartTime = new DateTime(2026, 4, 8, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-5555-5555-5555-666666666666"),
-                            CreatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-4444-4444-4444-444444444444"),
-                            EndTime = new DateTime(2026, 4, 10, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-3333-3333-3333-111111111104"),
-                            StartTime = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-5555-5555-5555-777777777777"),
-                            CreatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = new Guid("44444444-7777-7777-7777-000000000003"),
+                            CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             DoctorId = new Guid("33333333-5555-5555-5555-555555555555"),
-                            EndTime = new DateTime(2026, 4, 8, 11, 30, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 8, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndTime = new DateTime(2026, 4, 14, 11, 30, 0, 0, DateTimeKind.Unspecified),
+                            NextAvailableAt = new DateTime(2026, 4, 14, 9, 0, 0, 0, DateTimeKind.Unspecified),
                             ServiceId = new Guid("22222222-1111-1111-1111-111111111105"),
-                            StartTime = new DateTime(2026, 4, 8, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                            StartTime = new DateTime(2026, 4, 14, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = new Guid("44444444-5555-5555-5555-888888888888"),
-                            CreatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-5555-5555-5555-555555555555"),
-                            EndTime = new DateTime(2026, 4, 9, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 9, 8, 30, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-3333-3333-3333-111111111105"),
-                            StartTime = new DateTime(2026, 4, 9, 8, 30, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                            Id = new Guid("44444444-7777-7777-7777-000000000004"),
+                            CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-2222-2222-2222-222222222222"),
+                            EndTime = new DateTime(2026, 4, 15, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                            NextAvailableAt = new DateTime(2026, 4, 15, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111102"),
+                            StartTime = new DateTime(2026, 4, 15, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = new Guid("44444444-5555-5555-5555-999999999999"),
-                            CreatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = new Guid("44444444-7777-7777-7777-000000000005"),
+                            CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-4444-4444-4444-444444444444"),
+                            EndTime = new DateTime(2026, 4, 15, 17, 0, 0, 0, DateTimeKind.Unspecified),
+                            NextAvailableAt = new DateTime(2026, 4, 15, 13, 30, 0, 0, DateTimeKind.Unspecified),
+                            ServiceId = new Guid("22222222-1111-1111-1111-111111111104"),
+                            StartTime = new DateTime(2026, 4, 15, 13, 30, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-7777-7777-7777-000000000006"),
+                            CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             DoctorId = new Guid("33333333-6666-6666-6666-666666666666"),
-                            EndTime = new DateTime(2026, 4, 8, 17, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 8, 14, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndTime = new DateTime(2026, 4, 15, 17, 0, 0, 0, DateTimeKind.Unspecified),
+                            NextAvailableAt = new DateTime(2026, 4, 15, 14, 0, 0, 0, DateTimeKind.Unspecified),
                             ServiceId = new Guid("22222222-3333-3333-3333-111111111106"),
-                            StartTime = new DateTime(2026, 4, 8, 14, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                            StartTime = new DateTime(2026, 4, 15, 14, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = new Guid("44444444-6666-6666-6666-000000000000"),
-                            CreatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-6666-6666-6666-666666666666"),
-                            EndTime = new DateTime(2026, 4, 10, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-1111-1111-1111-111111111106"),
-                            StartTime = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-6666-6666-6666-111111111111"),
-                            CreatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = new Guid("44444444-7777-7777-7777-000000000007"),
+                            CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             DoctorId = new Guid("33333333-7777-7777-7777-777777777777"),
-                            EndTime = new DateTime(2026, 4, 9, 17, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 9, 13, 30, 0, 0, DateTimeKind.Unspecified),
+                            EndTime = new DateTime(2026, 4, 16, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                            NextAvailableAt = new DateTime(2026, 4, 16, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             ServiceId = new Guid("22222222-3333-3333-3333-111111111107"),
-                            StartTime = new DateTime(2026, 4, 9, 13, 30, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                            StartTime = new DateTime(2026, 4, 16, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = new Guid("44444444-6666-6666-6666-222222222222"),
-                            CreatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = new Guid("44444444-7777-7777-7777-000000000008"),
+                            CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             DoctorId = new Guid("33333333-8888-8888-8888-888888888888"),
-                            EndTime = new DateTime(2026, 4, 8, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 8, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndTime = new DateTime(2026, 4, 16, 17, 0, 0, 0, DateTimeKind.Unspecified),
+                            NextAvailableAt = new DateTime(2026, 4, 16, 13, 30, 0, 0, DateTimeKind.Unspecified),
                             ServiceId = new Guid("22222222-3333-3333-3333-111111111108"),
-                            StartTime = new DateTime(2026, 4, 8, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                            StartTime = new DateTime(2026, 4, 16, 13, 30, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = new Guid("44444444-6666-6666-6666-333333333333"),
-                            CreatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = new Guid("44444444-7777-7777-7777-000000000009"),
+                            CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             DoctorId = new Guid("33333333-9999-9999-9999-999999999999"),
-                            EndTime = new DateTime(2026, 4, 10, 17, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 10, 13, 30, 0, 0, DateTimeKind.Unspecified),
+                            EndTime = new DateTime(2026, 4, 16, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                            NextAvailableAt = new DateTime(2026, 4, 16, 8, 30, 0, 0, DateTimeKind.Unspecified),
                             ServiceId = new Guid("22222222-3333-3333-3333-111111111109"),
-                            StartTime = new DateTime(2026, 4, 10, 13, 30, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                            StartTime = new DateTime(2026, 4, 16, 8, 30, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = new Guid("44444444-6666-6666-6666-444444444444"),
-                            CreatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = new Guid("44444444-7777-7777-7777-000000000010"),
+                            CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             DoctorId = new Guid("33333333-0000-0000-0000-000000000000"),
-                            EndTime = new DateTime(2026, 4, 8, 17, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 8, 13, 30, 0, 0, DateTimeKind.Unspecified),
+                            EndTime = new DateTime(2026, 4, 17, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                            NextAvailableAt = new DateTime(2026, 4, 17, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             ServiceId = new Guid("22222222-1111-1111-1111-111111111110"),
-                            StartTime = new DateTime(2026, 4, 8, 13, 30, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                            StartTime = new DateTime(2026, 4, 17, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = new Guid("44444444-6666-6666-6666-555555555555"),
-                            CreatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = new Guid("44444444-7777-7777-7777-000000000011"),
+                            CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-1111-1111-1111-111111111111"),
+                            EndTime = new DateTime(2026, 4, 17, 17, 0, 0, 0, DateTimeKind.Unspecified),
+                            NextAvailableAt = new DateTime(2026, 4, 17, 13, 30, 0, 0, DateTimeKind.Unspecified),
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111101"),
+                            StartTime = new DateTime(2026, 4, 17, 13, 30, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-7777-7777-7777-000000000012"),
+                            CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-4444-4444-4444-444444444444"),
+                            EndTime = new DateTime(2026, 4, 17, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                            NextAvailableAt = new DateTime(2026, 4, 17, 9, 30, 0, 0, DateTimeKind.Unspecified),
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111104"),
+                            StartTime = new DateTime(2026, 4, 17, 9, 30, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-7777-7777-7777-000000000013"),
+                            CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-5555-5555-5555-555555555555"),
+                            EndTime = new DateTime(2026, 4, 18, 11, 30, 0, 0, DateTimeKind.Unspecified),
+                            NextAvailableAt = new DateTime(2026, 4, 18, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111105"),
+                            StartTime = new DateTime(2026, 4, 18, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-7777-7777-7777-000000000014"),
+                            CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-6666-6666-6666-666666666666"),
+                            EndTime = new DateTime(2026, 4, 18, 17, 0, 0, 0, DateTimeKind.Unspecified),
+                            NextAvailableAt = new DateTime(2026, 4, 18, 13, 30, 0, 0, DateTimeKind.Unspecified),
+                            ServiceId = new Guid("22222222-1111-1111-1111-111111111106"),
+                            StartTime = new DateTime(2026, 4, 18, 13, 30, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-7777-7777-7777-000000000015"),
+                            CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-2222-2222-2222-222222222222"),
+                            EndTime = new DateTime(2026, 4, 18, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                            NextAvailableAt = new DateTime(2026, 4, 18, 8, 30, 0, 0, DateTimeKind.Unspecified),
+                            ServiceId = new Guid("22222222-1111-1111-1111-111111111102"),
+                            StartTime = new DateTime(2026, 4, 18, 8, 30, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-7777-7777-7777-000000000016"),
+                            CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-3333-3333-3333-333333333333"),
+                            EndTime = new DateTime(2026, 4, 19, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                            NextAvailableAt = new DateTime(2026, 4, 19, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            ServiceId = new Guid("22222222-1111-1111-1111-111111111103"),
+                            StartTime = new DateTime(2026, 4, 19, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-7777-7777-7777-000000000017"),
+                            CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-7777-7777-7777-777777777777"),
+                            EndTime = new DateTime(2026, 4, 19, 16, 30, 0, 0, DateTimeKind.Unspecified),
+                            NextAvailableAt = new DateTime(2026, 4, 19, 13, 0, 0, 0, DateTimeKind.Unspecified),
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111107"),
+                            StartTime = new DateTime(2026, 4, 19, 13, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-7777-7777-7777-000000000018"),
+                            CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-8888-8888-8888-888888888888"),
+                            EndTime = new DateTime(2026, 4, 19, 11, 0, 0, 0, DateTimeKind.Unspecified),
+                            NextAvailableAt = new DateTime(2026, 4, 19, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111108"),
+                            StartTime = new DateTime(2026, 4, 19, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-7777-7777-7777-000000000019"),
+                            CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-9999-9999-9999-999999999999"),
+                            EndTime = new DateTime(2026, 4, 20, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                            NextAvailableAt = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111109"),
+                            StartTime = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-7777-7777-7777-000000000020"),
+                            CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             DoctorId = new Guid("33333333-0000-0000-0000-000000000000"),
-                            EndTime = new DateTime(2026, 4, 10, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndTime = new DateTime(2026, 4, 20, 17, 0, 0, 0, DateTimeKind.Unspecified),
+                            NextAvailableAt = new DateTime(2026, 4, 20, 13, 30, 0, 0, DateTimeKind.Unspecified),
                             ServiceId = new Guid("22222222-3333-3333-3333-222222222210"),
-                            StartTime = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 4, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                            StartTime = new DateTime(2026, 4, 20, 13, 30, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-7777-7777-7777-000000000021"),
+                            CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-1111-1111-1111-111111111111"),
+                            EndTime = new DateTime(2026, 4, 20, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                            NextAvailableAt = new DateTime(2026, 4, 20, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111101"),
+                            StartTime = new DateTime(2026, 4, 20, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-7777-7777-7777-000000000022"),
+                            CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-3333-3333-3333-333333333333"),
+                            EndTime = new DateTime(2026, 4, 15, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                            NextAvailableAt = new DateTime(2026, 4, 15, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                            ServiceId = new Guid("22222222-1111-1111-1111-111111111103"),
+                            StartTime = new DateTime(2026, 4, 15, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-7777-7777-7777-000000000023"),
+                            CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-6666-6666-6666-666666666666"),
+                            EndTime = new DateTime(2026, 4, 16, 16, 30, 0, 0, DateTimeKind.Unspecified),
+                            NextAvailableAt = new DateTime(2026, 4, 16, 14, 0, 0, 0, DateTimeKind.Unspecified),
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111106"),
+                            StartTime = new DateTime(2026, 4, 16, 14, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-7777-7777-7777-000000000024"),
+                            CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-4444-4444-4444-444444444444"),
+                            EndTime = new DateTime(2026, 4, 18, 16, 30, 0, 0, DateTimeKind.Unspecified),
+                            NextAvailableAt = new DateTime(2026, 4, 18, 14, 0, 0, 0, DateTimeKind.Unspecified),
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111104"),
+                            StartTime = new DateTime(2026, 4, 18, 14, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -2096,6 +2268,12 @@ namespace BookingCare.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("BookingCare.Domain.Entities.Service", "Service")
+                        .WithMany("Appointments")
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("BookingCare.Domain.Entities.WorkSession", "WorkSession")
                         .WithMany("Appointments")
                         .HasForeignKey("WorkSessionId")
@@ -2106,30 +2284,19 @@ namespace BookingCare.Infrastructure.Migrations
 
                     b.Navigation("PatientProfile");
 
-                    b.Navigation("WorkSession");
-                });
-
-            modelBuilder.Entity("BookingCare.Domain.Entities.AppointmentService", b =>
-                {
-                    b.HasOne("BookingCare.Domain.Entities.Appointment", "Appointment")
-                        .WithMany("AppointmentServices")
-                        .HasForeignKey("AppointmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BookingCare.Domain.Entities.Service", "Service")
-                        .WithMany("AppointmentServices")
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Appointment");
-
                     b.Navigation("Service");
+
+                    b.Navigation("WorkSession");
                 });
 
             modelBuilder.Entity("BookingCare.Domain.Entities.Doctor", b =>
                 {
+                    b.HasOne("BookingCare.Domain.Entities.Service", "Service")
+                        .WithMany("Doctors")
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("BookingCare.Domain.Entities.Specialty", "Specialty")
                         .WithMany("Doctors")
                         .HasForeignKey("SpecialtyId")
@@ -2141,6 +2308,8 @@ namespace BookingCare.Infrastructure.Migrations
                         .HasForeignKey("BookingCare.Domain.Entities.Doctor", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Service");
 
                     b.Navigation("Specialty");
 
@@ -2191,6 +2360,28 @@ namespace BookingCare.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("BookingCare.Domain.Entities.Payment", b =>
+                {
+                    b.HasOne("BookingCare.Domain.Entities.Appointment", "Appointment")
+                        .WithOne("Payment")
+                        .HasForeignKey("BookingCare.Domain.Entities.Payment", "AppointmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Appointment");
+                });
+
+            modelBuilder.Entity("BookingCare.Domain.Entities.PaymentTransaction", b =>
+                {
+                    b.HasOne("BookingCare.Domain.Entities.Payment", "Payment")
+                        .WithMany("Transactions")
+                        .HasForeignKey("PaymentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Payment");
                 });
 
             modelBuilder.Entity("BookingCare.Domain.Entities.Prescription", b =>
@@ -2263,17 +2454,14 @@ namespace BookingCare.Infrastructure.Migrations
 
             modelBuilder.Entity("BookingCare.Domain.Entities.Service", b =>
                 {
-                    b.HasOne("BookingCare.Domain.Entities.Doctor", "Doctor")
+                    b.HasOne("BookingCare.Domain.Entities.Doctor", null)
                         .WithMany("Services")
-                        .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("DoctorId");
 
                     b.HasOne("BookingCare.Domain.Entities.Specialty", "Specialty")
                         .WithMany("Services")
                         .HasForeignKey("SpecialtyId")
                         .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Doctor");
 
                     b.Navigation("Specialty");
                 });
@@ -2350,7 +2538,7 @@ namespace BookingCare.Infrastructure.Migrations
 
             modelBuilder.Entity("BookingCare.Domain.Entities.Appointment", b =>
                 {
-                    b.Navigation("AppointmentServices");
+                    b.Navigation("Payment");
 
                     b.Navigation("Prescription");
                 });
@@ -2379,6 +2567,11 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Navigation("SharedProfiles");
                 });
 
+            modelBuilder.Entity("BookingCare.Domain.Entities.Payment", b =>
+                {
+                    b.Navigation("Transactions");
+                });
+
             modelBuilder.Entity("BookingCare.Domain.Entities.Prescription", b =>
                 {
                     b.Navigation("PrescriptionDetails");
@@ -2386,7 +2579,9 @@ namespace BookingCare.Infrastructure.Migrations
 
             modelBuilder.Entity("BookingCare.Domain.Entities.Service", b =>
                 {
-                    b.Navigation("AppointmentServices");
+                    b.Navigation("Appointments");
+
+                    b.Navigation("Doctors");
 
                     b.Navigation("WorkSessions");
                 });

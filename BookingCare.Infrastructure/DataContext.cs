@@ -24,10 +24,11 @@ namespace BookingCare.Infrastructure
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<WorkSession> WorkSessions { get; set; }
         public DbSet<Service> Services { get; set; }
-        public DbSet<AppointmentService> AppointmentServices { get; set; }
         public DbSet<Prescription> Prescriptions { get; set; }
         public DbSet<PrescriptionDetail> PrescriptionDetails { get; set; }
         public DbSet<Medicine> Medicines { get; set; }
+        public DbSet<Payment> Payments { get; set; }
+        public DbSet<PaymentTransaction> PaymentTransactions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -64,6 +65,12 @@ namespace BookingCare.Infrastructure
                 .WithMany(s => s.Doctors)
                 .HasForeignKey(d => d.SpecialtyId)
                 .OnDelete(DeleteBehavior.Restrict);
+            
+            builder.Entity<Doctor>()
+                .HasOne(d => d.Service)
+                .WithMany(s => s.Doctors)
+                .HasForeignKey(d => d.ServiceId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Receptionist>()
                 .HasOne(r => r.User)
@@ -75,12 +82,6 @@ namespace BookingCare.Infrastructure
                 .HasOne(ws => ws.Doctor)
                 .WithMany(d => d.WorkSessions)
                 .HasForeignKey(ws => ws.DoctorId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<Service>()
-                .HasOne(s => s.Doctor)
-                .WithMany(d => d.Services)
-                .HasForeignKey(s => s.DoctorId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Service>()
@@ -117,18 +118,6 @@ namespace BookingCare.Infrastructure
                 .HasOne(a => a.Prescription)
                 .WithOne(p => p.Appointment)
                 .HasForeignKey<Appointment>(a => a.PrescriptionId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<AppointmentService>()
-                .HasOne(asvc => asvc.Appointment)
-                .WithMany(a => a.AppointmentServices)
-                .HasForeignKey(asvc => asvc.AppointmentId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            builder.Entity<AppointmentService>()
-                .HasOne(asvc => asvc.Service)
-                .WithMany(s => s.AppointmentServices)
-                .HasForeignKey(asvc => asvc.ServiceId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<ProfileShare>()
@@ -184,19 +173,41 @@ namespace BookingCare.Infrastructure
                 .WithOne(pd => pd.Medicine)
                 .HasForeignKey(pd => pd.MedicineId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Appointment>()
+                .HasOne(a => a.Service)
+                .WithMany(s => s.Appointments)
+                .HasForeignKey(a => a.ServiceId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Payment>()
+                .HasOne(p => p.Appointment)
+                .WithOne(a => a.Payment)
+                .HasForeignKey<Payment>(p => p.AppointmentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<PaymentTransaction>()
+                .HasOne(pt => pt.Payment)
+                .WithMany(p => p.Transactions)
+                .HasForeignKey(pt => pt.PaymentId)
+                .OnDelete(DeleteBehavior.Cascade);
             #endregion
 
             #region Convertion for Enums to string
-            //builder.Entity<Doctor>()
-            //    .Property(d => d.Position)
-            //    .HasConversion<string>();
+            builder.Entity<Doctor>()
+                .Property(d => d.Position)
+                .HasConversion<string>();
 
-            //builder.Entity<Doctor>()
-            //    .Property(d => d.Gender)
-            //    .HasConversion<string>();
+            builder.Entity<Doctor>()
+                .Property(d => d.Gender)
+                .HasConversion<string>();
 
             builder.Entity<Medicine>()
                 .Property(m => m.Unit)
+                .HasConversion<string>();
+
+            builder.Entity<Medicine>()
+                .Property(m => m.Status)
                 .HasConversion<string>();
 
             builder.Entity<Appointment>()
@@ -211,17 +222,57 @@ namespace BookingCare.Infrastructure
                 .Property(a => a.Priority)
                 .HasConversion<string>();
 
-            //builder.Entity<PatientProfile>()
-            //    .Property(a => a.Gender)
-            //    .HasConversion<string>();
+            builder.Entity<PatientProfile>()
+                .Property(a => a.Gender)
+                .HasConversion<string>();
 
-            //builder.Entity<PatientProfile>()
-            //    .Property(a => a.Relationship)
-            //    .HasConversion<string>();
+            builder.Entity<PatientProfile>()
+                .Property(a => a.Relationship)
+                .HasConversion<string>();
 
-            //builder.Entity<PatientProfile>()
-            //    .Property(a => a.BloodType)
-            //    .HasConversion<string>();
+            builder.Entity<PatientProfile>()
+                .Property(a => a.BloodType)
+                .HasConversion<string>();
+
+            builder.Entity<Notification>()
+                .Property(n => n.Type)
+                .HasConversion<string>();
+
+            builder.Entity<NotificationType>()
+                .Property(nt => nt.Content)
+                .HasConversion<string>();
+
+            builder.Entity<Payment>()
+                .Property(p => p.Status)
+                .HasConversion<string>();
+
+            builder.Entity<Payment>()
+                .Property(p => p.Method)
+                .HasConversion<string>();
+
+            builder.Entity<PaymentTransaction>()
+                .Property(pt => pt.Provider)
+                .HasConversion<string>();
+
+            builder.Entity<PaymentTransaction>()
+                .Property(pt => pt.Status)
+                .HasConversion<string>();
+
+            builder.Entity<ProfileShare>()
+                .Property(ps => ps.ShareStatus)
+                .HasConversion<string>();
+
+            builder.Entity<ProfileShare>()
+                .Property(ps => ps.SharePermission)
+                .HasConversion<string>();
+
+            builder.Entity<Receptionist>()
+                .Property(r => r.Gender)
+                .HasConversion<string>();
+
+            builder.Entity<Service>()
+                .Property(s => s.Position)
+                .HasConversion<string>();
             #endregion
 
             SeedData(builder);
