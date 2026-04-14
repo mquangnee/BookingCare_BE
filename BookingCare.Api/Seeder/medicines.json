@@ -2,7 +2,7 @@
   {
     "id": "e4b6d081-3c72-4d1a-8b1e-9a2f5c1d4e01",
     "name": "Paracetamol 500mg",
-    "unit": 0,
+    "unit": "Tablet",
     "function": "Giảm đau, hạ sốt từ nhẹ đến vừa.",
     "createdDate": "2026-04-09T17:04:05.000Z",
     "updatedDate": null
@@ -10,7 +10,7 @@
   {
     "id": "f5c7e192-4d83-5e2b-9c2f-0b3a6d2e5f12",
     "name": "Ibuprofen 400mg",
-    "unit": 0,
+    "unit": "Tablet",
     "function": "Kháng viêm không steroid (NSAID), giảm đau, hạ sốt.",
     "createdDate": "2026-04-09T17:04:05.000Z",
     "updatedDate": null
@@ -18,7 +18,7 @@
   {
     "id": "a1d8f203-5e94-6f3c-0d3a-1c4b7e3f6023",
     "name": "Voltaren Emulgel 1% 20g",
-    "unit": 7,
+    "unit": "Vial",
     "function": "Gel bôi ngoài da giảm đau, chống viêm cơ xương khớp.",
     "createdDate": "2026-04-09T17:04:05.000Z",
     "updatedDate": null
@@ -26,7 +26,7 @@
   {
     "id": "b2e90314-6fa5-704d-1e4b-2d5c8f407134",
     "name": "Omeprazole 20mg",
-    "unit": 0,
+    "unit": "Tablet",
     "function": "Ức chế tiết axit dạ dày, điều trị viêm loét dạ dày - tá tràng.",
     "createdDate": "2026-04-09T17:04:05.000Z",
     "updatedDate": null
@@ -34,7 +34,7 @@
   {
     "id": "c3fa1425-70b6-815e-2f5c-3e6d90518245",
     "name": "Phosphalugel 20% 20g",
-    "unit": 6,
+    "unit": "Bottle",
     "function": "Thuốc kháng axit, điều trị cơn đau dạ dày cấp.",
     "createdDate": "2026-04-09T17:04:05.000Z",
     "updatedDate": null
@@ -42,7 +42,7 @@
   {
     "id": "d40b2536-81c7-926f-306d-4f7ea1629356",
     "name": "Berberin 10mg",
-    "unit": 3,
+    "unit": "Bottle",
     "function": "Điều trị tiêu chảy, nhiễm khuẩn đường ruột.",
     "createdDate": "2026-04-09T17:04:05.000Z",
     "updatedDate": null
@@ -50,7 +50,7 @@
   {
     "id": "e51c3647-92d8-0370-417e-508fb273a467",
     "name": "Amoxicillin 500mg",
-    "unit": 1,
+    "unit": "Blister",
     "function": "Kháng sinh nhóm Penicillin, điều trị nhiễm khuẩn hô hấp, tai mũi họng.",
     "createdDate": "2026-04-09T17:04:05.000Z",
     "updatedDate": null
@@ -58,7 +58,7 @@
   {
     "id": "f62d4758-03e9-1481-528f-6190c384b578",
     "name": "Azithromycin 250mg",
-    "unit": 0,
+    "unit": "Tablet",
     "function": "Kháng sinh nhóm Macrolid, trị viêm phế quản, viêm phổi.",
     "createdDate": "2026-04-09T17:04:05.000Z",
     "updatedDate": null
@@ -66,7 +66,7 @@
   {
     "id": "073e5869-14fa-2592-6390-72a1d495c689",
     "name": "Loratadine 10mg",
-    "unit": 0,
+    "unit": "Tablet",
     "function": "Thuốc kháng histamin, điều trị viêm mũi dị ứng, mề đay.",
     "createdDate": "2026-04-09T17:04:05.000Z",
     "updatedDate": null
@@ -74,7 +74,7 @@
   {
     "id": "184f697a-250b-3603-74a1-83b2e506d79a",
     "name": "Prospan 100ml",
-    "unit": 3,
+    "unit": "Bottle",
     "function": "Siro ho chiết xuất lá thường xuân, làm loãng đờm, giảm ho.",
     "createdDate": "2026-04-09T17:04:05.000Z",
     "updatedDate": null
@@ -82,7 +82,7 @@
   {
     "id": "29507a8b-361c-4714-85b2-94c3f617e8ab",
     "name": "Amlodipine 5mg",
-    "unit": 1,
+    "unit": "Blister",
     "function": "Thuốc chẹn kênh canxi, điều trị tăng huyết áp.",
     "createdDate": "2026-04-09T17:04:05.000Z",
     "updatedDate": null
@@ -90,7 +90,7 @@
   {
     "id": "3a618b9c-472d-5825-96c3-05d40728f9bc",
     "name": "Vitamin C 500mg",
-    "unit": 4,
+    "unit": "Vial",
     "function": "Tăng cường sức đề kháng, bổ sung vitamin C.",
     "createdDate": "2026-04-09T17:04:05.000Z",
     "updatedDate": null
@@ -98,7 +98,7 @@
   {
     "id": "4b729cad-583e-6936-07d4-16e518390acd",
     "name": "Glucosamine Sulfate 1500mg",
-    "unit": 2,
+    "unit": "Box",
     "function": "Hỗ trợ điều trị thoái hóa khớp, tăng dịch nhờn sụn khớp.",
     "createdDate": "2026-04-09T17:04:05.000Z",
     "updatedDate": null
@@ -106,7 +106,7 @@
   {
     "id": "5c83adb1-694f-7a47-18e5-27f6294a1bde",
     "name": "Lidocaine 2%",
-    "unit": 5,
+    "unit": "Ampule",
     "function": "Thuốc gây tê tại chỗ dạng tiêm.",
     "createdDate": "2026-04-09T17:04:05.000Z",
     "updatedDate": null
@@ -114,7 +114,7 @@
   {
     "id": "6d94bec2-7a50-8b58-29f6-38073a5b2cef",
     "name": "Vitamin B12 1000mcg",
-    "unit": 5,
+    "unit": "Ampule",
     "function": "Điều trị thiếu máu do thiếu vitamin B12, đau dây thần kinh.",
     "createdDate": "2026-04-09T17:04:05.000Z",
     "updatedDate": null

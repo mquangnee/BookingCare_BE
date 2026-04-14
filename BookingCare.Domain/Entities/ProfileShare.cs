@@ -13,7 +13,6 @@ namespace BookingCare.Domain.Entities
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public DateTime? UpdatedDate { get; set; }
 
-        // Relationships
         public PatientProfile? PatientProfile { get; set; }
         public User? SharedByUser { get; set; }
         public User? SharedToUser { get; set; }

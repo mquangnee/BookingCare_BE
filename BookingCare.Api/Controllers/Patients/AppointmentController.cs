@@ -22,7 +22,7 @@ namespace BookingCare.Api.Controllers.Patients
         }
 
         [HttpPost("create")]
-        [ProducesResponseType(typeof(MethodResult<bool>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(MethodResult<PaymentResponseModel>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> CreateAppointment([FromBody] CreateAppointmentCommand command)
         {

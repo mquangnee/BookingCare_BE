@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BookingCare.Infrastructure\BookingCare.Infrastructure.csproj" />
+    <ProjectReference Include="..\BookingCare.Domain\BookingCare.Domain.csproj" />
   </ItemGroup>
 
 </Project>

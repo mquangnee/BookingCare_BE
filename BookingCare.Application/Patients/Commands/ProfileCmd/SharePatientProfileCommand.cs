@@ -22,10 +22,10 @@ namespace BookingCare.Application.Patients.Commands.ProfileCmd
     {
         private readonly UserManager<User> _userManager;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly INotificationRealTimeService _notificationService;
+        private readonly INotificationService _notificationService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public SharePatientProfileCommandHandler(UserManager<User> userManager, IUnitOfWork unitOfWork, INotificationRealTimeService notificationService, IHttpContextAccessor httpContextAccessor)
+        public SharePatientProfileCommandHandler(UserManager<User> userManager, IUnitOfWork unitOfWork, INotificationService notificationService, IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _unitOfWork = unitOfWork;
@@ -99,7 +99,7 @@ namespace BookingCare.Application.Patients.Commands.ProfileCmd
             return methodResult;
         }
 
-        private static async Task SendNotificationAsync(INotificationRealTimeService notificationService, Guid patientProfileId, Guid senderId, Guid receiverId, Guid objectId, List<object> messageParams)
+        private static async Task SendNotificationAsync(INotificationService notificationService, Guid patientProfileId, Guid senderId, Guid receiverId, Guid objectId, List<object> messageParams)
         {
             await notificationService.SendNotificationAsync(
                 receiverId: receiverId,

@@ -11,29 +11,33 @@ using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
+using BookingCare.Domain.Models.EntityModels;
+
 namespace BookingCare.Application.Patients.Commands.AppointmentCmd
 {
-    public class CreateAppointmentCommand : CreateAppointmentCommandModel, IRequest<MethodResult<bool>>
+    public class CreateAppointmentCommand : CreateAppointmentCommandModel, IRequest<MethodResult<PaymentResponseModel>>
     {
     }
 
-    public class CreateAppointmentCommandHandler : IRequestHandler<CreateAppointmentCommand, MethodResult<bool>>
+    public class CreateAppointmentCommandHandler : IRequestHandler<CreateAppointmentCommand, MethodResult<PaymentResponseModel>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IGeneratorCodeService _generatorCodeService;
+        private readonly ISepayService _sepayService;
 
-        public CreateAppointmentCommandHandler(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor, IGeneratorCodeService generatorCodeService)
+        public CreateAppointmentCommandHandler(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor, IGeneratorCodeService generatorCodeService, ISepayService sepayService)
         {
             _unitOfWork = unitOfWork;
             _httpContextAccessor = httpContextAccessor;
             _generatorCodeService = generatorCodeService;
+            _sepayService = sepayService;
         }
 
-        public async Task<MethodResult<bool>> Handle(CreateAppointmentCommand request, CancellationToken cancellationToken)
+        public async Task<MethodResult<PaymentResponseModel>> Handle(CreateAppointmentCommand request, CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(request);
-            var methodResult = new MethodResult<bool>();
+            var methodResult = new MethodResult<PaymentResponseModel>();
 
             var userIdString = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value
                             ?? _httpContextAccessor.HttpContext?.User?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
@@ -102,26 +106,35 @@ namespace BookingCare.Application.Patients.Commands.AppointmentCmd
                 Id = Guid.NewGuid(),
                 AppointmentCode = appointmentCode,
                 BookerId = bookerId,
-                Status = EnumAppointmentStatus.Approved, //Khi tích hợp thanh toán xong thì sửa
+                Status = EnumAppointmentStatus.Pending,
                 Date = request.Date,
                 StartTime = request.StartTime,
                 EndTime = request.EndTime,
                 CreatedDate = DateTime.Now,
                 WorkSessionId = workSession.Id,
                 PatientProfileId = request.PatientProfileId,
-                AppointmentServices = new List<AppointmentService>
-                {
-                    new AppointmentService
-                    {
-                        Id = Guid.NewGuid(),
-                        ServiceId = targetService.Id,
-                        PriceOverride = targetService.Price
-                    }
-                }
+                ServiceId = targetService.Id,
+                ServicePrice = targetService.Price
             };
+
+            var newPayment = new Payment
+            {
+                Id = Guid.NewGuid(),
+                AppointmentId = newAppointment.Id,
+                PaymentCode = await _generatorCodeService.GenerateAppointmentCodeAsync(),
+                Amount = targetService.Price,
+                Status = EnumPaymentStatus.Pending,
+                Method = EnumPaymentMethod.BankTransfer,
+                CreatedDate = DateTime.Now
+            };
+
+            var paymentResponse = await _sepayService.CreateCheckoutAsync(newPayment, newAppointment);
+
             await _unitOfWork.Appointments.AddAsync(newAppointment);
+            await _unitOfWork.Payments.AddAsync(newPayment);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            methodResult.Result = true;
+
+            methodResult.Result = paymentResponse;
             methodResult.StatusCode = StatusCodes.Status201Created;
             return methodResult;
         }

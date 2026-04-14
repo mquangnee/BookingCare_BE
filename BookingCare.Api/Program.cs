@@ -5,6 +5,8 @@ using BookingCare.Domain.Entities;
 using BookingCare.Domain.IRepository;
 using BookingCare.Infrastructure;
 using BookingCare.Infrastructure.Maps;
+using BookingCare.Infrastructure.Repository;
+using BookingCare.Infrastructure.Services;
 using BookingCare.Shared.Setting;
 using BookingCare.Shared.SignalR;
 using Hangfire;
@@ -13,7 +15,6 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Runtime;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -88,6 +89,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 // Cấu hình Bind JSON vào Class
 builder.Services.Configure<JwtSetting>(builder.Configuration.GetSection(JwtSetting.SECTION_NAME));
 builder.Services.Configure<SmtpSetting>(builder.Configuration.GetSection(SmtpSetting.SECTION_NAME));
+builder.Services.Configure<SepaySetting>(builder.Configuration.GetSection("Sepay"));
 
 // Đăng ký Repository
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -104,10 +106,11 @@ builder.Services.AddScoped<INotificationTypeRepository, NotificationTypeReposito
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IWorkSessionRepository, WorkSessionRepository>();
 builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
-builder.Services.AddScoped<IAppointmentServiceRepository, AppointmentServiceRepository>();
 builder.Services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
 builder.Services.AddScoped<IPrescriptionDetailRepository, PrescriptionDetailRepository>();
 builder.Services.AddScoped<IMedicineRepository, MedicineRepository>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<IPaymentTransactionRepository, PaymentTransactionRepository>();
 
 // Đăng ký Service
 builder.Services.AddHttpContextAccessor();
@@ -115,7 +118,8 @@ builder.Services.AddScoped<ISenderService, SenderService>();
 builder.Services.AddScoped<IOtpService, OtpService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IGeneratorCodeService, GeneratorCodeService>();
-builder.Services.AddScoped<INotificationRealTimeService, NotificationRealTimeService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddHttpClient<ISepayService, SepayService>();
 builder.Services.AddMemoryCache();
 builder.Services.AddMediatR(cfg =>
 {

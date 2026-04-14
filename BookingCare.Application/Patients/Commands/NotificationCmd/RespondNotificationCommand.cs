@@ -17,9 +17,9 @@ namespace BookingCare.Application.Patients.Commands.NotificationCmd
     public class RespondNotificationCommandHandler : IRequestHandler<RespondNotificationCommand, MethodResult<bool>>
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly INotificationRealTimeService _notificationService;
+        private readonly INotificationService _notificationService;
 
-        public RespondNotificationCommandHandler(IUnitOfWork unitOfWork, INotificationRealTimeService notificationService)
+        public RespondNotificationCommandHandler(IUnitOfWork unitOfWork, INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
             _notificationService = notificationService;
@@ -79,7 +79,7 @@ namespace BookingCare.Application.Patients.Commands.NotificationCmd
             return methodResult;
         }
 
-        private static async Task SendNotificationAsync(INotificationRealTimeService notificationService, Guid? patientProfileId, Guid senderId, Guid receiverId, List<object> messageParams, bool isAccepted)
+        private static async Task SendNotificationAsync(INotificationService notificationService, Guid? patientProfileId, Guid senderId, Guid receiverId, List<object> messageParams, bool isAccepted)
         {
             await notificationService.SendNotificationAsync(
                 receiverId: receiverId,

@@ -44,8 +44,7 @@ namespace BookingCare.Application.Patients.Queries.AppointmentQuery
                     .ThenInclude(ws => ws.Doctor)
                         .ThenInclude(d => d.Specialty)
                 .Include(a => a.PatientProfile)
-                .Include(a => a.AppointmentServices)
-                    .ThenInclude(s => s.Service)
+                .Include(a => a.Service)
                 .Where(a => a.BookerId == userId);
             if (request.Status.HasValue)
             {
@@ -54,12 +53,12 @@ namespace BookingCare.Application.Patients.Queries.AppointmentQuery
             if (!string.IsNullOrWhiteSpace(request.DoctorName))
             {
                 var doctorPattern = $"%{request.DoctorName.Trim()}%";
-                query = query.Where(a => EF.Functions.Like(a.WorkSession.Doctor.FullName, doctorPattern));
+                query = query.Where(a => EF.Functions.Like(a.WorkSession!.Doctor!.FullName, doctorPattern));
             }
             if (!string.IsNullOrWhiteSpace(request.PatientProfileName))
             {
                 var patientPattern = $"%{request.PatientProfileName.Trim()}%";
-                query = query.Where(a => EF.Functions.Like(a.PatientProfile.FullName, patientPattern));
+                query = query.Where(a => EF.Functions.Like(a.PatientProfile!.FullName, patientPattern));
             }
             var totalCount = await query.CountAsync(cancellationToken);
 
@@ -75,14 +74,15 @@ namespace BookingCare.Application.Patients.Queries.AppointmentQuery
                 StartTime = a.StartTime,
                 EndTime = a.EndTime,
                 Status = a.Status,
-                DoctorName = a.WorkSession.Doctor.FullName,
+                DoctorName = a.WorkSession!.Doctor!.FullName,
                 DoctorCode = a.WorkSession.Doctor.DoctorCode,
                 DoctorId = a.WorkSession.Doctor.Id,
                 SpecialtyName = a.WorkSession.Doctor.Specialty?.Name ?? string.Empty,
-                PatientProfileName = a.PatientProfile.FullName,
+                PatientProfileName = a.PatientProfile!.FullName,
                 PatientProfileCode = a.PatientProfile.ProfileCode,
                 PatientProfileId = a.PatientProfile.Id,
-                Services = a.AppointmentServices?.Select(s => s.Service.Name).ToList() ?? new(),
+                ServiceId = a.ServiceId,
+                ServiceName = a.Service!.Name,
                 CreatedDate = a.CreatedDate
             }).ToList();
 

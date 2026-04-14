@@ -5,9 +5,8 @@ namespace BookingCare.Domain.Entities
     public class PatientProfile
     {
         public Guid Id { get; set; }
-        public string? ProfileCode { get; set; }
         public Guid? PatientId { get; set; }
-
+        public string? ProfileCode { get; set; }
         public string? FullName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public EnumGender Gender { get; set; }
@@ -19,7 +18,6 @@ namespace BookingCare.Domain.Entities
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public DateTime? UpdatedDate { get; set; }
 
-        // Relationships
         public Patient? Patient { get; set; }
         public ICollection<Appointment>? Appointments { get; set; }
         public ICollection<ProfileShare>? SharedProfiles { get; set; }
