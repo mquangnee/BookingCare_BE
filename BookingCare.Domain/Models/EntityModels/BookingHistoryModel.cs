@@ -8,6 +8,7 @@ namespace BookingCare.Domain.Models.EntityModels
         public Guid DoctorId { get; set; }
         public Guid PatientProfileId { get; set; }
         public Guid ServiceId { get; set; }
+        public Guid? PrescriptionId { get; set; }
         public string? DoctorName { get; set; }
         public string? DoctorCode { get; set; }
         public string? SpecialtyName { get; set; }

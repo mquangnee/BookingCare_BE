@@ -40,6 +40,7 @@ namespace BookingCare.Application.Doctors.Query
                 return methodResult;
             }
 
+            //var startOfDay = new DateTime(2026, 04, 17).Date;
             var startOfDay = DateTime.Now.Date;
             var endOfDay = startOfDay.AddDays(1);
 
@@ -49,7 +50,7 @@ namespace BookingCare.Application.Doctors.Query
                 .Where(a => a.Date >= startOfDay &&
                             a.Date < endOfDay &&
                             a.WorkSession!.Doctor!.UserId == userId &&
-                            a.Status == EnumAppointmentStatus.Waiting)
+                            (a.Status == EnumAppointmentStatus.Waiting || a.Status == EnumAppointmentStatus.Completed))
                 .Select(a => new AppointmentModel
                 {
                     Id = a.Id,

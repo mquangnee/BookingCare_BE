@@ -6,5 +6,7 @@
         PatientHasOverlappingAppointment,
         StatusNotValidForCancellation,
         TimeNotValidForCancellation,
+        PrescriptionNotFound,
+        PrescriptionDetailNotFound
     }
 }
