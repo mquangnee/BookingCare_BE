@@ -4,6 +4,7 @@ using BookingCare.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookingCare.Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260421040607_add_ai_chat_entity")]
+    partial class add_ai_chat_entity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -158,8 +161,7 @@ namespace BookingCare.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ChatSessionId", "CreatedDate")
-                        .HasDatabaseName("IX_ChatMessages_ChatSessionId_CreatedDate");
+                    b.HasIndex("ChatSessionId");
 
                     b.ToTable("ChatMessages");
                 });
@@ -181,8 +183,7 @@ namespace BookingCare.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId", "CreatedDate")
-                        .HasDatabaseName("IX_ChatSessions_UserId_CreatedDate");
+                    b.HasIndex("UserId");
 
                     b.ToTable("ChatSessions");
                 });

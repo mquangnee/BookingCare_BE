@@ -1,4 +1,6 @@
-﻿namespace BookingCare.Domain.IRepository
+﻿using Microsoft.EntityFrameworkCore.Storage;
+
+namespace BookingCare.Domain.IRepository
 {
     public interface IUnitOfWork : IDisposable
     {
@@ -19,6 +21,11 @@
         IPrescriptionDetailRepository PrescriptionDetails { get; }
         IPaymentRepository Payments { get; }
         IPaymentTransactionRepository PaymentsTransactions { get; }
+        IChatMessageRepository ChatMessages { get; }
+        IChatSessionRepository ChatSessions { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
+        Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default);
+        Task CommitAsync(CancellationToken cancellationToken = default);
+        Task RollbackAsync(CancellationToken cancellationToken = default);
     }
 }

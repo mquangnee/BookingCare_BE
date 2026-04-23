@@ -2,6 +2,7 @@ using BookingCare.Domain.IRepository;
 using BookingCare.Domain.Models.EntityModels;
 using BookingCare.Domain.Models.QueryModels;
 using BookingCare.Shared.Common;
+using BookingCare.Shared.Enum;
 using BookingCare.Shared.Enum.ErrorCode;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -85,6 +86,20 @@ namespace BookingCare.Application.Patients.Queries.AppointmentQuery
                 ServiceName = a.Service!.Name,
                 CreatedDate = a.CreatedDate
             }).ToList();
+
+            foreach (var booking in bookingHistories)
+            {
+                if (booking.Status == EnumAppointmentStatus.Completed)
+                {
+                    var prescription = await _unitOfWork.Prescriptions.QueryableAsync()
+                        .Where(p => p.AppointmentId == booking.Id)
+                        .FirstOrDefaultAsync(cancellationToken);
+                    if (prescription != null)
+                    {
+                        booking.PrescriptionId = prescription.Id;
+                    }
+                }
+            }
 
             var pagedResult = new PagedResult<BookingHistoryModel>
             {

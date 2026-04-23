@@ -11,7 +11,7 @@ namespace BookingCare.Api.Controllers.Patients
 {
     [Route("api/patient/appointment")]
     [ApiController]
-    [Authorize(Roles = "Patient")]
+    //[Authorize(Roles = "Patient")]
     public class AppointmentController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -46,6 +46,15 @@ namespace BookingCare.Api.Controllers.Patients
         {
             var commandResult = await _mediator.Send(new CancelAppointmentCommand { AppointmentId = appointmentId});
             return commandResult.GetActionResult();
+        }
+
+        [HttpGet("result/{appointmentId}")]
+        [ProducesResponseType(typeof(MethodResult<PrescriptionModel>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> GetMedicalReport([FromRoute] Guid appointmentId)
+        {
+            var queryResult = await _mediator.Send(new GetMedicalReportQuery { AppointmentId = appointmentId });
+            return queryResult.GetActionResult();
         }
     }
 }

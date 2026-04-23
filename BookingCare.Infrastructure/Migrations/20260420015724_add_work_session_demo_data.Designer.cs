@@ -4,6 +4,7 @@ using BookingCare.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookingCare.Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260420015724_add_work_session_demo_data")]
+    partial class add_work_session_demo_data
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -129,62 +132,6 @@ namespace BookingCare.Infrastructure.Migrations
                     b.HasIndex("WorkSessionId");
 
                     b.ToTable("Appointments");
-                });
-
-            modelBuilder.Entity("BookingCare.Domain.Entities.ChatMessage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ChatRole")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("ChatSessionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Content")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ToolId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ToolName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ChatSessionId", "CreatedDate")
-                        .HasDatabaseName("IX_ChatMessages_ChatSessionId_CreatedDate");
-
-                    b.ToTable("ChatMessages");
-                });
-
-            modelBuilder.Entity("BookingCare.Domain.Entities.ChatSession", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId", "CreatedDate")
-                        .HasDatabaseName("IX_ChatSessions_UserId_CreatedDate");
-
-                    b.ToTable("ChatSessions");
                 });
 
             modelBuilder.Entity("BookingCare.Domain.Entities.Doctor", b =>
@@ -2675,27 +2622,6 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Navigation("WorkSession");
                 });
 
-            modelBuilder.Entity("BookingCare.Domain.Entities.ChatMessage", b =>
-                {
-                    b.HasOne("BookingCare.Domain.Entities.ChatSession", "ChatSession")
-                        .WithMany("ChatMessages")
-                        .HasForeignKey("ChatSessionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ChatSession");
-                });
-
-            modelBuilder.Entity("BookingCare.Domain.Entities.ChatSession", b =>
-                {
-                    b.HasOne("BookingCare.Domain.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("BookingCare.Domain.Entities.Doctor", b =>
                 {
                     b.HasOne("BookingCare.Domain.Entities.Service", "Service")
@@ -2948,11 +2874,6 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Navigation("Payment");
 
                     b.Navigation("Prescription");
-                });
-
-            modelBuilder.Entity("BookingCare.Domain.Entities.ChatSession", b =>
-                {
-                    b.Navigation("ChatMessages");
                 });
 
             modelBuilder.Entity("BookingCare.Domain.Entities.Doctor", b =>

@@ -1,4 +1,5 @@
 using BookingCare.Api.Workers;
+using BookingCare.Application.IServices;
 using BookingCare.Application.Patients.Commands.AuthCmd;
 using BookingCare.Application.Services;
 using BookingCare.Domain.Entities;
@@ -90,6 +91,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 builder.Services.Configure<JwtSetting>(builder.Configuration.GetSection(JwtSetting.SECTION_NAME));
 builder.Services.Configure<SmtpSetting>(builder.Configuration.GetSection(SmtpSetting.SECTION_NAME));
 builder.Services.Configure<SepaySetting>(builder.Configuration.GetSection("Sepay"));
+builder.Services.Configure<GroqSetting>(builder.Configuration.GetSection(GroqSetting.SECTION_NAME));
 
 // Đăng ký Repository
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -111,6 +113,8 @@ builder.Services.AddScoped<IPrescriptionDetailRepository, PrescriptionDetailRepo
 builder.Services.AddScoped<IMedicineRepository, MedicineRepository>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IPaymentTransactionRepository, PaymentTransactionRepository>();
+builder.Services.AddScoped<IChatMessageRepository, ChatMessageRepository>();
+builder.Services.AddScoped<IChatSessionRepository, ChatSessionRepository>();
 
 // Đăng ký Service
 builder.Services.AddHttpContextAccessor();
@@ -120,6 +124,7 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IGeneratorCodeService, GeneratorCodeService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddHttpClient<ISepayService, SepayService>();
+builder.Services.AddHttpClient<IAiAssistantService, AiAssistantService>();
 builder.Services.AddMemoryCache();
 builder.Services.AddMediatR(cfg =>
 {
