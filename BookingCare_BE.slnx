@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="BookingCare.Api/BookingCare.Api.csproj" />
     <Project Path="BookingCare.Application/BookingCare.Application.csproj" />

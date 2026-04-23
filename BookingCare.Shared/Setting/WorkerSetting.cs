@@ -4,7 +4,7 @@
     {
         public static class JobName
         {
-            public const string SendEmailDailyAppointmentReminders = "SendEmailDailyAppointmentReminders";
+            public const string SendEmailDailyAppointmentRemindersName = "SendEmailDailyAppointmentReminders";
         }
     }
 }

@@ -1,27 +1,40 @@
 ﻿using BookingCare.Application.Services;
+using BookingCare.Domain.Entities;
+using BookingCare.Domain.IRepository;
+using BookingCare.Domain.Models.CommandModels;
 using BookingCare.Domain.Models.EntityModels;
-using BookingCare.Infrastructure;
+using BookingCare.Shared.Common;
 using BookingCare.Shared.Enum;
+using BookingCare.Shared.Enum.ErrorCode;
+using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 
-namespace BookingCare.Api.Workers
+namespace BookingCare.Application.Appointments.Command
 {
-    public class AppointmentReminderWorker
+    public class SendAppointmentSummaryCommand : IRequest
     {
-        private readonly DataContext _dbContext;
-        private readonly ISenderService _senderService;
+    }
 
-        public AppointmentReminderWorker(DataContext dbContext, ISenderService senderService)
+    public class SendAppointmentSummaryCommandHandler : IRequestHandler<SendAppointmentSummaryCommand>
+    {
+        private readonly ISenderService _senderService;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public SendAppointmentSummaryCommandHandler(IUnitOfWork unitOfWork, ISenderService senderService)
         {
-            _dbContext = dbContext;
+            _unitOfWork = unitOfWork;
             _senderService = senderService;
         }
 
-        public async Task SendAppointmentSummaryAsync()
+        public async Task Handle(SendAppointmentSummaryCommand request, CancellationToken cancellationToken)
         {
+            ArgumentNullException.ThrowIfNull(request);
+
             var today = DateTime.Today;
 
-            var appointments = await _dbContext.Appointments
+            var appointments = await _unitOfWork.Appointments.QueryableAsync()
                 .Where(a => a.Date.Date == today
                          && a.Status != EnumAppointmentStatus.Cancelled)
                 .Include(a => a.Booker)
@@ -29,6 +42,12 @@ namespace BookingCare.Api.Workers
                 .Include(a => a.WorkSession)
                     .ThenInclude(ws => ws.Doctor)
                 .ToListAsync();
+
+            if (!appointments.Any())
+            {
+                return;
+            }
+
             var grouped = appointments.GroupBy(a => a.BookerId);
 
             if (!grouped.Any())
@@ -36,14 +55,14 @@ namespace BookingCare.Api.Workers
                 return;
             }
 
-            var user = grouped.FirstOrDefault().Where(a => a.PatientProfile.Relationship == EnumRelationship.MySelf);
             foreach (var group in grouped)
             {
-                var booker = group.First().Booker;
+                var booker = group.Select(a => a.Booker).First();
 
                 var selfProfile = group
                     .Select(a => a.PatientProfile)
-                    .FirstOrDefault(pp => pp.Relationship == EnumRelationship.MySelf);
+                    .Where(pp => pp.Relationship == EnumRelationship.MySelf)
+                    .First();
 
                 var displayName = selfProfile?.FullName ?? booker?.UserName;
 

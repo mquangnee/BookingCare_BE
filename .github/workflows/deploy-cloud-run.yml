@@ -21,14 +21,19 @@
 #   Variables (tab “Variables”):
 #     GCP_PROJECT_ID      e.g. my-gcp-project
 #     GCP_REGION          e.g. asia-southeast1
-#     GAR_REPOSITORY      Artifact Registry repo id (e.g. bookingcare)
-#     CLOUD_RUN_SERVICE   Cloud Run service name (e.g. bookingcare-api)
+#     GCP_GAR_REPOSITORY  Artifact Registry repo id (e.g. bookingcare)
+#     GCP_CLOUD_RUN_SERVICE Cloud Run service name (e.g. bookingcare-api)
+#     GCP_TASK_QUEUE_ID   e.g. bookingcare-queue
+#     GCP_BUCKET_NAME     e.g. bookingcare-resources
+#     CLOUD_RUN_URL       Cloud Run service URL (set after first deploy, e.g. https://bookingcare-api-xxxx.run.app)
+#     Note: GoogleCloud__SchedulerServiceAccount is set directly in appsettings.json (not via GitHub Variable)
 #
 # --- Runtime configuration ---
 # This workflow sets ConnectionStrings__ConnectedDb from DATABASE_CONNECTION_STRING.
 # Set other secrets in Cloud Run console or extend the deploy step, e.g.:
 #   Jwt__SecretKey, Jwt__Issuer, Jwt__Audience
 #   Smtp__Host, Smtp__Port, Smtp__From, Smtp__Password
+#   Sepay__MerchantId, Sepay__SecretKey (or use JSON / Secret Manager)
 #   Cors__AllowedOrigins__0, Cors__AllowedOrigins__1, ... (or use JSON / Secret Manager)
 # Add your Firebase Hosting origin to CORS for the live API URL.
 #
@@ -60,10 +65,13 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
-      REGION: ${{ vars.GCP_REGION }}
-      GAR_REPOSITORY: ${{ vars.GAR_REPOSITORY }}
-      SERVICE: ${{ vars.CLOUD_RUN_SERVICE }}
+      GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+      GCP_REGION: ${{ vars.GCP_REGION }}
+      GCP_GAR_REPOSITORY: ${{ vars.GCP_GAR_REPOSITORY }}
+      GCP_CLOUD_RUN_SERVICE: ${{ vars.GCP_CLOUD_RUN_SERVICE }}
+      GCP_TASK_QUEUE_ID: ${{ vars.GCP_TASK_QUEUE_ID }}
+      GCP_BUCKET_NAME: ${{ vars.GCP_BUCKET_NAME }}
+      CLOUD_RUN_URL: ${{ vars.CLOUD_RUN_URL }}
 
     steps:
       - name: Checkout
@@ -82,12 +90,12 @@ jobs:
 
       - name: Set gcloud project and Docker credential helper
         run: |
-          gcloud config set project "$PROJECT_ID" --quiet
-          gcloud auth configure-docker "${REGION}-docker.pkg.dev" --quiet
+          gcloud config set project "${GCP_PROJECT_ID}" --quiet
+          gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
 
       - name: Build and push image
         run: |
-          IMAGE="${REGION}-docker.pkg.dev/${PROJECT_ID}/${GAR_REPOSITORY}/${SERVICE}:${GITHUB_SHA}"
+          IMAGE="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${GCP_GAR_REPOSITORY}/${GCP_CLOUD_RUN_SERVICE}:${GITHUB_SHA}"
           docker build -t "${IMAGE}" -f Dockerfile .
           docker push "${IMAGE}"
 
@@ -95,16 +103,24 @@ jobs:
         env:
           CONNECTION_STRING: ${{ secrets.DATABASE_CONNECTION_STRING }}
         run: |
+          echo "=== GitHub Variables ==="
+          echo "GCP_PROJECT_ID=${GCP_PROJECT_ID}"
+          echo "GCP_REGION=${GCP_REGION}"
+          echo "GCP_GAR_REPOSITORY=${GCP_GAR_REPOSITORY}"
+          echo "GCP_CLOUD_RUN_SERVICE=${GCP_CLOUD_RUN_SERVICE}"
+          echo "GCP_TASK_QUEUE_ID=${GCP_TASK_QUEUE_ID}"
+          echo "GCP_BUCKET_NAME=${GCP_BUCKET_NAME}"
+          echo "CLOUD_RUN_URL=${CLOUD_RUN_URL}"
+          echo "========================"
           if [ -z "${CONNECTION_STRING}" ]; then
             echo "Missing Actions secret DATABASE_CONNECTION_STRING"
             exit 1
           fi
-          IMAGE="${REGION}-docker.pkg.dev/${PROJECT_ID}/${GAR_REPOSITORY}/${SERVICE}:${GITHUB_SHA}"
-          ENV_VARS="$(printf '^##^ConnectionStrings__ConnectedDb=%s' "${CONNECTION_STRING}")"
-          gcloud run deploy "${SERVICE}" \
+          IMAGE="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${GCP_GAR_REPOSITORY}/${GCP_CLOUD_RUN_SERVICE}:${GITHUB_SHA}"
+          gcloud run deploy "${GCP_CLOUD_RUN_SERVICE}" \
             --image "${IMAGE}" \
-            --region "${REGION}" \
+            --region "${GCP_REGION}" \
             --platform managed \
             --port 8080 \
             --allow-unauthenticated \
-            --update-env-vars "${ENV_VARS}"
+             --update-env-vars ConnectionStrings__ConnectedDb="${CONNECTION_STRING}",ASPNETCORE_ENVIRONMENT=Production,ENVIRONMENT=Production,GoogleCloud__CloudScheduler__ProjectId="${GCP_PROJECT_ID}",GoogleCloud__CloudScheduler__LocationId="${GCP_REGION}",GoogleCloud__CloudScheduler__QueueId="${GCP_TASK_QUEUE_ID}",GoogleCloud__CloudStorage__BucketName="${GCP_BUCKET_NAME}",Jobs__SendAppointmentSummary__EndPoint="${CLOUD_RUN_URL}/api/tasks/send-appointment-summary"
