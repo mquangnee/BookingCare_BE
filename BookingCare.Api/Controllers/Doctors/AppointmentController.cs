@@ -38,5 +38,39 @@ namespace BookingCare.Api.Controllers.Doctors
             var commandResult = await _mediator.Send(command);
             return commandResult.GetActionResult();
         }
+
+        [HttpGet("history")]
+        [ProducesResponseType(typeof(MethodResult<List<MedicalHistoryModel>>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> GetMedicalHistory([FromQuery] string? keyword, [FromQuery] DateTime? fromDate, [FromQuery] DateTime? toDate)
+        {
+            var queryResult = await _mediator.Send(new GetMedicalHistoryQuery { Keyword = keyword, FromDate = fromDate, ToDate = toDate });
+            return queryResult.GetActionResult();
+        }
+
+        [HttpGet("report/{appointmentId}")]
+        [ProducesResponseType(typeof(MethodResult<PrescriptionModel>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> GetMedicalReport([FromRoute] Guid appointmentId)
+        {
+            var queryResult = await _mediator.Send(new GetMedicalReportQuery { AppointmentId = appointmentId });
+            return queryResult.GetActionResult();
+        }
+
+        [HttpGet("export/{appointmentId}")]
+        [ProducesResponseType(typeof(FileContentResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> ExportPrescriptionPdf([FromRoute] Guid appointmentId)
+        {
+            var queryResult = await _mediator.Send(new GetPrescriptionPdfQuery { AppointmentId = appointmentId });
+            
+            if (queryResult.StatusCode != StatusCodes.Status200OK || queryResult.Result == null)
+            {
+                return queryResult.GetActionResult();
+            }
+
+            return File(queryResult.Result, "application/pdf", $"Prescription_{appointmentId}.pdf");
+        }
     }
 }

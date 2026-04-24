@@ -43,4 +43,9 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="libwkhtmltox.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

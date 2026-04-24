@@ -9,6 +9,7 @@ namespace BookingCare.Domain.Models.EntityModels
     }
     public class AvailableTimeSlotModel
     {
+        public Guid WorkSessionId { get; set; }
         public TimeSpan StartTime { get; set; }
         public TimeSpan EndTime { get; set; }
         public string TimeString => $"{StartTime:hh\\:mm} - {EndTime:hh\\:mm}";

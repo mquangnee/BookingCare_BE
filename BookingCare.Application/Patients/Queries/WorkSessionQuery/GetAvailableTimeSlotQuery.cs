@@ -40,10 +40,12 @@ namespace BookingCare.Application.Patients.Queries.WorkSessionQuery
             }
 
             DateTime startDate = request.Date.Date;
-            DateTime endDate = startDate.AddDays(request.DaysToFetch - 1);
+            DateTime endDateLimit = startDate.AddDays(request.DaysToFetch);
+
             var workSessionQuery = _unitOfWork.WorkSessions.QueryableAsync()
                 .Include(ws => ws.Doctor)
-                .Where(ws => ws.StartTime.Date >= startDate && ws.StartTime.Date <= endDate);
+                .Where(ws => ws.StartTime >= startDate && ws.StartTime < endDateLimit);
+
             if (request.DoctorId.HasValue)
             {
                 workSessionQuery = workSessionQuery.Where(ws => ws.DoctorId == request.DoctorId.Value);
@@ -51,14 +53,19 @@ namespace BookingCare.Application.Patients.Queries.WorkSessionQuery
             else if (request.ServiceId.HasValue)
             {
                 var service = await _unitOfWork.Services.QueryableAsync()
+                    .AsNoTracking()
+                    .Select(s => new { s.Id, s.SpecialtyId, s.Position })
                     .FirstOrDefaultAsync(s => s.Id == request.ServiceId.Value, cancellationToken);
+
                 if (service == null)
                 {
                     methodResult.AddErrorBadRequest(nameof(EnumSystemErrorCode.DataNotExist), nameof(service));
                     return methodResult;
                 }
+
                 var validDoctorsQuery = _unitOfWork.Doctors.QueryableAsync()
                     .Where(d => d.SpecialtyId == service.SpecialtyId);
+
                 if (service.Position.HasValue)
                 {
                     validDoctorsQuery = validDoctorsQuery.Where(d => d.Position == service.Position.Value);
@@ -66,12 +73,20 @@ namespace BookingCare.Application.Patients.Queries.WorkSessionQuery
                 var validDoctorIds = await validDoctorsQuery.Select(d => d.Id).ToListAsync(cancellationToken);
                 workSessionQuery = workSessionQuery.Where(ws => validDoctorIds.Contains(ws.DoctorId));
             }
+
             var workSessions = await workSessionQuery.ToListAsync(cancellationToken);
             var workSessionIds = workSessions.Select(ws => ws.Id).ToList();
+
             var bookedAppointments = await _unitOfWork.Appointments.QueryableAsync()
-                .Where(a => workSessionIds.Contains(a.WorkSessionId) && a.Status != EnumAppointmentStatus.Cancelled)
+                .Where(a => workSessionIds.Contains(a.WorkSessionId) && a.Status != EnumAppointmentStatus.Cancelled && a.StartTime.HasValue)
                 .Select(a => new { a.WorkSessionId, a.StartTime })
                 .ToListAsync(cancellationToken);
+
+            var now = DateTime.Now;
+            var nowDate = now.Date;
+            var nowTime = now.TimeOfDay;
+            var step = TimeSpan.FromMinutes(request.DurationInMinutes);
+
             for (int i = 0; i < request.DaysToFetch; i++)
             {
                 DateTime currentDate = startDate.AddDays(i);
@@ -80,32 +95,35 @@ namespace BookingCare.Application.Patients.Queries.WorkSessionQuery
                     Date = currentDate,
                     AvailableTimeSlots = new List<AvailableTimeSlotModel>()
                 };
+
                 var sessionsToday = workSessions.Where(ws => ws.StartTime.Date == currentDate).ToList();
+
                 foreach (var session in sessionsToday)
                 {
                     var sessionBookedTimes = bookedAppointments
-                        .Where(a => a.WorkSessionId == session.Id && a.StartTime.HasValue)
-                        .Select(a => a.StartTime.Value)
-                        .ToList();
+                        .Where(a => a.WorkSessionId == session.Id)
+                        .Select(a => a.StartTime!.Value)
+                        .ToHashSet();
+
                     TimeSpan currentSlotStart = session.StartTime.TimeOfDay;
                     TimeSpan sessionEnd = session.EndTime.TimeOfDay;
-                    TimeSpan step = TimeSpan.FromMinutes(request.DurationInMinutes);
+
                     while (currentSlotStart.Add(step) <= sessionEnd)
                     {
-                        bool isPastSlot = currentDate == DateTime.Now.Date && currentSlotStart < DateTime.Now.TimeOfDay;
-                        if (!isPastSlot)
+                        bool isPastSlot = currentDate == nowDate && currentSlotStart < nowTime;
+                        bool isBooked = sessionBookedTimes.Contains(currentSlotStart);
+
+                        dayModel.AvailableTimeSlots.Add(new AvailableTimeSlotModel
                         {
-                            bool isBooked = sessionBookedTimes.Any(booked => booked == currentSlotStart);
-                            dayModel.AvailableTimeSlots.Add(new AvailableTimeSlotModel
-                            {
-                                StartTime = currentSlotStart,
-                                EndTime = currentSlotStart.Add(step),
-                                IsFull = isBooked,
-                                DoctorId = session.DoctorId,
-                                DoctorName = session.Doctor?.FullName,
-                                DoctorPosition = session.Doctor?.Position
-                            });
-                        }
+                            WorkSessionId = session.Id,
+                            StartTime = currentSlotStart,
+                            EndTime = currentSlotStart.Add(step),
+                            IsFull = isBooked || isPastSlot,
+                            DoctorId = session.DoctorId,
+                            DoctorName = session.Doctor?.FullName,
+                            DoctorPosition = session.Doctor?.Position
+                        });
+
                         currentSlotStart = currentSlotStart.Add(step);
                     }
                 }
@@ -114,6 +132,7 @@ namespace BookingCare.Application.Patients.Queries.WorkSessionQuery
                     .OrderBy(s => s.StartTime)
                     .ThenBy(s => s.DoctorName)
                     .ToList();
+
                 resultDays.Add(dayModel);
             }
 
