@@ -114,7 +114,13 @@ builder.Services.AddSignalR();
 builder.Services.AddControllers();
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.CustomSchemaIds(type => type.FullName);
+});
+builder.Services.AddSingleton<DinkToPdf.Contracts.IConverter, DinkToPdf.SynchronizedConverter>(provider =>
+    new DinkToPdf.SynchronizedConverter(new DinkToPdf.PdfTools()));
+builder.Services.AddScoped<BookingCare.Domain.IRepository.IPdfService, BookingCare.Infrastructure.Services.PdfService>();
 
 var app = builder.Build();
 

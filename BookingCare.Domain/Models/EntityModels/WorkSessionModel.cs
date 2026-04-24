@@ -15,6 +15,8 @@ namespace BookingCare.Domain.Models.EntityModels
         public int? DurationInMinutes { get; set; }
         public double? DoctorPrice { get; set; }
         public EnumPosition? Position { get; set; }
+        public DateTime? Date { get; set; }
         public DateTime? StartTime { get; set; }
+        public DateTime? EndTime { get; set; }
     }
 }
