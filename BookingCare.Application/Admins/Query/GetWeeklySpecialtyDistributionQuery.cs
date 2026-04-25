@@ -32,10 +32,10 @@ namespace BookingCare.Application.Admins.Query
             var distribution = await _unitOfWork.Appointments
                 .QueryableAsync()
                 .Include(a => a.WorkSession)
-                    .ThenInclude(ws => ws.Doctor)
-                        .ThenInclude(d => d.Specialty)
+                    .ThenInclude(ws => ws!.Doctor)
+                        .ThenInclude(d => d!.Specialty)
                 .Where(a => a.Date >= startOfWeek && a.Date < endOfWeek)
-                .GroupBy(a => a.WorkSession.Doctor.Specialty.Name)
+                .GroupBy(a => a.WorkSession!.Doctor!.Specialty!.Name)
                 .Select(g => new SpecialtyDistributionModel
                 {
                     Label = g.Key,

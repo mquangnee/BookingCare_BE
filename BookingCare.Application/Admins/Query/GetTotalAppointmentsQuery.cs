@@ -32,7 +32,7 @@ namespace BookingCare.Application.Admins.Query
                 .QueryableAsync()
                 .Include(a => a.Booker)
                 .Include(a => a.WorkSession)
-                    .ThenInclude(ws => ws.Doctor)
+                    .ThenInclude(ws => ws!.Doctor)
                 .Where(a => a.CreatedDate.Day == today.Day)
                 .Select(a => new AppointmentModel
                 {
@@ -40,9 +40,9 @@ namespace BookingCare.Application.Admins.Query
                     AppointmentCode = a.AppointmentCode,
                     BookerId = a.BookerId,
                     WorkSessionId = a.WorkSessionId,
-                    DoctorName = a.WorkSession.Doctor.FullName,
+                    DoctorName = a.WorkSession!.Doctor!.FullName,
                     PatientProfileId = a.PatientProfileId,
-                    PatientName = a.PatientProfile.FullName,
+                    PatientName = a.PatientProfile!.FullName,
                     Date = a.Date,
                     StartTime = a.StartTime,
                     EndTime = a.EndTime
@@ -57,9 +57,9 @@ namespace BookingCare.Application.Admins.Query
                     AppointmentCode = a.AppointmentCode,
                     BookerId = a.BookerId,
                     WorkSessionId = a.WorkSessionId,
-                    DoctorName = a.WorkSession.Doctor.FullName,
+                    DoctorName = a.WorkSession!.Doctor!.FullName,
                     PatientProfileId = a.PatientProfileId,
-                    PatientName = a.PatientProfile.FullName,
+                    PatientName = a.PatientProfile!.FullName,
                     Date = a.Date,
                     StartTime = a.StartTime,
                     EndTime = a.EndTime

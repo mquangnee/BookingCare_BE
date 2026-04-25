@@ -41,6 +41,7 @@ namespace BookingCare.Application.Patients.Queries.WorkSessionQuery
 
             DateTime startDate = request.Date.Date;
             DateTime endDateLimit = startDate.AddDays(request.DaysToFetch);
+            int durationInMinutes = request.DurationInMinutes;
 
             var workSessionQuery = _unitOfWork.WorkSessions.QueryableAsync()
                 .Include(ws => ws.Doctor)
@@ -48,19 +49,46 @@ namespace BookingCare.Application.Patients.Queries.WorkSessionQuery
 
             if (request.DoctorId.HasValue)
             {
+                var doctor = await _unitOfWork.Doctors.QueryableAsync()
+                    .AsNoTracking()
+                    .Select(d => new { d.Id, d.SpecialtyId, d.Position })
+                    .FirstOrDefaultAsync(d => d.Id == request.DoctorId.Value, cancellationToken);
+
+                if (doctor != null)
+                {
+                    var serviceQuery = _unitOfWork.Services.QueryableAsync().AsNoTracking()
+                        .Where(s => s.SpecialtyId == doctor.SpecialtyId);
+
+                    if (doctor.Position != null)
+                    {
+                        serviceQuery = serviceQuery.Where(s => s.Position == doctor.Position);
+                    }
+
+                    var service = await serviceQuery.Select(s => new { s.DurationInMinutes }).FirstOrDefaultAsync(cancellationToken);
+                    if (service != null && service.DurationInMinutes > 0)
+                    {
+                        durationInMinutes = service.DurationInMinutes;
+                    }
+                }
+
                 workSessionQuery = workSessionQuery.Where(ws => ws.DoctorId == request.DoctorId.Value);
             }
             else if (request.ServiceId.HasValue)
             {
                 var service = await _unitOfWork.Services.QueryableAsync()
                     .AsNoTracking()
-                    .Select(s => new { s.Id, s.SpecialtyId, s.Position })
+                    .Select(s => new { s.Id, s.SpecialtyId, s.Position, s.DurationInMinutes })
                     .FirstOrDefaultAsync(s => s.Id == request.ServiceId.Value, cancellationToken);
 
                 if (service == null)
                 {
                     methodResult.AddErrorBadRequest(nameof(EnumSystemErrorCode.DataNotExist), nameof(service));
                     return methodResult;
+                }
+
+                if (service.DurationInMinutes > 0)
+                {
+                    durationInMinutes = service.DurationInMinutes;
                 }
 
                 var validDoctorsQuery = _unitOfWork.Doctors.QueryableAsync()
@@ -78,14 +106,14 @@ namespace BookingCare.Application.Patients.Queries.WorkSessionQuery
             var workSessionIds = workSessions.Select(ws => ws.Id).ToList();
 
             var bookedAppointments = await _unitOfWork.Appointments.QueryableAsync()
-                .Where(a => workSessionIds.Contains(a.WorkSessionId) && a.Status != EnumAppointmentStatus.Cancelled && a.StartTime.HasValue)
-                .Select(a => new { a.WorkSessionId, a.StartTime })
+                .Where(a => workSessionIds.Contains(a.WorkSessionId) && a.Status != EnumAppointmentStatus.Cancelled && a.StartTime.HasValue && a.EndTime.HasValue)
+                .Select(a => new { a.WorkSessionId, a.StartTime, a.EndTime })
                 .ToListAsync(cancellationToken);
 
             var now = DateTime.Now;
             var nowDate = now.Date;
             var nowTime = now.TimeOfDay;
-            var step = TimeSpan.FromMinutes(request.DurationInMinutes);
+            var step = TimeSpan.FromMinutes(durationInMinutes);
 
             for (int i = 0; i < request.DaysToFetch; i++)
             {
@@ -100,18 +128,23 @@ namespace BookingCare.Application.Patients.Queries.WorkSessionQuery
 
                 foreach (var session in sessionsToday)
                 {
-                    var sessionBookedTimes = bookedAppointments
+                    var sessionBookedAppointments = bookedAppointments
                         .Where(a => a.WorkSessionId == session.Id)
-                        .Select(a => a.StartTime!.Value)
-                        .ToHashSet();
+                        .ToList();
 
                     TimeSpan currentSlotStart = session.StartTime.TimeOfDay;
                     TimeSpan sessionEnd = session.EndTime.TimeOfDay;
 
                     while (currentSlotStart.Add(step) <= sessionEnd)
                     {
+                        TimeSpan currentSlotEnd = currentSlotStart.Add(step);
                         bool isPastSlot = currentDate == nowDate && currentSlotStart < nowTime;
-                        bool isBooked = sessionBookedTimes.Contains(currentSlotStart);
+
+                        bool isBooked = sessionBookedAppointments.Any(a =>
+                            (currentSlotStart >= a.StartTime!.Value && currentSlotStart < a.EndTime!.Value) ||
+                            (currentSlotEnd > a.StartTime!.Value && currentSlotEnd <= a.EndTime!.Value) ||
+                            (currentSlotStart <= a.StartTime!.Value && currentSlotEnd >= a.EndTime!.Value)
+                        );
 
                         dayModel.AvailableTimeSlots.Add(new AvailableTimeSlotModel
                         {

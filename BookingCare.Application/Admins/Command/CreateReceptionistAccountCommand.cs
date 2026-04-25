@@ -1,4 +1,4 @@
-﻿using BookingCare.Application.Services;
+using BookingCare.Application.Services;
 using BookingCare.Domain.Entities;
 using BookingCare.Domain.IRepository;
 using BookingCare.Domain.Models.CommandModels;
@@ -14,11 +14,11 @@ using Microsoft.Extensions.Options;
 
 namespace BookingCare.Application.Admins.Command
 {
-    public class CreateDoctorAccountCommand : CreateDoctorAccountCommandModel, IRequest<MethodResult<bool>>
+    public class CreateReceptionistAccountCommand : CreateReceptionistAccountCommandModel, IRequest<MethodResult<bool>>
     {
     }
 
-    public class CreateDoctorAccountCommandHandler : IRequestHandler<CreateDoctorAccountCommand, MethodResult<bool>>
+    public class CreateReceptionistAccountCommandHandler : IRequestHandler<CreateReceptionistAccountCommand, MethodResult<bool>>
     {
         private readonly UserManager<User> _userManager;
         private readonly IUnitOfWork _unitOfWork;
@@ -27,7 +27,7 @@ namespace BookingCare.Application.Admins.Command
         private readonly ISenderService _senderService;
         private readonly CloudStorageSetting _cloudStorageSetting;
 
-        public CreateDoctorAccountCommandHandler(
+        public CreateReceptionistAccountCommandHandler(
             UserManager<User> userManager,
             IUnitOfWork unitOfWork,
             IGeneratorCodeService generatorCodeService,
@@ -43,7 +43,7 @@ namespace BookingCare.Application.Admins.Command
             _cloudStorageSetting = options.Value;
         }
 
-        public async Task<MethodResult<bool>> Handle(CreateDoctorAccountCommand request, CancellationToken cancellationToken)
+        public async Task<MethodResult<bool>> Handle(CreateReceptionistAccountCommand request, CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(request);
             var methodResult = new MethodResult<bool>();
@@ -65,17 +65,18 @@ namespace BookingCare.Application.Admins.Command
                 }
             }
 
-            var isCitizenIdExists = await _unitOfWork.Doctors.QueryableAsync()
-                            .AnyAsync(d => d.CitizenId == request.CitizenId, cancellationToken) ||
+            var isCitizenIdExists = await _unitOfWork.Receptionists.QueryableAsync()
+                            .AnyAsync(r => r.CitizenId == request.CitizenId, cancellationToken) ||
                         await _unitOfWork.PatientProfiles.QueryableAsync()
-                            .AnyAsync(p => p.CitizenId == request.CitizenId, cancellationToken);
+                            .AnyAsync(p => p.CitizenId == request.CitizenId, cancellationToken) ||
+                        await _unitOfWork.Doctors.QueryableAsync()
+                            .AnyAsync(d => d.CitizenId == request.CitizenId, cancellationToken);
 
             if (isCitizenIdExists)
             {
                 methodResult.AddErrorBadRequest(nameof(EnumSystemErrorCode.DataAlreadyExist), nameof(request.CitizenId), request.CitizenId);
                 return methodResult;
             }
-
 
             var user = new User
             {
@@ -95,32 +96,26 @@ namespace BookingCare.Application.Admins.Command
                 return methodResult;
             }
 
-            await _userManager.AddToRoleAsync(user, RoleConstants.Doctor);
+            await _userManager.AddToRoleAsync(user, RoleConstants.Receptionist);
 
             string? avatarUrl = null;
             if (request.Avatar != null)
             {
-                avatarUrl = await _cloudStorageService.UploadFileAsync(request.Avatar, _cloudStorageSetting.DoctorFolder);
+                avatarUrl = await _cloudStorageService.UploadFileAsync(request.Avatar, _cloudStorageSetting.ReceptionistFolder);
             }
 
-            var doctorCode = await _generatorCodeService.GenerateDoctorCodeAsync();
-            var doctor = new Doctor
+            var receptionistCode = await _generatorCodeService.GenerateReceptionistCodeAsync();
+            var receptionist = new Receptionist
             {
                 UserId = user.Id,
-                DoctorCode = doctorCode,
-                SpecialtyId = request.SpecialtyId,
-                ServiceId = request.ServiceId,
+                ReceptionistCode = receptionistCode,
                 AvatarUrl = avatarUrl,
                 FullName = request.FullName,
                 CitizenId = request.CitizenId,
                 DateOfBirth = request.DateOfBirth,
-                Gender = request.Gender,
-                ExperienceYears = request.ExperienceYears,
-                Position = request.Position,
-                WorkingHistory = request.WorkingHistory,
-                Description = request.Description
+                Gender = request.Gender
             };
-            await _unitOfWork.Doctors.AddAsync(doctor);
+            await _unitOfWork.Receptionists.AddAsync(receptionist);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             var templateData = new Dictionary<string, string>
@@ -132,8 +127,8 @@ namespace BookingCare.Application.Admins.Command
 
             await _senderService.SendEmailAsync(
                 to: request.Email!,
-                subject: EmailConstants.Subjects.CreateDoctorAccount,
-                templateName: EnumSenderTemplate.CreateDoctorAccount.ToString(),
+                subject: EmailConstants.Subjects.CreateReceptionistAccount,
+                templateName: EnumSenderTemplate.CreateReceptionistAccount.ToString(),
                 templateData: templateData
             );
 

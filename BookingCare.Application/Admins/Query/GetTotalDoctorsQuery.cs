@@ -38,6 +38,7 @@ namespace BookingCare.Application.Admins.Query
                 {
                     Id = d.Id,
                     UserId = d.UserId,
+                    ServiceId = d.ServiceId,
                     SpecialtyId = d.SpecialtyId,
                     SpecialtyName = d.Specialty != null ? d.Specialty.Name : "Chưa xác định",
                     DoctorCode = d.DoctorCode,

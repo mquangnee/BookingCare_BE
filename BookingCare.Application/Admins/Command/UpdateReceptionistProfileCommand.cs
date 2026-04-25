@@ -1,4 +1,4 @@
-﻿using BookingCare.Application.Services;
+using BookingCare.Application.Services;
 using BookingCare.Domain.Entities;
 using BookingCare.Domain.IRepository;
 using BookingCare.Domain.Models.CommandModels;
@@ -12,18 +12,18 @@ using Microsoft.Extensions.Options;
 
 namespace BookingCare.Application.Admins.Command
 {
-    public class UpdateDoctorProfileCommand : UpdateDoctorProfileCommandModel, IRequest<MethodResult<bool>>
+    public class UpdateReceptionistProfileCommand : UpdateReceptionistProfileCommandModel, IRequest<MethodResult<bool>>
     {
     }
 
-    public class UpdateDoctorProfileCommandHandler : IRequestHandler<UpdateDoctorProfileCommand, MethodResult<bool>>
+    public class UpdateReceptionistProfileCommandHandler : IRequestHandler<UpdateReceptionistProfileCommand, MethodResult<bool>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<User> _userManager;
         private readonly ICloudStorageService _cloudStorageService;
         private readonly CloudStorageSetting _cloudStorageSetting;
 
-        public UpdateDoctorProfileCommandHandler(
+        public UpdateReceptionistProfileCommandHandler(
             IUnitOfWork unitOfWork, 
             UserManager<User> userManager,
             ICloudStorageService cloudStorageService,
@@ -35,36 +35,34 @@ namespace BookingCare.Application.Admins.Command
             _cloudStorageSetting = options.Value;
         }
 
-        public async Task<MethodResult<bool>> Handle(UpdateDoctorProfileCommand request, CancellationToken cancellationToken)
+        public async Task<MethodResult<bool>> Handle(UpdateReceptionistProfileCommand request, CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(request);
             var methodResult = new MethodResult<bool>();
 
-            var doctor = await _unitOfWork.Doctors.GetByIdAsync(request.DoctorId);
-            if (doctor == null)
+            var receptionist = await _unitOfWork.Receptionists.GetByIdAsync(request.ReceptionistId);
+            if (receptionist == null)
             {
-                methodResult.AddError(nameof(EnumSystemErrorCode.DataNotExist), nameof(request.DoctorId), request.DoctorId);
+                methodResult.AddError(nameof(EnumSystemErrorCode.DataNotExist), nameof(request.ReceptionistId), request.ReceptionistId);
                 return methodResult;
             }
-            var user = await _userManager.FindByIdAsync(doctor.UserId.ToString());
+            var user = await _userManager.FindByIdAsync(receptionist.UserId.ToString());
             if (user == null)
             {
-                methodResult.AddError(nameof(EnumSystemErrorCode.DataNotExist), nameof(doctor.UserId), doctor.UserId);
+                methodResult.AddError(nameof(EnumSystemErrorCode.DataNotExist), nameof(receptionist.UserId), receptionist.UserId);
                 return methodResult;
             }
 
             if (request.Avatar != null)
             {
-                doctor.AvatarUrl = await _cloudStorageService.UploadFileAsync(request.Avatar, _cloudStorageSetting.DoctorFolder);
+                receptionist.AvatarUrl = await _cloudStorageService.UploadFileAsync(request.Avatar, _cloudStorageSetting.ReceptionistFolder);
             }
 
-            doctor.ServiceId = request.ServiceId;
-            doctor.SpecialtyId = request.SpecialtyId;
-            doctor.Position = request.Position;
-            doctor.ExperienceYears = request.ExperienceYears;
-            doctor.Description = request.Description;
-            doctor.WorkingHistory = request.WorkingHistory;
-            _unitOfWork.Doctors.Update(doctor);
+            receptionist.FullName = request.FullName;
+            receptionist.DateOfBirth = request.DateOfBirth;
+            receptionist.Gender = request.Gender;
+
+            _unitOfWork.Receptionists.Update(receptionist);
 
             user.PhoneNumber = request.PhoneNumber;
             user.UpdatedDate = DateTime.Now;

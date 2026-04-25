@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace BookingCare.Domain.IRepository
+﻿namespace BookingCare.Domain.IRepository
 {
     public interface IRepository<T> where T : class
     {
