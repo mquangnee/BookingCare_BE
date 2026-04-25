@@ -7,6 +7,7 @@
         SendOtpChangePassword,
         DailySummary,
         AccountCreated,
-        CreateDoctorAccount
+        CreateDoctorAccount,
+        CreateReceptionistAccount
     }
 }

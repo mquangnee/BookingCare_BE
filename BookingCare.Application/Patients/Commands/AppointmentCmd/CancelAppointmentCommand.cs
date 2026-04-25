@@ -57,7 +57,7 @@ namespace BookingCare.Application.Patients.Commands.AppointmentCmd
             }
 
             var appointmentDateTime = appointment.Date.Date + appointment.StartTime;
-            var minutesUntilAppointment = (appointmentDateTime - DateTime.Now).Value.TotalMilliseconds;
+            var minutesUntilAppointment = (appointmentDateTime! - DateTime.Now).Value.TotalMilliseconds;
 
             if (minutesUntilAppointment < MinutesBeforeAllowedToCancel)
             {

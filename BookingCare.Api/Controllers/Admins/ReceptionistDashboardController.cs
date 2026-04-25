@@ -1,4 +1,4 @@
-﻿using BookingCare.Application.Admins.Command;
+using BookingCare.Application.Admins.Command;
 using BookingCare.Application.Admins.Query;
 using BookingCare.Domain.Models.EntityModels;
 using BookingCare.Shared.Common;
@@ -9,31 +9,31 @@ using System.Net;
 
 namespace BookingCare.Api.Controllers.Admins
 {
-    [Route("api/admin/doctor")]
+    [Route("api/admin/receptionist")]
     [ApiController]
     [Authorize(Roles = "Admin")]
-    public class DoctorDashboardController : Controller
+    public class ReceptionistDashboardController : Controller
     {
         private readonly IMediator _mediator;
 
-        public DoctorDashboardController(IMediator mediator)
+        public ReceptionistDashboardController(IMediator mediator)
         {
             _mediator = mediator;
         }
 
         [HttpGet("all")]
-        [ProducesResponseType(typeof(MethodResult<DashboardMetricModel<DoctorModel>>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(MethodResult<DashboardMetricModel<ReceptionistModel>>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> GetTotalDoctors()
+        public async Task<IActionResult> GetTotalReceptionists()
         {
-            var queryResult = await _mediator.Send(new GetTotalDoctorsQuery { });
+            var queryResult = await _mediator.Send(new GetTotalReceptionistsQuery { });
             return queryResult.GetActionResult();
         }
 
         [HttpPost("update")]
         [ProducesResponseType(typeof(MethodResult<bool>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> UpdateDoctorProfile([FromForm] UpdateDoctorProfileCommand command)
+        public async Task<IActionResult> UpdateReceptionistProfile([FromForm] UpdateReceptionistProfileCommand command)
         {
             var commandResult = await _mediator.Send(command);
             return commandResult.GetActionResult();
@@ -51,7 +51,7 @@ namespace BookingCare.Api.Controllers.Admins
         [HttpPost("create")]
         [ProducesResponseType(typeof(MethodResult<bool>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> CreateDoctorAccount([FromForm] CreateDoctorAccountCommand command)
+        public async Task<IActionResult> CreateReceptionistAccount([FromForm] CreateReceptionistAccountCommand command)
         {
             var commandResult = await _mediator.Send(command);
             return commandResult.GetActionResult();

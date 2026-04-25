@@ -42,8 +42,8 @@ namespace BookingCare.Application.Patients.Queries.AppointmentQuery
             }
             var query = _unitOfWork.Appointments.QueryableAsync()
                 .Include(a => a.WorkSession)
-                    .ThenInclude(ws => ws.Doctor)
-                        .ThenInclude(d => d.Specialty)
+                    .ThenInclude(ws => ws!.Doctor)
+                        .ThenInclude(d => d!.Specialty)
                 .Include(a => a.PatientProfile)
                 .Include(a => a.Service)
                 .Where(a => a.BookerId == userId);

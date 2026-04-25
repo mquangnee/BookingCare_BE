@@ -30,7 +30,7 @@ namespace BookingCare.Application.Admins.Query
             var totalPatientAccounts = await _unitOfWork.PatientProfiles
                 .QueryableAsync()
                 .Include(pp => pp.Patient)
-                    .ThenInclude(pp => pp.User)
+                    .ThenInclude(pp => pp!.User)
                 .Where(pp => pp.Patient!.User != null && (pp.Patient.User.LockoutEnd == null || pp.Patient.User.LockoutEnd < today) && pp.Relationship == EnumRelationship.MySelf)
                 .Select(pp => new PatientModel
                 {

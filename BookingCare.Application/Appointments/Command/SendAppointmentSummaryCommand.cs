@@ -40,7 +40,7 @@ namespace BookingCare.Application.Appointments.Command
                 .Include(a => a.Booker)
                 .Include(a => a.PatientProfile)
                 .Include(a => a.WorkSession)
-                    .ThenInclude(ws => ws.Doctor)
+                    .ThenInclude(ws => ws!.Doctor)
                 .ToListAsync();
 
             if (!appointments.Any())
@@ -61,7 +61,7 @@ namespace BookingCare.Application.Appointments.Command
 
                 var selfProfile = group
                     .Select(a => a.PatientProfile)
-                    .Where(pp => pp.Relationship == EnumRelationship.MySelf)
+                    .Where(pp => pp!.Relationship == EnumRelationship.MySelf)
                     .First();
 
                 var displayName = selfProfile?.FullName ?? booker?.UserName;

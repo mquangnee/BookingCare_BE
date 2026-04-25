@@ -58,128 +58,57 @@ namespace BookingCare.Infrastructure.Services
                 _ => "Không xác định"
             };
 
-            var htmlContent = $@"
-                <html>
-                <head>
-                    <meta charset='utf-8'>
-                    <style>
-                        body {{ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; margin: 40px; line-height: 1.6; }}
-                        
-                        /* Layout Header dùng Table để tương thích DinkToPdf */
-                        table.header-table {{ width: 100%; border-bottom: 2px solid #2c3e50; padding-bottom: 10px; margin-bottom: 20px; }}
-                        .clinic-info {{ text-align: right; font-size: 14px; }}
-                        
-                        h1.main-title {{ text-align: center; color: #2c3e50; font-size: 26px; text-transform: uppercase; margin-top: 10px; margin-bottom: 25px; letter-spacing: 1px; }}
-                        .section-title {{ font-size: 16px; color: #2980b9; border-bottom: 1px solid #bdc3c7; padding-bottom: 5px; margin-top: 20px; margin-bottom: 10px; font-weight: bold; text-transform: uppercase; }}
-                        
-                        /* Layout lưới thông tin dùng Table */
-                        table.info-table {{ width: 100%; font-size: 14px; margin-bottom: 10px; }}
-                        table.info-table td {{ padding-bottom: 6px; vertical-align: top; }}
-                        .info-label {{ font-weight: 600; color: #555; }}
-                        
-                        table.medicine-table {{ width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }}
-                        table.medicine-table th {{ background-color: #f8f9fa; color: #2c3e50; font-weight: bold; border: 1px solid #ddd; padding: 10px; text-align: left; }}
-                        table.medicine-table td {{ border: 1px solid #ddd; padding: 8px; }}
-                        table.medicine-table tr:nth-child(even) {{ background-color: #fbfbfc; }}
-                        
-                        .footer-table {{ width: 100%; margin-top: 40px; }}
-                        .footer-text {{ text-align: right; padding-right: 30px; }}
-                        .footer-date {{ font-style: italic; margin-bottom: 10px; }}
-                        .signature-area {{ height: 80px; }}
-                    </style>
-                </head>
-                <body>
-                    <table class='header-table' cellpadding='0' cellspacing='0'>
-                        <tr>
-                            <td style='width: 40%; vertical-align: top;'>
-                                <h2 style='color:#2980b9; margin:0; font-size: 20px;'>BOOKING CARE</h2>
-                                <p style='font-size:12px; color:#7f8c8d; margin:3px 0 0 0;'>Chăm sóc sức khỏe toàn diện</p>
-                            </td>
-                            <td class='clinic-info' style='width: 60%; vertical-align: top;'>
-                                <strong>Phòng Khám Đa Khoa Booking Care</strong><br>
-                                Hotline: 1900 1234<br>
-                                Email: contact@bookingcare.vn
-                            </td>
-                        </tr>
-                    </table>
+            string imageUrl = "https://storage.googleapis.com/bookingcare/%24RKY6O8O.png";
+            string logoBase64 = string.Empty;
 
-                    <h1 class='main-title'>KẾT QUẢ KHÁM BỆNH & ĐƠN THUỐC</h1>
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    byte[] imageBytes = client.GetByteArrayAsync(imageUrl).GetAwaiter().GetResult();
+                    logoBase64 = $"data:image/png;base64,{Convert.ToBase64String(imageBytes)}";
+                }
+            }
+            catch (Exception)
+            {
+                logoBase64 = "BookingCare";
+            }
 
-                    <div class='section-title'>THÔNG TIN BỆNH NHÂN</div>
-                    <table class='info-table' cellpadding='0' cellspacing='0'>
-                        <tr>
-                            <td style='width: 50%;'>
-                                <span class='info-label'>Họ và tên:</span> <strong>{prescriptionDetails.PatientName}</strong>
-                            </td>
-                            <td style='width: 50%;'>
-                                <span class='info-label'>Mã bệnh nhân:</span> {prescriptionDetails.ProfileCode}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class='info-label'>Giới tính:</span> {genderVN}
-                            </td>
-                            <td>
-                                <span class='info-label'>Tuổi:</span> {prescriptionDetails.Age}
-                            </td>
-                        </tr>
-                    </table>
+            string logoHtml = !string.IsNullOrEmpty(logoBase64)
+                ? $"<img src='{logoBase64}' alt='Booking Care Logo' style='max-width: 180px; height: auto; margin-bottom: 5px;' />"
+                : "<h2 style='color:#2980b9; margin:0; font-size: 20px;'>BOOKING CARE</h2>";
 
-                    <div class='section-title'>THÔNG TIN KHÁM BỆNH</div>
-                    <table class='info-table' cellpadding='0' cellspacing='0'>
-                        <tr>
-                            <td style='width: 50%;'>
-                                <span class='info-label'>Bác sĩ khám:</span> {prescriptionDetails.DoctorName}
-                            </td>
-                            <td style='width: 50%;'>
-                                <span class='info-label'>Mã lịch hẹn:</span> {prescriptionDetails.AppointmentCode}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class='info-label'>Ngày khám:</span> {prescriptionDetails.Date:dd/MM/yyyy}
-                            </td>
-                            <td>
-                                <span class='info-label'>Giờ khám:</span> {prescriptionDetails.StartTime:hh\:mm} - {prescriptionDetails.EndTime:hh\:mm}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan='2'>
-                                <span class='info-label'>Chẩn đoán:</span> <strong style='color:#c0392b;'>{prescriptionDetails.Diagnosis}</strong>
-                            </td>
-                        </tr>
-                    </table>
+            var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "Prescription", "PrescriptionTemplate.html");
+            if(!File.Exists(templatePath)) 
+            {
+                string? currentDir = Directory.GetCurrentDirectory();
+                while (currentDir != null && !Directory.Exists(Path.Combine(currentDir, "BookingCare.Infrastructure")))
+                {
+                    currentDir = Directory.GetParent(currentDir)?.FullName;
+                }
+                if (currentDir != null)
+                {
+                    templatePath = Path.Combine(currentDir, "BookingCare.Infrastructure", "Templates", "Prescription", "PrescriptionTemplate.html");
+                }
+            }
 
-                    <div class='section-title'>CHI TIẾT ĐƠN THUỐC</div>
-                    <table class='medicine-table'>
-                        <thead>
-                            <tr>
-                                <th width='5%' style='text-align:center'>STT</th>
-                                <th width='35%'>Tên Thuốc</th>
-                                <th width='15%' style='text-align:center'>Đơn vị</th>
-                                <th width='45%'>Liều dùng & Cách dùng</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {medicineRows}
-                        </tbody>
-                    </table>
+            var htmlContent = File.ReadAllText(templatePath);
 
-                    <table class='footer-table' cellpadding='0' cellspacing='0'>
-                        <tr>
-                            <td style='width: 60%;'></td>
-                            <td class='footer-text' style='width: 40%;'>
-                                <div class='footer-date'>
-                                    Ngày {DateTime.Now.Day:D2} tháng {DateTime.Now.Month:D2} năm {DateTime.Now.Year}
-                                </div>
-                                <strong>Bác sĩ chỉ định</strong><br>
-                                <div class='signature-area'></div>
-                                <strong>{prescriptionDetails.DoctorName}</strong>
-                            </td>
-                        </tr>
-                    </table>
-                </body>
-                </html>";
+            htmlContent = htmlContent.Replace("{{LogoHtml}}", logoHtml)
+                                     .Replace("{{PatientName}}", prescriptionDetails.PatientName)
+                                     .Replace("{{ProfileCode}}", prescriptionDetails.ProfileCode)
+                                     .Replace("{{Gender}}", genderVN)
+                                     .Replace("{{Age}}", prescriptionDetails.Age.ToString())
+                                     .Replace("{{DoctorName}}", prescriptionDetails.DoctorName)
+                                     .Replace("{{AppointmentCode}}", prescriptionDetails.AppointmentCode)
+                                     .Replace("{{Date}}", prescriptionDetails.Date.ToString("dd/MM/yyyy"))
+                                     .Replace("{{StartTime}}", prescriptionDetails.StartTime?.ToString(@"hh\:mm"))
+                                     .Replace("{{EndTime}}", prescriptionDetails.EndTime?.ToString(@"hh\:mm"))
+                                     .Replace("{{Diagnosis}}", prescriptionDetails.Diagnosis)
+                                     .Replace("{{MedicineRows}}", medicineRows)
+                                     .Replace("{{Day}}", DateTime.Now.Day.ToString("D2"))
+                                     .Replace("{{Month}}", DateTime.Now.Month.ToString("D2"))
+                                     .Replace("{{Year}}", DateTime.Now.Year.ToString());
 
             var doc = new HtmlToPdfDocument()
             {
