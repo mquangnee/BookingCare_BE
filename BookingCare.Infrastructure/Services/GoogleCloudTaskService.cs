@@ -1,9 +1,9 @@
 using BookingCare.Application.Services;
 using Google.Cloud.Tasks.V2;
-using Google.Protobuf.WellKnownTypes;
+using BookingCare.Shared.Setting;
 using System.Linq.Expressions;
-using HttpMethod = Google.Cloud.Tasks.V2.HttpMethod;
-using Task = Google.Cloud.Tasks.V2.Task;
+using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
 
 namespace BookingCare.Infrastructure.Services
 {
@@ -12,22 +12,18 @@ namespace BookingCare.Infrastructure.Services
         private readonly string _projectId;
         private readonly string _locationId;
         private readonly string _queueId;
-        private CloudTasksClient? _client;
+        private CloudTasksClient _client;
 
-        public GoogleCloudTaskService(string projectId, string locationId, string queueId)
+        public GoogleCloudTaskService(
+            IOptions<CloudTaskSetting> taskSetting, 
+            ILogger<GoogleCloudSchedulerService> logger)
         {
-            _projectId = projectId;
-            _locationId = locationId;
-            _queueId = queueId;
-        }
-
-        private CloudTasksClient Client
-        {
-            get
-            {
-                _client ??= CloudTasksClient.Create();
-                return _client;
-            }
+            var settings = taskSetting.Value;
+            _projectId = settings.ProjectId!;
+            _locationId = settings.LocationId!;
+            _queueId = settings.QueueId!;
+            // Create service client
+            _client = CloudTasksClient.Create();
         }
 
         public string Enqueue(Expression<Action> methodCall)

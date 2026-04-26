@@ -123,4 +123,4 @@ jobs:
             --platform managed \
             --port 8080 \
             --allow-unauthenticated \
-             --update-env-vars ConnectionStrings__ConnectedDb="${CONNECTION_STRING}",ASPNETCORE_ENVIRONMENT=Production,ENVIRONMENT=Production,GoogleCloud__CloudScheduler__ProjectId="${GCP_PROJECT_ID}",GoogleCloud__CloudScheduler__LocationId="${GCP_REGION}",GoogleCloud__CloudScheduler__QueueId="${GCP_TASK_QUEUE_ID}",GoogleCloud__CloudStorage__BucketName="${GCP_BUCKET_NAME}",Jobs__SendAppointmentSummary__EndPoint="${CLOUD_RUN_URL}/api/tasks/send-appointment-summary"
+             --update-env-vars ConnectionStrings__ConnectedDb="${CONNECTION_STRING}",ASPNETCORE_ENVIRONMENT=Production,ENVIRONMENT=Production,GoogleCloud__CloudScheduler__ProjectId="${GCP_PROJECT_ID}",GoogleCloud__CloudScheduler__LocationId="${GCP_REGION}",GoogleCloud__CloudStorage__BucketName="${GCP_BUCKET_NAME}",Jobs__SendAppointmentSummary__EndPoint="${CLOUD_RUN_URL}/api/tasks/send-appointment-summary"
