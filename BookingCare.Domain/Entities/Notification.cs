@@ -1,5 +1,4 @@
 ﻿using BookingCare.Shared.Enum;
-using System.Text.Json.Serialization;
 
 namespace BookingCare.Domain.Entities
 {
@@ -11,7 +10,6 @@ namespace BookingCare.Domain.Entities
         public Guid? NotificationTypeId { get; set; }
         public Guid? ObjectId { get; set; }
         public string? Message { get; set; }
-        [JsonConverter(typeof(JsonStringEnumConverter))]
         public EnumNotificationType Type { get; set; }
         public bool IsRead { get; set; } = false;
         public bool IsAccepted { get; set; } = false;

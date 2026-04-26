@@ -131,62 +131,6 @@ namespace BookingCare.Infrastructure.Migrations
                     b.ToTable("Appointments");
                 });
 
-            modelBuilder.Entity("BookingCare.Domain.Entities.ChatMessage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ChatRole")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("ChatSessionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Content")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ToolId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ToolName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ChatSessionId", "CreatedDate")
-                        .HasDatabaseName("IX_ChatMessages_ChatSessionId_CreatedDate");
-
-                    b.ToTable("ChatMessages");
-                });
-
-            modelBuilder.Entity("BookingCare.Domain.Entities.ChatSession", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId", "CreatedDate")
-                        .HasDatabaseName("IX_ChatSessions_UserId_CreatedDate");
-
-                    b.ToTable("ChatSessions");
-                });
-
             modelBuilder.Entity("BookingCare.Domain.Entities.Doctor", b =>
                 {
                     b.Property<Guid>("Id")
@@ -755,94 +699,6 @@ namespace BookingCare.Infrastructure.Migrations
                     b.HasIndex("PatientId");
 
                     b.ToTable("PatientProfiles");
-                });
-
-            modelBuilder.Entity("BookingCare.Domain.Entities.Payment", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<double>("Amount")
-                        .HasColumnType("float");
-
-                    b.Property<Guid>("AppointmentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Method")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("PaidAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("PaymentCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AppointmentId")
-                        .IsUnique();
-
-                    b.ToTable("Payments");
-                });
-
-            modelBuilder.Entity("BookingCare.Domain.Entities.PaymentTransaction", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<double>("Amount")
-                        .HasColumnType("float");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ExternalOrderCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FailureReason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GatewayResponse")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("PaymentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Provider")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TransactionCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PaymentId");
-
-                    b.ToTable("PaymentTransactions");
                 });
 
             modelBuilder.Entity("BookingCare.Domain.Entities.Prescription", b =>
@@ -1788,20 +1644,20 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("DoctorId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("EndTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("NextAvailableAt")
-                        .HasColumnType("datetime2");
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time");
 
                     b.Property<Guid>("ServiceId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime2");
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -1819,594 +1675,440 @@ namespace BookingCare.Infrastructure.Migrations
                         {
                             Id = new Guid("44444444-7777-7777-7777-000000000001"),
                             CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 4, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DoctorId = new Guid("33333333-1111-1111-1111-111111111111"),
-                            EndTime = new DateTime(2026, 4, 14, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 14, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndTime = new TimeSpan(0, 12, 0, 0, 0),
                             ServiceId = new Guid("22222222-1111-1111-1111-111111111101"),
-                            StartTime = new DateTime(2026, 4, 14, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            StartTime = new TimeSpan(0, 7, 30, 0, 0),
                             UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("44444444-7777-7777-7777-000000000002"),
                             CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-3333-3333-3333-333333333333"),
-                            EndTime = new DateTime(2026, 4, 14, 17, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 14, 13, 30, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-3333-3333-3333-111111111103"),
-                            StartTime = new DateTime(2026, 4, 14, 13, 30, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 4, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-1111-1111-1111-111111111111"),
+                            EndTime = new TimeSpan(0, 17, 30, 0, 0),
+                            ServiceId = new Guid("22222222-1111-1111-1111-111111111101"),
+                            StartTime = new TimeSpan(0, 13, 30, 0, 0),
                             UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("44444444-7777-7777-7777-000000000003"),
                             CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-5555-5555-5555-555555555555"),
-                            EndTime = new DateTime(2026, 4, 14, 11, 30, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 14, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-1111-1111-1111-111111111105"),
-                            StartTime = new DateTime(2026, 4, 14, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-1111-1111-1111-111111111111"),
+                            EndTime = new TimeSpan(0, 12, 0, 0, 0),
+                            ServiceId = new Guid("22222222-1111-1111-1111-111111111101"),
+                            StartTime = new TimeSpan(0, 7, 30, 0, 0),
                             UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("44444444-7777-7777-7777-000000000004"),
                             CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-2222-2222-2222-222222222222"),
-                            EndTime = new DateTime(2026, 4, 15, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 15, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-3333-3333-3333-111111111102"),
-                            StartTime = new DateTime(2026, 4, 15, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-1111-1111-1111-111111111111"),
+                            EndTime = new TimeSpan(0, 17, 30, 0, 0),
+                            ServiceId = new Guid("22222222-1111-1111-1111-111111111101"),
+                            StartTime = new TimeSpan(0, 13, 30, 0, 0),
                             UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("44444444-7777-7777-7777-000000000005"),
                             CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-4444-4444-4444-444444444444"),
-                            EndTime = new DateTime(2026, 4, 15, 17, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 15, 13, 30, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-1111-1111-1111-111111111104"),
-                            StartTime = new DateTime(2026, 4, 15, 13, 30, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 4, 29, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-2222-2222-2222-222222222222"),
+                            EndTime = new TimeSpan(0, 12, 0, 0, 0),
+                            ServiceId = new Guid("22222222-1111-1111-1111-111111111102"),
+                            StartTime = new TimeSpan(0, 7, 30, 0, 0),
                             UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("44444444-7777-7777-7777-000000000006"),
                             CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-6666-6666-6666-666666666666"),
-                            EndTime = new DateTime(2026, 4, 15, 17, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 15, 14, 0, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-3333-3333-3333-111111111106"),
-                            StartTime = new DateTime(2026, 4, 15, 14, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 4, 29, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-2222-2222-2222-222222222222"),
+                            EndTime = new TimeSpan(0, 17, 30, 0, 0),
+                            ServiceId = new Guid("22222222-1111-1111-1111-111111111102"),
+                            StartTime = new TimeSpan(0, 13, 30, 0, 0),
                             UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("44444444-7777-7777-7777-000000000007"),
                             CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-7777-7777-7777-777777777777"),
-                            EndTime = new DateTime(2026, 4, 16, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 16, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-3333-3333-3333-111111111107"),
-                            StartTime = new DateTime(2026, 4, 16, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-3333-3333-3333-333333333333"),
+                            EndTime = new TimeSpan(0, 12, 0, 0, 0),
+                            ServiceId = new Guid("22222222-1111-1111-1111-111111111102"),
+                            StartTime = new TimeSpan(0, 7, 30, 0, 0),
                             UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("44444444-7777-7777-7777-000000000008"),
                             CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-8888-8888-8888-888888888888"),
-                            EndTime = new DateTime(2026, 4, 16, 17, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 16, 13, 30, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-3333-3333-3333-111111111108"),
-                            StartTime = new DateTime(2026, 4, 16, 13, 30, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-3333-3333-3333-333333333333"),
+                            EndTime = new TimeSpan(0, 17, 30, 0, 0),
+                            ServiceId = new Guid("22222222-1111-1111-1111-111111111102"),
+                            StartTime = new TimeSpan(0, 13, 30, 0, 0),
                             UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("44444444-7777-7777-7777-000000000009"),
                             CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-9999-9999-9999-999999999999"),
-                            EndTime = new DateTime(2026, 4, 16, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 16, 8, 30, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-3333-3333-3333-111111111109"),
-                            StartTime = new DateTime(2026, 4, 16, 8, 30, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-4444-4444-4444-444444444444"),
+                            EndTime = new TimeSpan(0, 12, 0, 0, 0),
+                            ServiceId = new Guid("22222222-1111-1111-1111-111111111102"),
+                            StartTime = new TimeSpan(0, 7, 30, 0, 0),
                             UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("44444444-7777-7777-7777-000000000010"),
                             CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-0000-0000-0000-000000000000"),
-                            EndTime = new DateTime(2026, 4, 17, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 17, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-1111-1111-1111-111111111110"),
-                            StartTime = new DateTime(2026, 4, 17, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-4444-4444-4444-444444444444"),
+                            EndTime = new TimeSpan(0, 17, 30, 0, 0),
+                            ServiceId = new Guid("22222222-1111-1111-1111-111111111102"),
+                            StartTime = new TimeSpan(0, 13, 30, 0, 0),
                             UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("44444444-7777-7777-7777-000000000011"),
                             CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-1111-1111-1111-111111111111"),
-                            EndTime = new DateTime(2026, 4, 17, 17, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 17, 13, 30, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-3333-3333-3333-111111111101"),
-                            StartTime = new DateTime(2026, 4, 17, 13, 30, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 5, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-5555-5555-5555-555555555555"),
+                            EndTime = new TimeSpan(0, 12, 0, 0, 0),
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111103"),
+                            StartTime = new TimeSpan(0, 7, 30, 0, 0),
                             UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("44444444-7777-7777-7777-000000000012"),
                             CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-4444-4444-4444-444444444444"),
-                            EndTime = new DateTime(2026, 4, 17, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 17, 9, 30, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-3333-3333-3333-111111111104"),
-                            StartTime = new DateTime(2026, 4, 17, 9, 30, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 5, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-5555-5555-5555-555555555555"),
+                            EndTime = new TimeSpan(0, 17, 30, 0, 0),
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111103"),
+                            StartTime = new TimeSpan(0, 13, 30, 0, 0),
                             UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("44444444-7777-7777-7777-000000000013"),
                             CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-5555-5555-5555-555555555555"),
-                            EndTime = new DateTime(2026, 4, 18, 11, 30, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 18, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-3333-3333-3333-111111111105"),
-                            StartTime = new DateTime(2026, 4, 18, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 5, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-6666-6666-6666-666666666666"),
+                            EndTime = new TimeSpan(0, 12, 0, 0, 0),
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111103"),
+                            StartTime = new TimeSpan(0, 7, 30, 0, 0),
                             UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("44444444-7777-7777-7777-000000000014"),
                             CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 5, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DoctorId = new Guid("33333333-6666-6666-6666-666666666666"),
-                            EndTime = new DateTime(2026, 4, 18, 17, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 18, 13, 30, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-1111-1111-1111-111111111106"),
-                            StartTime = new DateTime(2026, 4, 18, 13, 30, 0, 0, DateTimeKind.Unspecified),
+                            EndTime = new TimeSpan(0, 17, 30, 0, 0),
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111103"),
+                            StartTime = new TimeSpan(0, 13, 30, 0, 0),
                             UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("44444444-7777-7777-7777-000000000015"),
                             CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-2222-2222-2222-222222222222"),
-                            EndTime = new DateTime(2026, 4, 18, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 18, 8, 30, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-1111-1111-1111-111111111102"),
-                            StartTime = new DateTime(2026, 4, 18, 8, 30, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 5, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-7777-7777-7777-777777777777"),
+                            EndTime = new TimeSpan(0, 12, 0, 0, 0),
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111103"),
+                            StartTime = new TimeSpan(0, 7, 30, 0, 0),
                             UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("44444444-7777-7777-7777-000000000016"),
                             CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-3333-3333-3333-333333333333"),
-                            EndTime = new DateTime(2026, 4, 19, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 19, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-1111-1111-1111-111111111103"),
-                            StartTime = new DateTime(2026, 4, 19, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 5, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-7777-7777-7777-777777777777"),
+                            EndTime = new TimeSpan(0, 17, 30, 0, 0),
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111103"),
+                            StartTime = new TimeSpan(0, 13, 30, 0, 0),
                             UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("44444444-7777-7777-7777-000000000017"),
                             CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-7777-7777-7777-777777777777"),
-                            EndTime = new DateTime(2026, 4, 19, 16, 30, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 19, 13, 0, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-3333-3333-3333-111111111107"),
-                            StartTime = new DateTime(2026, 4, 19, 13, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-8888-8888-8888-888888888888"),
+                            EndTime = new TimeSpan(0, 12, 0, 0, 0),
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111103"),
+                            StartTime = new TimeSpan(0, 7, 30, 0, 0),
                             UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("44444444-7777-7777-7777-000000000018"),
                             CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DoctorId = new Guid("33333333-8888-8888-8888-888888888888"),
-                            EndTime = new DateTime(2026, 4, 19, 11, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 19, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-3333-3333-3333-111111111108"),
-                            StartTime = new DateTime(2026, 4, 19, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndTime = new TimeSpan(0, 17, 30, 0, 0),
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111103"),
+                            StartTime = new TimeSpan(0, 13, 30, 0, 0),
                             UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("44444444-7777-7777-7777-000000000019"),
                             CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-9999-9999-9999-999999999999"),
-                            EndTime = new DateTime(2026, 4, 20, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-3333-3333-3333-111111111109"),
-                            StartTime = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 5, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-1111-1111-1111-111111111111"),
+                            EndTime = new TimeSpan(0, 12, 0, 0, 0),
+                            ServiceId = new Guid("22222222-1111-1111-1111-111111111101"),
+                            StartTime = new TimeSpan(0, 7, 30, 0, 0),
                             UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("44444444-7777-7777-7777-000000000020"),
                             CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-0000-0000-0000-000000000000"),
-                            EndTime = new DateTime(2026, 4, 20, 17, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 20, 13, 30, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-3333-3333-3333-222222222210"),
-                            StartTime = new DateTime(2026, 4, 20, 13, 30, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 5, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-1111-1111-1111-111111111111"),
+                            EndTime = new TimeSpan(0, 17, 30, 0, 0),
+                            ServiceId = new Guid("22222222-1111-1111-1111-111111111101"),
+                            StartTime = new TimeSpan(0, 13, 30, 0, 0),
                             UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("44444444-7777-7777-7777-000000000021"),
-                            CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-1111-1111-1111-111111111111"),
-                            EndTime = new DateTime(2026, 4, 20, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 20, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-3333-3333-3333-111111111101"),
-                            StartTime = new DateTime(2026, 4, 20, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 4, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-2222-2222-2222-222222222222"),
+                            EndTime = new TimeSpan(0, 12, 0, 0, 0),
+                            ServiceId = new Guid("22222222-1111-1111-1111-111111111104"),
+                            StartTime = new TimeSpan(0, 7, 30, 0, 0),
+                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("44444444-7777-7777-7777-000000000022"),
-                            CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-3333-3333-3333-333333333333"),
-                            EndTime = new DateTime(2026, 4, 15, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 15, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-1111-1111-1111-111111111103"),
-                            StartTime = new DateTime(2026, 4, 15, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 4, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-2222-2222-2222-222222222222"),
+                            EndTime = new TimeSpan(0, 17, 30, 0, 0),
+                            ServiceId = new Guid("22222222-1111-1111-1111-111111111104"),
+                            StartTime = new TimeSpan(0, 13, 30, 0, 0),
+                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("44444444-7777-7777-7777-000000000023"),
-                            CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-6666-6666-6666-666666666666"),
-                            EndTime = new DateTime(2026, 4, 16, 16, 30, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 16, 14, 0, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-3333-3333-3333-111111111106"),
-                            StartTime = new DateTime(2026, 4, 16, 14, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-3333-3333-3333-333333333333"),
+                            EndTime = new TimeSpan(0, 12, 0, 0, 0),
+                            ServiceId = new Guid("22222222-1111-1111-1111-111111111105"),
+                            StartTime = new TimeSpan(0, 7, 30, 0, 0),
+                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("44444444-7777-7777-7777-000000000024"),
-                            CreatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-4444-4444-4444-444444444444"),
-                            EndTime = new DateTime(2026, 4, 18, 16, 30, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 18, 14, 0, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-3333-3333-3333-111111111104"),
-                            StartTime = new DateTime(2026, 4, 18, 14, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 10, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-7777-7777-7777-000000000026"),
                             CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-4444-4444-4444-444444444444"),
-                            EndTime = new DateTime(2026, 4, 20, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 20, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-3333-3333-3333-111111111107"),
-                            StartTime = new DateTime(2026, 4, 20, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-7777-7777-7777-000000000052"),
-                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DoctorId = new Guid("33333333-3333-3333-3333-333333333333"),
-                            EndTime = new DateTime(2026, 4, 20, 12, 30, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 20, 9, 30, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-1111-1111-1111-111111111110"),
-                            StartTime = new DateTime(2026, 4, 20, 9, 30, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-7777-7777-7777-000000000031"),
-                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-1111-1111-1111-111111111111"),
-                            EndTime = new DateTime(2026, 4, 21, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 21, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-1111-1111-1111-111111111103"),
-                            StartTime = new DateTime(2026, 4, 21, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-7777-7777-7777-000000000051"),
-                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-7777-7777-7777-777777777777"),
-                            EndTime = new DateTime(2026, 4, 21, 12, 30, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 21, 10, 30, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-1111-1111-1111-111111111101"),
-                            StartTime = new DateTime(2026, 4, 21, 10, 30, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-7777-7777-7777-000000000034"),
-                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-4444-4444-4444-444444444444"),
-                            EndTime = new DateTime(2026, 4, 21, 17, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 21, 14, 0, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-3333-3333-3333-111111111106"),
-                            StartTime = new DateTime(2026, 4, 21, 14, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-7777-7777-7777-000000000030"),
-                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-6666-6666-6666-666666666666"),
-                            EndTime = new DateTime(2026, 4, 21, 17, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 21, 15, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndTime = new TimeSpan(0, 17, 30, 0, 0),
                             ServiceId = new Guid("22222222-1111-1111-1111-111111111105"),
-                            StartTime = new DateTime(2026, 4, 21, 15, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-7777-7777-7777-000000000032"),
-                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-7777-7777-7777-777777777777"),
-                            EndTime = new DateTime(2026, 4, 22, 10, 30, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 22, 8, 30, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-1111-1111-1111-111111111101"),
-                            StartTime = new DateTime(2026, 4, 22, 8, 30, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-7777-7777-7777-000000000042"),
-                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-0000-0000-0000-000000000000"),
-                            EndTime = new DateTime(2026, 4, 22, 12, 30, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 22, 8, 30, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-3333-3333-3333-111111111107"),
-                            StartTime = new DateTime(2026, 4, 22, 8, 30, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-7777-7777-7777-000000000044"),
-                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-9999-9999-9999-999999999999"),
-                            EndTime = new DateTime(2026, 4, 22, 10, 30, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 22, 8, 30, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-1111-1111-1111-111111111110"),
-                            StartTime = new DateTime(2026, 4, 22, 8, 30, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-7777-7777-7777-000000000047"),
-                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-5555-5555-5555-555555555555"),
-                            EndTime = new DateTime(2026, 4, 22, 15, 30, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 22, 13, 30, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-1111-1111-1111-111111111103"),
-                            StartTime = new DateTime(2026, 4, 22, 13, 30, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-7777-7777-7777-000000000027"),
-                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-8888-8888-8888-888888888888"),
-                            EndTime = new DateTime(2026, 4, 22, 17, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 22, 14, 0, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-1111-1111-1111-111111111104"),
-                            StartTime = new DateTime(2026, 4, 22, 14, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-7777-7777-7777-000000000036"),
-                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-2222-2222-2222-222222222222"),
-                            EndTime = new DateTime(2026, 4, 23, 12, 30, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 23, 9, 30, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-1111-1111-1111-111111111104"),
-                            StartTime = new DateTime(2026, 4, 23, 9, 30, 0, 0, DateTimeKind.Unspecified),
+                            StartTime = new TimeSpan(0, 13, 30, 0, 0),
                             UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("44444444-7777-7777-7777-000000000025"),
                             CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-3333-3333-3333-333333333333"),
-                            EndTime = new DateTime(2026, 4, 23, 15, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 23, 13, 0, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-3333-3333-3333-111111111106"),
-                            StartTime = new DateTime(2026, 4, 23, 13, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 4, 29, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-4444-4444-4444-444444444444"),
+                            EndTime = new TimeSpan(0, 12, 0, 0, 0),
+                            ServiceId = new Guid("22222222-1111-1111-1111-111111111105"),
+                            StartTime = new TimeSpan(0, 7, 30, 0, 0),
                             UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = new Guid("44444444-7777-7777-7777-000000000046"),
+                            Id = new Guid("44444444-7777-7777-7777-000000000026"),
                             CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-7777-7777-7777-777777777777"),
-                            EndTime = new DateTime(2026, 4, 23, 16, 30, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 23, 13, 30, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-3333-3333-3333-111111111102"),
-                            StartTime = new DateTime(2026, 4, 23, 13, 30, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 4, 29, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-4444-4444-4444-444444444444"),
+                            EndTime = new TimeSpan(0, 17, 30, 0, 0),
+                            ServiceId = new Guid("22222222-1111-1111-1111-111111111105"),
+                            StartTime = new TimeSpan(0, 13, 30, 0, 0),
+                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-7777-7777-7777-000000000027"),
+                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-5555-5555-5555-555555555555"),
+                            EndTime = new TimeSpan(0, 12, 0, 0, 0),
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111106"),
+                            StartTime = new TimeSpan(0, 7, 30, 0, 0),
                             UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("44444444-7777-7777-7777-000000000028"),
                             CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-3333-3333-3333-333333333333"),
-                            EndTime = new DateTime(2026, 4, 23, 17, 30, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 23, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-1111-1111-1111-111111111103"),
-                            StartTime = new DateTime(2026, 4, 23, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-7777-7777-7777-000000000035"),
-                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-7777-7777-7777-777777777777"),
-                            EndTime = new DateTime(2026, 4, 23, 17, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 23, 15, 0, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-1111-1111-1111-111111111105"),
-                            StartTime = new DateTime(2026, 4, 23, 15, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-7777-7777-7777-000000000049"),
-                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-9999-9999-9999-999999999999"),
-                            EndTime = new DateTime(2026, 4, 24, 11, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 24, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-1111-1111-1111-111111111101"),
-                            StartTime = new DateTime(2026, 4, 24, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-7777-7777-7777-000000000041"),
-                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-2222-2222-2222-222222222222"),
-                            EndTime = new DateTime(2026, 4, 24, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 24, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-3333-3333-3333-111111111102"),
-                            StartTime = new DateTime(2026, 4, 24, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-7777-7777-7777-000000000039"),
-                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-6666-6666-6666-666666666666"),
-                            EndTime = new DateTime(2026, 4, 24, 12, 30, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 24, 10, 30, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-1111-1111-1111-111111111105"),
-                            StartTime = new DateTime(2026, 4, 24, 10, 30, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-7777-7777-7777-000000000043"),
-                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-4444-4444-4444-444444444444"),
-                            EndTime = new DateTime(2026, 4, 25, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 25, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-3333-3333-3333-111111111102"),
-                            StartTime = new DateTime(2026, 4, 25, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-7777-7777-7777-000000000053"),
-                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-8888-8888-8888-888888888888"),
-                            EndTime = new DateTime(2026, 4, 25, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 25, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-1111-1111-1111-111111111110"),
-                            StartTime = new DateTime(2026, 4, 25, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-7777-7777-7777-000000000054"),
-                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-7777-7777-7777-777777777777"),
-                            EndTime = new DateTime(2026, 4, 25, 11, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 25, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-1111-1111-1111-111111111101"),
-                            StartTime = new DateTime(2026, 4, 25, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-7777-7777-7777-000000000038"),
-                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-6666-6666-6666-666666666666"),
-                            EndTime = new DateTime(2026, 4, 25, 16, 30, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 25, 13, 30, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-3333-3333-3333-111111111107"),
-                            StartTime = new DateTime(2026, 4, 25, 13, 30, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-7777-7777-7777-000000000037"),
-                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-1111-1111-1111-111111111111"),
-                            EndTime = new DateTime(2026, 4, 25, 17, 30, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 25, 15, 30, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-3333-3333-3333-111111111102"),
-                            StartTime = new DateTime(2026, 4, 25, 15, 30, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-7777-7777-7777-000000000045"),
-                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-1111-1111-1111-111111111111"),
-                            EndTime = new DateTime(2026, 4, 26, 12, 30, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 26, 9, 30, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-3333-3333-3333-111111111102"),
-                            StartTime = new DateTime(2026, 4, 26, 9, 30, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-5555-5555-5555-555555555555"),
+                            EndTime = new TimeSpan(0, 17, 30, 0, 0),
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111106"),
+                            StartTime = new TimeSpan(0, 13, 30, 0, 0),
                             UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("44444444-7777-7777-7777-000000000029"),
                             CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-5555-5555-5555-555555555555"),
-                            EndTime = new DateTime(2026, 4, 26, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 26, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-6666-6666-6666-666666666666"),
+                            EndTime = new TimeSpan(0, 12, 0, 0, 0),
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111106"),
+                            StartTime = new TimeSpan(0, 7, 30, 0, 0),
+                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-7777-7777-7777-000000000030"),
+                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-6666-6666-6666-666666666666"),
+                            EndTime = new TimeSpan(0, 17, 30, 0, 0),
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111106"),
+                            StartTime = new TimeSpan(0, 13, 30, 0, 0),
+                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-7777-7777-7777-000000000031"),
+                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 5, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-7777-7777-7777-777777777777"),
+                            EndTime = new TimeSpan(0, 12, 0, 0, 0),
                             ServiceId = new Guid("22222222-3333-3333-3333-111111111107"),
-                            StartTime = new DateTime(2026, 4, 26, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                            StartTime = new TimeSpan(0, 7, 30, 0, 0),
+                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-7777-7777-7777-000000000032"),
+                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 5, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-7777-7777-7777-777777777777"),
+                            EndTime = new TimeSpan(0, 17, 30, 0, 0),
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111107"),
+                            StartTime = new TimeSpan(0, 13, 30, 0, 0),
                             UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("44444444-7777-7777-7777-000000000033"),
                             CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 5, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DoctorId = new Guid("33333333-8888-8888-8888-888888888888"),
-                            EndTime = new DateTime(2026, 4, 26, 12, 30, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 26, 10, 30, 0, 0, DateTimeKind.Unspecified),
+                            EndTime = new TimeSpan(0, 12, 0, 0, 0),
                             ServiceId = new Guid("22222222-3333-3333-3333-111111111107"),
-                            StartTime = new DateTime(2026, 4, 26, 10, 30, 0, 0, DateTimeKind.Unspecified),
+                            StartTime = new TimeSpan(0, 7, 30, 0, 0),
+                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-7777-7777-7777-000000000034"),
+                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 5, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-8888-8888-8888-888888888888"),
+                            EndTime = new TimeSpan(0, 17, 30, 0, 0),
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111107"),
+                            StartTime = new TimeSpan(0, 13, 30, 0, 0),
+                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-7777-7777-7777-000000000035"),
+                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 5, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-1111-1111-1111-111111111111"),
+                            EndTime = new TimeSpan(0, 12, 0, 0, 0),
+                            ServiceId = new Guid("22222222-1111-1111-1111-111111111101"),
+                            StartTime = new TimeSpan(0, 7, 30, 0, 0),
+                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-7777-7777-7777-000000000036"),
+                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 5, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-1111-1111-1111-111111111111"),
+                            EndTime = new TimeSpan(0, 17, 30, 0, 0),
+                            ServiceId = new Guid("22222222-1111-1111-1111-111111111101"),
+                            StartTime = new TimeSpan(0, 13, 30, 0, 0),
+                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-7777-7777-7777-000000000037"),
+                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-2222-2222-2222-222222222222"),
+                            EndTime = new TimeSpan(0, 12, 0, 0, 0),
+                            ServiceId = new Guid("22222222-1111-1111-1111-111111111104"),
+                            StartTime = new TimeSpan(0, 7, 30, 0, 0),
+                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-7777-7777-7777-000000000038"),
+                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-2222-2222-2222-222222222222"),
+                            EndTime = new TimeSpan(0, 17, 30, 0, 0),
+                            ServiceId = new Guid("22222222-1111-1111-1111-111111111104"),
+                            StartTime = new TimeSpan(0, 13, 30, 0, 0),
+                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-7777-7777-7777-000000000039"),
+                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 5, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-8888-8888-8888-888888888888"),
+                            EndTime = new TimeSpan(0, 12, 0, 0, 0),
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111107"),
+                            StartTime = new TimeSpan(0, 7, 30, 0, 0),
                             UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("44444444-7777-7777-7777-000000000040"),
                             CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-7777-7777-7777-777777777777"),
-                            EndTime = new DateTime(2026, 4, 26, 17, 30, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 26, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-1111-1111-1111-111111111104"),
-                            StartTime = new DateTime(2026, 4, 26, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-7777-7777-7777-000000000048"),
-                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-0000-0000-0000-000000000000"),
-                            EndTime = new DateTime(2026, 4, 26, 16, 30, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 26, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-1111-1111-1111-111111111103"),
-                            StartTime = new DateTime(2026, 4, 26, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-7777-7777-7777-000000000050"),
-                            CreatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            DoctorId = new Guid("33333333-4444-4444-4444-444444444444"),
-                            EndTime = new DateTime(2026, 4, 26, 17, 0, 0, 0, DateTimeKind.Unspecified),
-                            NextAvailableAt = new DateTime(2026, 4, 26, 15, 0, 0, 0, DateTimeKind.Unspecified),
-                            ServiceId = new Guid("22222222-1111-1111-1111-111111111103"),
-                            StartTime = new DateTime(2026, 4, 26, 15, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2026, 5, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DoctorId = new Guid("33333333-8888-8888-8888-888888888888"),
+                            EndTime = new TimeSpan(0, 17, 30, 0, 0),
+                            ServiceId = new Guid("22222222-3333-3333-3333-111111111107"),
+                            StartTime = new TimeSpan(0, 13, 30, 0, 0),
                             UpdatedDate = new DateTime(2026, 4, 20, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
@@ -2675,27 +2377,6 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Navigation("WorkSession");
                 });
 
-            modelBuilder.Entity("BookingCare.Domain.Entities.ChatMessage", b =>
-                {
-                    b.HasOne("BookingCare.Domain.Entities.ChatSession", "ChatSession")
-                        .WithMany("ChatMessages")
-                        .HasForeignKey("ChatSessionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ChatSession");
-                });
-
-            modelBuilder.Entity("BookingCare.Domain.Entities.ChatSession", b =>
-                {
-                    b.HasOne("BookingCare.Domain.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("BookingCare.Domain.Entities.Doctor", b =>
                 {
                     b.HasOne("BookingCare.Domain.Entities.Service", "Service")
@@ -2767,28 +2448,6 @@ namespace BookingCare.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Patient");
-                });
-
-            modelBuilder.Entity("BookingCare.Domain.Entities.Payment", b =>
-                {
-                    b.HasOne("BookingCare.Domain.Entities.Appointment", "Appointment")
-                        .WithOne("Payment")
-                        .HasForeignKey("BookingCare.Domain.Entities.Payment", "AppointmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Appointment");
-                });
-
-            modelBuilder.Entity("BookingCare.Domain.Entities.PaymentTransaction", b =>
-                {
-                    b.HasOne("BookingCare.Domain.Entities.Payment", "Payment")
-                        .WithMany("Transactions")
-                        .HasForeignKey("PaymentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Payment");
                 });
 
             modelBuilder.Entity("BookingCare.Domain.Entities.Prescription", b =>
@@ -2945,14 +2604,7 @@ namespace BookingCare.Infrastructure.Migrations
 
             modelBuilder.Entity("BookingCare.Domain.Entities.Appointment", b =>
                 {
-                    b.Navigation("Payment");
-
                     b.Navigation("Prescription");
-                });
-
-            modelBuilder.Entity("BookingCare.Domain.Entities.ChatSession", b =>
-                {
-                    b.Navigation("ChatMessages");
                 });
 
             modelBuilder.Entity("BookingCare.Domain.Entities.Doctor", b =>
@@ -2977,11 +2629,6 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Navigation("Appointments");
 
                     b.Navigation("SharedProfiles");
-                });
-
-            modelBuilder.Entity("BookingCare.Domain.Entities.Payment", b =>
-                {
-                    b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("BookingCare.Domain.Entities.Prescription", b =>

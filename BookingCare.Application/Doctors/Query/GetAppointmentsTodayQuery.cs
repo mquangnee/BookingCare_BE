@@ -40,8 +40,8 @@ namespace BookingCare.Application.Doctors.Query
                 return methodResult;
             }
 
-            //var startOfDay = new DateTime(2026, 04, 17).Date;
-            var startOfDay = DateTime.Now.Date;
+            var startOfDay = new DateTime(2026, 04, 27).Date;
+            //var startOfDay = DateTime.Now.Date;
             var endOfDay = startOfDay.AddDays(1);
 
             var appointments = await _unitOfWork.Appointments

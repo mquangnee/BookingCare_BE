@@ -28,6 +28,5 @@ namespace BookingCare.Domain.Entities
         public PatientProfile? PatientProfile { get; set; }
         public Prescription? Prescription { get; set; }
         public Service? Service { get; set; }
-        public Payment? Payment { get; set; }
     }
 }

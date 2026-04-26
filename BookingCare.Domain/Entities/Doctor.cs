@@ -1,5 +1,4 @@
 ﻿using BookingCare.Shared.Enum;
-using System.Text.Json.Serialization;
 
 namespace BookingCare.Domain.Entities
 {
@@ -13,11 +12,9 @@ namespace BookingCare.Domain.Entities
         public string? AvatarUrl { get; set; }
         public string? FullName { get; set; }
         public DateTime DateOfBirth { get; set; }
-        [JsonConverter(typeof(JsonStringEnumConverter))]
         public EnumGender Gender { get; set; }
         public string? CitizenId { get; set; }
         public int ExperienceYears { get; set; }
-        [JsonConverter(typeof(JsonStringEnumConverter))]
         public EnumPosition Position { get; set; }
         public string? WorkingHistory { get; set; }
         public string? Description { get; set; }

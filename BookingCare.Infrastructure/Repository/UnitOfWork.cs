@@ -23,10 +23,6 @@ namespace BookingCare.Infrastructure.Repository
         public IMedicineRepository Medicines { get; }
         public IPrescriptionRepository Prescriptions { get; }
         public IPrescriptionDetailRepository PrescriptionDetails { get; }
-        public IPaymentRepository Payments { get; }
-        public IPaymentTransactionRepository PaymentsTransactions { get; }
-        public IChatMessageRepository ChatMessages { get; }
-        public IChatSessionRepository ChatSessions { get; }
 
         public UnitOfWork(
             DbContext dbContext,
@@ -44,11 +40,7 @@ namespace BookingCare.Infrastructure.Repository
             IServiceRepository services,
             IMedicineRepository medicines,
             IPrescriptionRepository prescriptions,
-            IPrescriptionDetailRepository prescriptionDetails,
-            IPaymentRepository payment,
-            IPaymentTransactionRepository paymentTransaction,
-            IChatMessageRepository chatMessages,
-            IChatSessionRepository chatSessions)
+            IPrescriptionDetailRepository prescriptionDetails)
         {
             _dbContext = dbContext;
             Admins = admins;
@@ -66,10 +58,6 @@ namespace BookingCare.Infrastructure.Repository
             Medicines = medicines;
             Prescriptions = prescriptions;
             PrescriptionDetails = prescriptionDetails;
-            Payments = payment;
-            PaymentsTransactions = paymentTransaction;
-            ChatMessages = chatMessages;
-            ChatSessions = chatSessions;
         }
 
         public void Dispose()

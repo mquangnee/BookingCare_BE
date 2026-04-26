@@ -105,7 +105,7 @@ namespace BookingCare.Application.Doctors.Query
                 Diagnosis = prescriptionsDict.GetValueOrDefault(appointment.Id) ?? "Không có chẩn đoán",
                 Gender = appointment.PatientProfile.Gender,
                 Type = appointment.Type,
-                Date = appointment.WorkSession!.StartTime.Date,
+                Date = appointment.WorkSession!.Date,
                 StartTime = appointment.StartTime,
                 EndTime = appointment.EndTime
             })

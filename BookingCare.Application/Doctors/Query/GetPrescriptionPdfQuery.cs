@@ -53,7 +53,7 @@ namespace BookingCare.Application.Doctors.Query
                 ProfileCode = appointment.PatientProfile?.ProfileCode,
                 PatientName = appointment.PatientProfile?.FullName,
                 DoctorName = $"{doctor?.FullName} - {doctor?.DoctorCode}",
-                Date = appointment.WorkSession!.StartTime.Date,
+                Date = appointment.WorkSession!.Date,
                 Age = appointment.PatientProfile != null ? DateTime.Now.Year - appointment.PatientProfile.DateOfBirth.Year : null,
                 Gender = appointment.PatientProfile?.Gender,
                 StartTime = appointment.StartTime,

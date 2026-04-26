@@ -1,15 +1,9 @@
 ﻿using BookingCare.Application.Services;
-using BookingCare.Domain.Entities;
 using BookingCare.Domain.IRepository;
-using BookingCare.Domain.Models.CommandModels;
 using BookingCare.Domain.Models.EntityModels;
-using BookingCare.Shared.Common;
 using BookingCare.Shared.Enum;
-using BookingCare.Shared.Enum.ErrorCode;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Linq;
 
 namespace BookingCare.Application.Appointments.Command
 {
@@ -43,26 +37,20 @@ namespace BookingCare.Application.Appointments.Command
                     .ThenInclude(ws => ws!.Doctor)
                 .ToListAsync();
 
-            if (!appointments.Any())
+            if (appointments.Count == 0)
             {
                 return;
             }
 
             var grouped = appointments.GroupBy(a => a.BookerId);
 
-            if (!grouped.Any())
-            {
-                return;
-            }
-
             foreach (var group in grouped)
             {
-                var booker = group.Select(a => a.Booker).First();
+                var booker = group.First().Booker;
 
                 var selfProfile = group
                     .Select(a => a.PatientProfile)
-                    .Where(pp => pp!.Relationship == EnumRelationship.MySelf)
-                    .First();
+                    .FirstOrDefault(pp => pp != null && pp.Relationship == EnumRelationship.MySelf);
 
                 var displayName = selfProfile?.FullName ?? booker?.UserName;
 
@@ -82,7 +70,7 @@ namespace BookingCare.Application.Appointments.Command
                 {
                     ToEmail = booker?.Email,
                     BookerName = displayName,
-                    Date = today.Date,
+                    Date = today,
                     Appointments = appointmentList
                 });
             }
