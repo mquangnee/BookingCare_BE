@@ -1,9 +1,6 @@
-﻿using BookingCare.Application.Services;
+using BookingCare.Application.Services;
 using Hangfire;
-using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Text;
 
 namespace BookingCare.Infrastructure.Services
 {
@@ -16,7 +13,31 @@ namespace BookingCare.Infrastructure.Services
         public void AddOrUpdateRecurring(string jobId, Expression<Action> methodCall, string cronExpression)
             => RecurringJob.AddOrUpdate(jobId, methodCall, cronExpression);
         public void AddOrUpdateRecurring(string jobId, string apiUrl, string cronExpression)
-            =>  throw new NotSupportedException(
+            => throw new NotSupportedException(
                     "Expression-based scheduling is only supported by GoogleCloudScheduler.");
+
+        public void TriggerJob(string jobId)
+        {
+            RecurringJob.Trigger(jobId);
+        }
+
+        public void DisableJob(string jobId)
+        {
+            RecurringJob.RemoveIfExists(jobId);
+        }
+
+        public void EnableJob(string jobId, string cronExpression)
+        {
+            throw new NotSupportedException(
+                "EnableJob requires the original method reference. Use AddOrUpdateRecurring with method call instead.");
+        }
+
+        public (bool isEnabled, string? cronExpression, DateTime? nextRun) GetJobStatus(string jobId)
+        {
+            // Note: Hangfire doesn't expose job status lookup directly via API
+            // The JobConfig database table is the source of truth for job status
+            // This method returns a default tuple - actual status comes from database
+            return (true, null, null);
+        }
     }
 }

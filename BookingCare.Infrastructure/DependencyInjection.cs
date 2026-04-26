@@ -64,8 +64,14 @@ public static class DependencyInjection
         // Backgroung Job configuration
         if (environment.IsDevelopment())
         {
-            // Hangfire setup
-            services.AddHangfire(x => x.UseSqlServerStorage(configuration.GetConnectionString("HangfireDb")));
+
+            // Hangfire setup 
+            var hangfireConnectionString = configuration.GetConnectionString("HangfireDb");
+
+            // Auto-create Hangfire schema if not exists
+            EnsureHangfireSchema(hangfireConnectionString);
+
+            services.AddHangfire(x => x.UseSqlServerStorage(hangfireConnectionString));
             services.AddHangfireServer();
 
             // Register Hangfire implementation
@@ -74,14 +80,13 @@ public static class DependencyInjection
         }
         else
         {
-            services.Configure<CloudSchedulerSetting>(configuration.GetSection("GoogleCloud:CloudScheduler"));
-            services.AddScoped<GoogleCloudTaskService>(sp =>
-            {
-                var options = sp.GetRequiredService<IOptions<CloudSchedulerSetting>>().Value;
-                return new GoogleCloudTaskService(options.ProjectId!, options.LocationId!, options.QueueId!);
-            });
             services.AddScoped<ILogger<GoogleCloudSchedulerService>, Logger<GoogleCloudSchedulerService>>();
+            // Scheduler service
+            services.Configure<CloudSchedulerSetting>(configuration.GetSection("GoogleCloud:CloudScheduler"));
             services.AddScoped<ISchedulerService, GoogleCloudSchedulerService>();
+            // Task service
+            services.Configure<CloudTaskSetting>(configuration.GetSection("GoogleCloud:CloudTask"));
+            services.AddScoped<IBackgroundJobService, GoogleCloudTaskService>();
         }
         
         services.Configure<CloudStorageSetting>(configuration.GetSection("GoogleCloud:CloudStorage"));
@@ -92,48 +97,47 @@ public static class DependencyInjection
 
     public static void ConfigureJobScheduler(this IApplicationBuilder app, IConfiguration configuration, IHostEnvironment environment)
     {
-        var logger = app.ApplicationServices.GetRequiredService<ILoggerFactory>()
-            .CreateLogger("JobSchedulerBootstrapper");
-
-        logger.LogInformation("[JobScheduler] Starting configuration. Environment={Env}", environment.EnvironmentName);
-
         using (var scope = app.ApplicationServices.CreateScope())
         {
             var services = scope.ServiceProvider;
-
             var mediator = services.GetRequiredService<IMediator>();
             var schedulerService = services.GetRequiredService<ISchedulerService>();
 
             var sendAppointmentSummaryUrl = configuration["Jobs:SendAppointmentSummary:Endpoint"] ?? "";
             var sendAppointmentSummaryCronExpression = configuration["Jobs:SendAppointmentSummary:CronExpression"] ?? "0 7 * * *";
 
-            logger.LogInformation("[JobScheduler] Job config loaded. URL={Url}, Cron={Cron}", sendAppointmentSummaryUrl, sendAppointmentSummaryCronExpression);
-
+            // DEV -> use Hangfire
             if (environment.IsDevelopment())
             {
-                logger.LogInformation("[JobScheduler] Development mode detected — using HangFire inline handler");
                 app.UseHangfireDashboard();
-
                 schedulerService.AddOrUpdateRecurring(
                     WorkerSetting.JobName.SendEmailDailyAppointmentRemindersName,
                     () => mediator.Send(new SendAppointmentSummaryCommand()),
                     sendAppointmentSummaryCronExpression);
-
-                logger.LogInformation("[JobScheduler] HangFire recurring job registered. JobId={JobId}", WorkerSetting.JobName.SendEmailDailyAppointmentRemindersName);
             }
             else
             {
-                logger.LogInformation("[JobScheduler] Production mode detected — using GCP Cloud Scheduler with URL endpoint");
-
                 schedulerService.AddOrUpdateRecurring(
                     WorkerSetting.JobName.SendEmailDailyAppointmentRemindersName,
                     sendAppointmentSummaryUrl,
                     sendAppointmentSummaryCronExpression);
-
-                logger.LogInformation("[JobScheduler] GCP Cloud Scheduler job registered. JobId={JobId}, Uri={Uri}", WorkerSetting.JobName.SendEmailDailyAppointmentRemindersName, sendAppointmentSummaryUrl);
             }
         }
+    }
 
-        logger.LogInformation("[JobScheduler] Configuration complete");
+    public static void EnsureHangfireSchema(string connectionString)
+    {
+        // Hangfire.SqlServer automatically creates its tables when the database exists
+        // We just need to ensure the database itself exists
+        var builder = new Microsoft.Data.SqlClient.SqlConnectionStringBuilder(connectionString);
+        var databaseName = builder.InitialCatalog;
+        builder.InitialCatalog = "master"; // Connect to master to create database if needed
+
+        using var masterConnection = new Microsoft.Data.SqlClient.SqlConnection(builder.ConnectionString);
+        masterConnection.Open();
+
+        var createDatabaseSql = $"IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = '{databaseName}') CREATE DATABASE [{databaseName}]";
+        using var cmd = new Microsoft.Data.SqlClient.SqlCommand(createDatabaseSql, masterConnection);
+        cmd.ExecuteNonQuery();
     }
 }
