@@ -45,7 +45,7 @@ namespace BookingCare.Application.Patients.Queries.WorkSessionQuery
 
             var workSessionQuery = _unitOfWork.WorkSessions.QueryableAsync()
                 .Include(ws => ws.Doctor)
-                .Where(ws => ws.StartTime >= startDate && ws.StartTime < endDateLimit);
+                .Where(ws => ws.Date >= startDate && ws.Date < endDateLimit);
 
             if (request.DoctorId.HasValue)
             {
@@ -124,7 +124,7 @@ namespace BookingCare.Application.Patients.Queries.WorkSessionQuery
                     AvailableTimeSlots = new List<AvailableTimeSlotModel>()
                 };
 
-                var sessionsToday = workSessions.Where(ws => ws.StartTime.Date == currentDate).ToList();
+                var sessionsToday = workSessions.Where(ws => ws.Date.Date == currentDate).ToList();
 
                 foreach (var session in sessionsToday)
                 {
@@ -132,8 +132,8 @@ namespace BookingCare.Application.Patients.Queries.WorkSessionQuery
                         .Where(a => a.WorkSessionId == session.Id)
                         .ToList();
 
-                    TimeSpan currentSlotStart = session.StartTime.TimeOfDay;
-                    TimeSpan sessionEnd = session.EndTime.TimeOfDay;
+                    TimeSpan currentSlotStart = session.StartTime;
+                    TimeSpan sessionEnd = session.EndTime;
 
                     while (currentSlotStart.Add(step) <= sessionEnd)
                     {
@@ -150,7 +150,7 @@ namespace BookingCare.Application.Patients.Queries.WorkSessionQuery
                         {
                             WorkSessionId = session.Id,
                             StartTime = currentSlotStart,
-                            EndTime = currentSlotStart.Add(step),
+                            EndTime = currentSlotEnd,
                             IsFull = isBooked || isPastSlot,
                             DoctorId = session.DoctorId,
                             DoctorName = session.Doctor?.FullName,

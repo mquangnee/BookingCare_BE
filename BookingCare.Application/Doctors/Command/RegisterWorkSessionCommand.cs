@@ -58,10 +58,12 @@ namespace BookingCare.Application.Doctors.Command
                 return methodResult;
             }
 
-            var (startTime, endTime) = GetWorkSessionTimeRange(request.Date, request.Shift);
+            var sessionDate = request.Date.Date;
+            var (startTime, endTime) = GetWorkSessionTimeRange(request.Shift);
             var existingSession = await _unitOfWork.WorkSessions
                 .QueryableAsync()
                 .Where(ws => ws.DoctorId == doctor.Id &&
+                             ws.Date == sessionDate &&
                              ws.StartTime >= startTime &&
                              ws.EndTime <= endTime)
                 .FirstOrDefaultAsync(cancellationToken);
@@ -71,15 +73,14 @@ namespace BookingCare.Application.Doctors.Command
                 return methodResult;
             }
 
-            
             var workSession = new WorkSession
             {
                 Id = Guid.NewGuid(),
                 DoctorId = doctor.Id,
                 ServiceId = doctor.ServiceId,
+                Date = sessionDate,
                 StartTime = startTime,
-                EndTime = endTime,
-                NextAvailableAt = startTime
+                EndTime = endTime
             };
             await _unitOfWork.WorkSessions.AddAsync(workSession);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -88,6 +89,7 @@ namespace BookingCare.Application.Doctors.Command
             {
                 Id = workSession.Id,
                 DoctorId = workSession.DoctorId,
+                Date = workSession.Date,
                 StartTime = workSession.StartTime,
                 EndTime = workSession.EndTime,
             };
@@ -95,14 +97,13 @@ namespace BookingCare.Application.Doctors.Command
             return methodResult;
         }
 
-        private (DateTime, DateTime) GetWorkSessionTimeRange(DateTime date, EnumShift shift)
+        private (TimeSpan, TimeSpan) GetWorkSessionTimeRange(EnumShift shift)
         {
-            var baseDate = date.Date;
             return shift switch
             {
-                EnumShift.Morning => (baseDate.Add(new TimeSpan(7, 30, 0)), baseDate.AddHours(12)),
-                EnumShift.Afternoon => (baseDate.Add(new TimeSpan(13, 30, 0)), baseDate.Add(new TimeSpan(17, 30, 0))),
-                EnumShift.Evening => (baseDate.AddHours(18), baseDate.AddHours(21)),
+                EnumShift.Morning => (new TimeSpan(7, 30, 0), new TimeSpan(12, 0, 0)),
+                EnumShift.Afternoon => (new TimeSpan(13, 30, 0), new TimeSpan(17, 30, 0)),
+                EnumShift.Evening => (new TimeSpan(18, 0, 0), new TimeSpan(21, 0, 0)),
                 _ => throw new ArgumentOutOfRangeException(nameof(shift), shift, null)
             };
         }

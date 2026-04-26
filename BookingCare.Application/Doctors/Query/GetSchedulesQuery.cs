@@ -55,22 +55,22 @@ namespace BookingCare.Application.Doctors.Query
             }
 
             var startDate = request.StartDate.Date;
-            var endLimit = startDate.AddDays(8);
+            var endLimit = startDate.AddDays(7);
 
             var workSessionModel = await _unitOfWork.WorkSessions
-                .QueryableAsync()
-                .Where(ws => ws.DoctorId == doctor.Id && ws.StartTime >= startDate && ws.EndTime < endLimit)
-                .Select(ws => new WorkSessionModel
-                {
-                    Id = ws.Id,
-                    UserId = userId,
-                    DoctorId = doctor.Id,
-                    DoctorCode = doctor.DoctorCode,
-                    Date = ws.StartTime.Date,
-                    StartTime = ws.StartTime,
-                    EndTime = ws.EndTime
-                })
-                .ToListAsync(cancellationToken);
+                 .QueryableAsync()
+                 .Where(ws => ws.DoctorId == doctor.Id && ws.Date >= startDate && ws.Date < endLimit)
+                 .Select(ws => new WorkSessionModel
+                 {
+                     Id = ws.Id,
+                     UserId = userId,
+                     DoctorId = doctor.Id,
+                     DoctorCode = doctor.DoctorCode,
+                     Date = ws.Date,
+                     StartTime = ws.StartTime,
+                     EndTime = ws.EndTime
+                 })
+                 .ToListAsync(cancellationToken);
 
             methodResult.Result = workSessionModel;
             methodResult.StatusCode = StatusCodes.Status200OK;

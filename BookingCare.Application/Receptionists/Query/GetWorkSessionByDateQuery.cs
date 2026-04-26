@@ -25,12 +25,11 @@ namespace BookingCare.Application.Receptionists.Query
         {
             ArgumentNullException.ThrowIfNull(request);
 
-            var startOfDay = request.Date.Date;
-            var endOfDay = startOfDay.AddDays(1);
+            var targetDate = request.Date.Date;
 
             var query =
                 from ws in _unitOfWork.WorkSessions.QueryableAsync().AsNoTracking()
-                where ws.StartTime >= startOfDay && ws.StartTime < endOfDay
+                where ws.Date == targetDate
                 from s in _unitOfWork.Services.QueryableAsync()
                     .Where(srv => srv.SpecialtyId == ws.Doctor!.SpecialtyId && srv.Position == ws.Doctor.Position)
                     .Take(1).DefaultIfEmpty()
@@ -45,6 +44,7 @@ namespace BookingCare.Application.Receptionists.Query
                     SpecialtyName = ws.Doctor.Specialty!.Name,
                     AvatarUrl = ws.Doctor.AvatarUrl,
                     Position = ws.Doctor.Position,
+                    Date = ws.Date,
                     StartTime = ws.StartTime,
                     DurationInMinutes = s != null ? s.DurationInMinutes : 0,
                     DoctorPrice = s != null ? s.Price : 0

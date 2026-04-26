@@ -19,10 +19,6 @@ namespace BookingCare.Domain.IRepository
         IMedicineRepository Medicines { get; }
         IPrescriptionRepository Prescriptions { get; }
         IPrescriptionDetailRepository PrescriptionDetails { get; }
-        IPaymentRepository Payments { get; }
-        IPaymentTransactionRepository PaymentsTransactions { get; }
-        IChatMessageRepository ChatMessages { get; }
-        IChatSessionRepository ChatSessions { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
         Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default);
         Task CommitAsync(CancellationToken cancellationToken = default);

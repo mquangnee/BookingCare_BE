@@ -1,5 +1,4 @@
 using BookingCare.Application.Appointments.Command;
-using BookingCare.Application.IServices;
 using BookingCare.Application.Services;
 using BookingCare.Domain.IRepository;
 using BookingCare.Infrastructure.Maps;
@@ -51,10 +50,6 @@ public static class DependencyInjection
         services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
         services.AddScoped<IPrescriptionDetailRepository, PrescriptionDetailRepository>();
         services.AddScoped<IMedicineRepository, MedicineRepository>();
-        services.AddScoped<IPaymentRepository, PaymentRepository>();
-        services.AddScoped<IPaymentTransactionRepository, PaymentTransactionRepository>();
-        services.AddScoped<IChatMessageRepository, ChatMessageRepository>();
-        services.AddScoped<IChatSessionRepository, ChatSessionRepository>();
 
         // Đăng ký Service
         services.AddHttpContextAccessor();
@@ -63,8 +58,6 @@ public static class DependencyInjection
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IGeneratorCodeService, GeneratorCodeService>();
         services.AddScoped<INotificationService, NotificationService>();
-        services.AddHttpClient<ISepayService, SepayService>();
-        services.AddHttpClient<IAiAssistantService, AiAssistantService>();
 
         services.AddAutoMapper(cfg => { }, typeof(ProfileMap));
 

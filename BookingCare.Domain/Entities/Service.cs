@@ -1,5 +1,4 @@
 ﻿using BookingCare.Shared.Enum;
-using System.Text.Json.Serialization;
 
 namespace BookingCare.Domain.Entities
 {
@@ -12,7 +11,6 @@ namespace BookingCare.Domain.Entities
         public double Price { get; set; }
         public int DurationInMinutes { get; set; }
         public string? Description { get; set; }
-        [JsonConverter(typeof(JsonStringEnumConverter))]
         public EnumPosition? Position { get; set; }
         public bool IsActive { get; set; } = true;
         public DateTime CreatedDate { get; set; } = DateTime.Now;
