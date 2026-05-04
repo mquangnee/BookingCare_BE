@@ -110,9 +110,9 @@ namespace BookingCare.Application.Patients.Commands.AppointmentCmd
                 WorkSessionId = workSession.Id,
                 PatientProfileId = request.PatientProfileId,
                 ServiceId = targetService.Id,
-                ServicePrice = targetService.Price
+                ServicePrice = targetService.Price,
+                Type = request.Type
             };
-
 
             await _unitOfWork.Appointments.AddAsync(newAppointment);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
