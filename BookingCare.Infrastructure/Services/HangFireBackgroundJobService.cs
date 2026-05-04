@@ -11,7 +11,24 @@ namespace BookingCare.Infrastructure.Services
         public string Schedule(Expression<Action> methodCall, TimeSpan delay)
             => BackgroundJob.Schedule(methodCall, delay);
         public void AddOrUpdateRecurring(string jobId, Expression<Action> methodCall, string cronExpression)
-            => RecurringJob.AddOrUpdate(jobId, methodCall, cronExpression);
+        {
+            TimeZoneInfo timeZone;
+            try
+            {
+                timeZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Ho_Chi_Minh");
+            }
+            catch (TimeZoneNotFoundException)
+            {
+                timeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+            }
+
+            RecurringJobOptions recurringJobOptions = new RecurringJobOptions
+            {
+                TimeZone = timeZone
+            };
+
+            RecurringJob.AddOrUpdate(jobId, methodCall, cronExpression, recurringJobOptions);
+        }
         public void AddOrUpdateRecurring(string jobId, string apiUrl, string cronExpression)
             => throw new NotSupportedException(
                     "Expression-based scheduling is only supported by GoogleCloudScheduler.");
