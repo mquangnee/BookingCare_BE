@@ -30,6 +30,9 @@ jobs:
     env:
       DOTNET_NO_LOGO: true
       DOTNET_EF_VERSION: "10.0.4"
+      # Ensure EF design-time host loads appsettings.json, not appsettings.Development.json.
+      ASPNETCORE_ENVIRONMENT: Production
+      DOTNET_ENVIRONMENT: Production
       # Used by BookingCare.Api design-time config (Program.cs: ConnectionStrings:ConnectedDb).
       # Required for `database drop`, which unlike `database update` has no --connection flag.
       ConnectionStrings__ConnectedDb: ${{ secrets.DATABASE_CONNECTION_STRING }}
