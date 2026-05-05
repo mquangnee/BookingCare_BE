@@ -7,5 +7,6 @@
         Task<string> GenerateReceptionistCodeAsync();
         Task<string> GeneratePatientProfileCodeAsync();
         Task<string> GenerateAppointmentCodeAsync();
+        Task<string> GenerateServiceCodeAsync();
     }
 }

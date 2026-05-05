@@ -56,5 +56,14 @@ namespace BookingCare.Api.Controllers.Admins
             var commandResult = await _mediator.Send(command);
             return commandResult.GetActionResult();
         }
+
+        [HttpGet("service/{serviceId}")]
+        [ProducesResponseType(typeof(MethodResult<ServiceModel>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> GetDoctorsByService([FromRoute] Guid serviceId)
+        {
+            var queryResult = await _mediator.Send(new GetDoctorsByServiceQuery { ServiceId = serviceId });
+            return queryResult.GetActionResult();
+        }
     }
 }
