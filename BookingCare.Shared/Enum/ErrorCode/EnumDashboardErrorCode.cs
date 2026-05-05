@@ -3,6 +3,8 @@
     public enum EnumDashboardErrorCode
     {
         UpdateInfoFailed,
-        LockUnlockAccountFailed
+        LockUnlockAccountFailed,
+        DurationInMinutesOrPriceInvalid,
+        ServiceHasDoctorsCannotDeactivate,
     }
 }

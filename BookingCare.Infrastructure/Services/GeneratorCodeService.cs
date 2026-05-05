@@ -73,6 +73,18 @@ namespace BookingCare.Infrastructure.Services
             return GenerateNextCode(lastAppointment?.AppointmentCode, prefix);
         }
 
+        public async Task<string> GenerateServiceCodeAsync()
+        {
+            var currentMonth = DateTime.Now.ToString("yyMM");
+            var prefix = $"DV-{currentMonth}-";
+            var lastService = await _dbContext.Set<Service>()
+                .Where(s => s.ServiceCode != null && s.ServiceCode.StartsWith(prefix))
+                .OrderByDescending(s => s.ServiceCode)
+                .FirstOrDefaultAsync();
+
+            return GenerateNextCode(lastService?.ServiceCode, prefix);
+        }
+
         private string GenerateNextCode(string? lastCode, string prefix)
         {
             if (string.IsNullOrEmpty(lastCode))
