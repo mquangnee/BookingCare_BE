@@ -16,8 +16,8 @@ namespace BookingCare.Infrastructure.Services
         {
             var settings = cloudStorageSetting.Value;
             _bucketName = settings.BucketName!;
-            GoogleCredential credential = GoogleCredential.FromFile(settings.CredentialPath);
-            _storageClient = StorageClient.Create(credential);
+            //GoogleCredential credential = GoogleCredential.FromFile(settings.CredentialPath);
+            _storageClient = StorageClient.Create();
         }
 
         public async Task<string> UploadFileAsync(IFormFile file, string folderPath)
