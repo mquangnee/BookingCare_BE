@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Net.WebSockets;
 using System.Text.Json;
 
 namespace BookingCare.Infrastructure
@@ -266,6 +267,14 @@ namespace BookingCare.Infrastructure
             var users = JsonSerializer.Deserialize<List<User>>(usersJson, jsonOptions);
             if (users != null) builder.Entity<User>().HasData(users);
 
+            var patientsJson = File.ReadAllText(Path.Combine(path, "patients.json"));
+            var patients = JsonSerializer.Deserialize<List<Patient>>(patientsJson, jsonOptions);
+            if (patients != null) builder.Entity<Patient>().HasData(patients);
+
+            var patientProfilesJson = File.ReadAllText(Path.Combine(path, "patientprofiles.json"));
+            var patientProfiles = JsonSerializer.Deserialize<List<PatientProfile>>(patientProfilesJson, jsonOptions);
+            if (patientProfiles != null) builder.Entity<PatientProfile>().HasData(patientProfiles);
+
             var adminJson = File.ReadAllText(Path.Combine(path, "admins.json"));
             var admins = JsonSerializer.Deserialize<List<Admin>>(adminJson, jsonOptions);
             if (admins != null) builder.Entity<Admin>().HasData(admins);
@@ -297,6 +306,10 @@ namespace BookingCare.Infrastructure
             var medicinesJson = File.ReadAllText(Path.Combine(path, "medicines.json"));
             var medicines = JsonSerializer.Deserialize<List<Medicine>>(medicinesJson, jsonOptions);
             if (medicines != null) builder.Entity<Medicine>().HasData(medicines);
+
+            var appointmentsJson = File.ReadAllText(Path.Combine(path, "appointments.json"));
+            var appointments = JsonSerializer.Deserialize<List<Appointment>>(appointmentsJson, jsonOptions);
+            if (appointments != null) builder.Entity<Appointment>().HasData(appointments);
         }
     }
 }
